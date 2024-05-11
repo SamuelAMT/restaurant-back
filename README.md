@@ -1,2 +1,1 @@
-# restaurante-back
-Desenvolvimento Web Back-End do SAAS BookABite.
+# Back-End do dispositivo mobile do Cliente.
