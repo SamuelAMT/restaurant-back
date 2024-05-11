@@ -1,1 +1,1 @@
-# Back-End do dispositivo mobile do Cliente.
+# Back-End do dispositivo Desktop do Restaurante.
