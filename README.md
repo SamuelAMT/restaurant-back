@@ -1,1 +1,1 @@
-# Back-End do dispositivo Desktop do Restaurante.
+# Back-End do dispositivo Desktop do restaurant.
