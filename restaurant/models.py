@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Restaurant(models.Model):
-    cnpj = models.CharField(max_length=14)
+    cnpj = models.CharField(max_length=14, primary_key=True)
     name = models.CharField(max_length=100)
     cep = models.CharField(max_length=9)
     street = models.CharField(max_length=30)

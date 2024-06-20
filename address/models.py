@@ -2,10 +2,11 @@ from django.db import models
 
 # Create your models here.
 
+# TODO: Create the Client model
 class Client(models.Model):
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     email = models.EmailField()
-    birthdate = models.DateField(blank=True, null=False)
+    """ birthdate = models.DateField(blank=True, null=False) """
     def __str__(self):
         return self.name

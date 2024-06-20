@@ -7,7 +7,7 @@ class Reservation(models.Model):
     amountOfHours = models.IntegerField()
     time = models.IntegerField()
     date = models.DateField()
-    hash = models.CharField(max_length=100)
+    hash = models.CharField(max_length=100, primary_key=True)
     reserver = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
