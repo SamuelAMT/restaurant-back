@@ -2,11 +2,16 @@ from django.db import models
 
 # Create your models here.
 
-# TODO: Create the Client model
-class Client(models.Model):
-    name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField()
-    """ birthdate = models.DateField(blank=True, null=False) """
+class Address(models.Model):
+    id = models.AutoField(primary_key=True)
+    cep = models.CharField(max_length=9)
+    street = models.CharField(max_length=30)
+    number = models.CharField(max_length=10)
+    neighborhood = models.CharField(max_length=30)
+    city = models.CharField(max_length=30)
+    state = models.CharField(max_length=2)
+    country = models.CharField(max_length=30)
+    class Meta:
+        unique_together = (('cep, street', 'number', 'neighborhood', 'city', 'state', 'country'),)
     def __str__(self):
-        return self.name
+        return self.street + ', ' + self.number + ' - ' + self.neighborhood + ', ' + self.city + ' - ' + self.state + ' - ' + self.cep
