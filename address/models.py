@@ -14,4 +14,4 @@ class Address(models.Model):
     class Meta:
         unique_together = (('cep', 'street', 'number', 'neighborhood', 'city', 'state', 'country'),)
     def __str__(self):
-        return self.street + ', ' + self.number + ' - ' + self.neighborhood + ', ' + self.city + ' - ' + self.state + ' - ' + self.cep
+        return f"{self.id} - {self.cep}, {self.street}, {self.number} - {self.neighborhood}, {self.city} - {self.state} - {self.country}"
