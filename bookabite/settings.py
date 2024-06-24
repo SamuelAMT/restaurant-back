@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'restaurant',
+    'restaurant_client',
     'reservation',
     'address',
     # 'debug_toolbar'
