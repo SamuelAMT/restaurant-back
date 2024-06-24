@@ -12,6 +12,6 @@ class Address(models.Model):
     state = models.CharField(max_length=2)
     country = models.CharField(max_length=30)
     class Meta:
-        unique_together = (('cep, street', 'number', 'neighborhood', 'city', 'state', 'country'),)
+        unique_together = (('cep', 'street', 'number', 'neighborhood', 'city', 'state', 'country'),)
     def __str__(self):
         return self.street + ', ' + self.number + ' - ' + self.neighborhood + ', ' + self.city + ' - ' + self.state + ' - ' + self.cep
