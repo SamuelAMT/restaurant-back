@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Address(models.Model):
-    id = models.AutoField(primary_key=True)
+    address_id = models.AutoField(primary_key=True)
     cep = models.CharField(max_length=9)
     street = models.CharField(max_length=30)
     number = models.CharField(max_length=10)
@@ -16,4 +16,4 @@ class Address(models.Model):
         unique_together = (('cep', 'street', 'street', 'number', 'neighborhood', 'city', 'state', 'country'),)
 
     def __str__(self):
-        return f"{self.id} - {self.cep}, {self.street}, {self.number} - {self.neighborhood}, {self.city} - {self.state} - {self.country}"
+        return f"{self.address_id} - {self.cep}, {self.street}, {self.number} - {self.neighborhood}, {self.city} - {self.state} - {self.country}"
