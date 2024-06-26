@@ -1,6 +1,5 @@
 from django.db import models
-
-# Create your models here.
+from restaurant.models import Restaurant
 
 class Address(models.Model):
     address_id = models.AutoField(primary_key=True)
@@ -11,9 +10,16 @@ class Address(models.Model):
     city = models.CharField(max_length=30)
     state = models.CharField(max_length=2)
     country = models.CharField(max_length=30)
+    
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.CASCADE,
+        related_name='addresses',
+        null=True,
+    )
 
     class Meta:
-        unique_together = (('cep', 'street', 'street', 'number', 'neighborhood', 'city', 'state', 'country'),)
+        unique_together = (('cep', 'street', 'number', 'neighborhood', 'city', 'state', 'country'),)
 
     def __str__(self):
         return f"{self.address_id} - {self.cep}, {self.street}, {self.number} - {self.neighborhood}, {self.city} - {self.state} - {self.country}"
