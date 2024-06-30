@@ -35,16 +35,16 @@ class Reservation(models.Model):
     )
     
     def save(self, *args, **kwargs):
-        if not self.pk:  # Check if the instance is not already saved
+        if not self.pk:
             is_unique = False
             while not is_unique:
                 try:
                     super().save(*args, **kwargs)
                     is_unique = True
                 except IntegrityError:
-                    self.reservation_hash = uuid.uuid4()  # Generate a new UUID if there was a collision
+                    self.reservation_hash = uuid.uuid4()
         else:
             super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.amount_of_people} - {self.amount_of_hours} - {self.time} - {self.date} - {self.hash} - {self.reserver}"
+        return f"{self.amount_of_people} - {self.amount_of_hours} - {self.time} - {self.date} - {self.reservation_hash} - {self.reserver}"

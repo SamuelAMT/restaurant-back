@@ -1,6 +1,7 @@
 from django.db import models
 from restaurant.models import Restaurant
 
+# Change the class name to Place
 class Address(models.Model):
     address_id = models.AutoField(primary_key=True)
     cep = models.CharField(max_length=9)
