@@ -4,7 +4,7 @@ from restaurant_client.models import RestaurantClient
 class Restaurant(models.Model):
     cnpj = models.CharField(max_length=14, primary_key=True)
     name = models.CharField(max_length=100)
-    country_code = models.CharField(max_length=3)
+    country_code = models.CharField(max_length=3, blank=True, null=True)
     phone = models.CharField(max_length=20)
     email = models.EmailField(max_length=70, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
@@ -12,7 +12,7 @@ class Restaurant(models.Model):
     image = models.URLField(blank=True, null=True)
     
     clients = models.ManyToManyField(
-        RestaurantClient,
+        'restaurant_client.RestaurantClient',
         related_name='restaurants'
     )
 

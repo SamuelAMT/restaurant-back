@@ -12,7 +12,7 @@ class RestaurantClient(models.Model):
     # Instead it's calling the model as a string to avoid it
     reservations = models.ManyToManyField(
         'reservation.Reservation',
-        related_name='restaurant_clients'       
+        related_name='restaurant_clients'
     )
     
     def __str__(self):
