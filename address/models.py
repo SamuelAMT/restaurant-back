@@ -3,7 +3,7 @@ from restaurant.models import Restaurant
 
 # Change the class name to Place
 class Address(models.Model):
-    address_id = models.AutoField(primary_key=True)
+    address_id = models.AutoField(primary_key=True, db_index=True, db_tablespace='index_tablespace')
     cep = models.CharField(max_length=9)
     street = models.CharField(max_length=30)
     number = models.CharField(max_length=10)
@@ -21,6 +21,8 @@ class Address(models.Model):
 
     class Meta:
         unique_together = (('cep', 'street', 'number', 'neighborhood', 'city', 'state', 'country'),)
+        db_tablespace = 'tables'
+        indexes = [models.Index(fields=['address_id'], db_tablespace='other_index_tablespace')]
 
     def __str__(self):
         return f"{self.address_id} - {self.cep}, {self.street}, {self.number} - {self.neighborhood}, {self.city} - {self.state} - {self.country}"

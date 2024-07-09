@@ -39,12 +39,13 @@ jobs:
         count=0
         while ! pg_isready -h localhost -p 5432 &>/dev/null; do
           ((count++))
-          if [ $count -gt 20 ]; then
-            echo "PostgreSQL did not respond within 20 seconds."
+          if [ $count -gt 30 ]; then
+            echo "PostgreSQL did not respond within 30 seconds."
             exit 1
           fi
           sleep 1
         done
+      
 
     - name: Run migrations and tests
       env:

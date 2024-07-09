@@ -16,25 +16,30 @@ class RestaurantVisit(models.Model):
     )
 
 class Reservation(models.Model):
-    reserver = models.CharField(max_length=100)
+    reserver = models.CharField(max_length=100, db_index=True, db_tablespace='index_tablespace')
     amount_of_people = models.IntegerField()
     amount_of_hours = models.IntegerField()
-    time = models.IntegerField()
-    date = models.DateField()
+    time = models.IntegerField(db_index=True)
+    date = models.DateField(db_index=True)
     reservation_hash = models.CharField(
         max_length=100,
         unique=True,
         blank=False,
         primary_key=True,
         default=uuid.uuid4,
+        db_index=True,
+        db_tablespace='index_tablespace',
     )
+    
+    class Meta:
+        db_tablespace = 'tables'
+        indexes = [models.Index(fields=['reserver', 'time', 'date', 'reservation_hash'], db_tablespace='other_index_tablespace')]
 
     visit = models.ForeignKey(
         RestaurantVisit,
         on_delete=models.CASCADE,
         related_name='reservations',
     )
-
 
     def save(self, *args, **kwargs):
         if not self.pk:
