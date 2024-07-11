@@ -37,15 +37,18 @@ jobs:
       run: |
         echo "Waiting for PostgreSQL to be ready..."
         count=0
+        max_retries=60
         while ! pg_isready -h localhost -p 5432 &>/dev/null; do
           ((count++))
-          if [ $count -gt 30 ]; then
-            echo "PostgreSQL did not respond within 30 seconds."
+          echo "Waiting for PostgreSQL... attempt $count"
+          if [ $count -gt $max_retries ]; then
+            echo "PostgreSQL did not respond within $max_retries seconds."
             exit 1
           fi
           sleep 1
         done
-      
+        echo "PostgreSQL is ready"
+
     - name: Run migrations and tests
       env:
         DB_ENGINE: ${{ secrets.DB_ENGINE }}
