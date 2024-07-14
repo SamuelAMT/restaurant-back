@@ -23,7 +23,7 @@ import debug_toolbar
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('restaurant/', include('restaurant.urls')),
-    path('reservation/', include('reservation.urls')),
+    path('customer/', include('restaurant_customer.urls')),
     path('address/', include('address.urls')),
     path('__debug__/', include('debug_toolbar.urls'))
 ]

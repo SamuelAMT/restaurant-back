@@ -3,5 +3,5 @@ from . import views
 
 # URLConf for reservation app
 urlpatterns = [
-    path('home/', views.index, name="index"),
+    path('', views.index, name="index"),
 ]

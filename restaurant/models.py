@@ -1,5 +1,5 @@
 from django.db import models
-from restaurant_client.models import RestaurantClient
+from restaurant_customer.models import RestaurantCustomer
 
 class Restaurant(models.Model):
     cnpj = models.CharField(max_length=14, primary_key=True, db_index=True, db_tablespace='index_tablespace')
@@ -11,8 +11,8 @@ class Restaurant(models.Model):
     description = models.TextField(blank=True, null=True)
     image = models.URLField(blank=True, null=True)
     
-    clients = models.ManyToManyField(
-        'restaurant_client.RestaurantClient',
+    customers = models.ManyToManyField(
+        'restaurant_customer.RestaurantCustomer',
         related_name='restaurants'
     )
     

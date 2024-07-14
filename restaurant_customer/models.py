@@ -1,6 +1,6 @@
 from django.db import models
 
-class RestaurantClient(models.Model):
+class RestaurantCustomer(models.Model):
     name = models.CharField(max_length=100, db_index=True, db_tablespace='index_tablespace')
     lastname = models.CharField(max_length=100, db_index=True, db_tablespace='index_tablespace')
     country_code = models.CharField(max_length=3)
@@ -12,7 +12,7 @@ class RestaurantClient(models.Model):
     # Instead it's calling the model as a string to avoid it
     reservations = models.ManyToManyField(
         'reservation.Reservation',
-        related_name='restaurant_clients'
+        related_name='restaurant_customers'
     )
     
     class Meta:

@@ -9,8 +9,8 @@ class RestaurantVisit(models.Model):
         related_name='restaurant_visits',
     )
     
-    restaurant_client = models.ForeignKey(
-        'restaurant_client.RestaurantClient',
+    restaurant_customer = models.ForeignKey(
+        'restaurant_customer.RestaurantCustomer',
         on_delete=models.CASCADE,
         related_name='restaurant_visits',  
     )
