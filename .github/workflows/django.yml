@@ -33,21 +33,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Wait for PostgreSQL to be ready
-      run: |
-        echo "Waiting for PostgreSQL to be ready..."
-        count=0
-        max_retries=60
-        while ! pg_isready -h localhost -p 5432 &>/dev/null; do
-          ((count++))
-          echo "Waiting for PostgreSQL... attempt $count"
-          if [ $count -gt $max_retries ]; then
-            echo "PostgreSQL did not respond within $max_retries seconds."
-            exit 1
-          fi
-          sleep 1
-        done
-        echo "PostgreSQL is ready"
+#    - name: Wait for PostgreSQL to be ready
+#      run: |
+#        echo "Waiting for PostgreSQL to be ready..."
+#        count=0
+#        max_retries=60
+#        while ! pg_isready -h localhost -p 5432 &>/dev/null; do
+#          ((count++))
+#          echo "Waiting for PostgreSQL... attempt $count"
+#          if [ $count -gt $max_retries ]; then
+#            echo "PostgreSQL did not respond within $max_retries seconds."
+#            exit 1
+#          fi
+#          sleep 1
+#        done
+#        echo "PostgreSQL is ready"
 
     - name: Run migrations and tests
       env:
