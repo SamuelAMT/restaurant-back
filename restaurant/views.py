@@ -1,9 +1,13 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
+from django.http import Http404
 
 # Create your views here.
 def index(request):
     return render(request, 'restaurant/index.html')
+
+def login(request):
+    return render(request, 'restaurant/login.html')
 
 def dashboard(request):
     return render(request, 'restaurant/dashboard.html')
