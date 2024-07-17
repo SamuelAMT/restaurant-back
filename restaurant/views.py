@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.http import Http404
 
 # Create your views here.
+# Integrate frontend with backend
 def index(request):
     return render(request, 'restaurant/index.html')
 
