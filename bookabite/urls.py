@@ -18,10 +18,18 @@ Including another URLconf
 # URLConf for BookABite root app
 from django.contrib import admin
 from django.urls import include, path
+from ninja import NinjaAPI
 import debug_toolbar
+
+api = NinjaAPI()
+
+@api.get("/async-hello")
+async def async_hello(request):
+    return {"message": "Hello World!"}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', api.urls),
     path('restaurant/', include('restaurant.urls')),
     path('customer/', include('restaurant_customer.urls')),
     path('address/', include('address.urls')),
