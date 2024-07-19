@@ -9,14 +9,14 @@ class RestaurantVisit(models.Model):
         related_name='restaurant_visits',
     )
     
-    restaurant_customer = models.ForeignKey(
+    """ restaurant_customer = models.ForeignKey(
         'restaurant_customer.RestaurantCustomer',
         on_delete=models.CASCADE,
         related_name='restaurant_visits',  
-    )
+    ) """
 
 class Reservation(models.Model):
-    reserver = models.CharField(max_length=100, db_index=True, db_tablespace='index_tablespace')
+    reserver = models.CharField(max_length=100, db_index=True)
     amount_of_people = models.IntegerField()
     amount_of_hours = models.IntegerField()
     time = models.IntegerField(db_index=True)
@@ -26,14 +26,13 @@ class Reservation(models.Model):
         unique=True,
         blank=False,
         primary_key=True,
+        serialize=False,
         default=uuid.uuid4,
-        db_index=True,
-        db_tablespace='index_tablespace',
+        db_index=True
     )
     
     class Meta:
-        db_tablespace = 'tables'
-        indexes = [models.Index(fields=['reserver', 'time', 'date', 'reservation_hash'], db_tablespace='other_index_tablespace')]
+        indexes = [models.Index(fields=['reserver', 'time', 'date', 'reservation_hash'], name='reservation_reserve_9df32c_idx')]
 
     visit = models.ForeignKey(
         RestaurantVisit,

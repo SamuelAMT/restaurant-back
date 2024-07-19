@@ -1,23 +1,19 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound
-from django.http import Http404
+from ninja import NinjaAPI
+from restaurant_customer.models import RestaurantCustomer
 
-# Create your views here.
-# Integrate frontend with backend
-def index(request):
-    return render(request, 'restaurant/index.html')
+api = NinjaAPI(urls_namespace='backend-restaurant-api')
 
-def login(request):
-    return render(request, 'restaurant/login.html')
-
-def dashboard(request):
-    return render(request, 'restaurant/dashboard.html')
-
-def calendar(request):
-    return render(request, 'restaurant/calendar.html')
-
-def customer_list(request):
-    return render(request, 'restaurant/customer-list.html')
-
-def settings(request):
-    return render(request, 'restaurant/settings.html')
+@api.get("/customer-reservations/", response=list)
+def customer_reservations(request):
+    customers = RestaurantCustomer.objects.all().select_related('reservations')
+    result = []
+    for customer in customers:
+        for reservation in customer.reservations.all():
+            result.append({
+                'customer_name': f"{customer.name} {customer.lastname}",
+                'email': customer.email,
+                'phone': customer.phone,
+                'amount_of_people': reservation.amount_of_people,
+                'amount_of_hours': reservation.amount_of_hours
+            })
+    return result

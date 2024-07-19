@@ -1,12 +1,7 @@
 from django.urls import path
-from . import views
+from .views import api
 
 # URLConf for restaurant app
 urlpatterns = [
-    path('home/', views.index, name="index"),
-    path('login/', views.login, name="login"),
-    path('dashboard/', views.dashboard, name="dashboard"),
-    path('calendar/', views.calendar, name="calendar"),
-    path('customer-list/', views.customer_list, name="customer_list"),
-    path('settings/', views.settings, name="settings"),
+    path('api/', api.urls),
 ]

@@ -29,7 +29,7 @@ async def async_hello(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', api.urls),
+    path('', include('api.urls')),
     path('restaurant/', include('restaurant.urls')),
     path('customer/', include('restaurant_customer.urls')),
     path('address/', include('address.urls')),
