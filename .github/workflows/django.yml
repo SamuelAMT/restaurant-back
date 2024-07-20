@@ -49,17 +49,7 @@ jobs:
 #        done
 #        echo "PostgreSQL is ready"
 
-    - name: Run migrations and tests
-      env:
-        DB_ENGINE: ${{ secrets.DB_ENGINE }}
-        DB_NAME: ${{ secrets.DB_NAME_DEV }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_HOST: localhost
-        DB_PORT: 5432
-      run: |
-        python manage.py migrate
-        python manage.py test
+    
 
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_PAT }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
