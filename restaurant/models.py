@@ -9,7 +9,7 @@ class Restaurant(models.Model):
     website = models.URLField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     image = models.URLField(blank=True, null=True)
-    
+
     customers = models.ManyToManyField(
         'restaurant_customer.RestaurantCustomer',
         related_name='restaurants'

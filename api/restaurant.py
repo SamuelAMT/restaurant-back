@@ -8,28 +8,37 @@ class RestaurantSchema(Schema):
     address: str
 
 class DashboardSchema(Schema):
-    # Define fields relevant to the dashboard
     total_reservations: int
+    new_customers: int
+    new_reservations: int    
     total_customers: int
+    canceled_reservations: int
 
 class ReservationSchema(Schema):
-    # Define fields for reservations
+    # Restaurant Customers in a specific day
     reserver: str
+    amount_of_people: int
+    amount_of_hours: str
     time: str
-    date: str
+    """date: str""" # We already have the calendar
+    email: str
+    phone: str
 
 class CustomerSchema(Schema):
-    # Define fields for customers
-    name: str
+    # The difference between this schema from the above is that this one is for the all time restaurant customers
+    reserver: str
+    amount_of_people: int
+    amount_of_hours: str
+    time: str
+    """date: str""" # We already have the calendar
     email: str
+    phone: str
 
 class SettingsSchema(Schema):
-    # Define fields for settings
     setting_key: str
     setting_value: str
 
 class ProfileSchema(Schema):
-    # Define fields for profile
     username: str
     email: str
 

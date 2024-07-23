@@ -1,19 +1,14 @@
-from ninja import NinjaAPI
-from restaurant_customer.models import RestaurantCustomer
+from django.shortcuts import render
+from django.http import HttpRequest
 
-api = NinjaAPI(urls_namespace='backend-restaurant-api')
+def dashboard_view(request: HttpRequest, restaurant_name: str):
+    return render(request, 'restaurant/dashboard.html', {'restaurant_name': restaurant_name})
 
-@api.get("/customer-reservations/", response=list)
-def customer_reservations(request):
-    customers = RestaurantCustomer.objects.all().select_related('reservations')
-    result = []
-    for customer in customers:
-        for reservation in customer.reservations.all():
-            result.append({
-                'customer_name': f"{customer.name} {customer.lastname}",
-                'email': customer.email,
-                'phone': customer.phone,
-                'amount_of_people': reservation.amount_of_people,
-                'amount_of_hours': reservation.amount_of_hours
-            })
-    return result
+def reservations_view(request: HttpRequest, restaurant_name: str):
+    return render(request, 'restaurant/reservations.html', {'restaurant_name': restaurant_name})
+
+def customers_view(request: HttpRequest, restaurant_name: str):
+    return render(request, 'restaurant/customers.html', {'restaurant_name': restaurant_name})
+
+def settings_view(request: HttpRequest, restaurant_name: str):
+    return render(request, 'restaurant/settings.html', {'restaurant_name': restaurant_name})

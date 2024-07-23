@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'restaurant_customer',
     'reservation',
     'address',
+    'ninja',
     #'api',
     # 'debug_toolbar'
 ]

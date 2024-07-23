@@ -1,37 +1,10 @@
-"""
-URL configuration for bookabite project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
-# URLConf for BookABite root app
 from django.contrib import admin
-from django.urls import include, path
-from ninja import NinjaAPI
+from django.urls import include, path, re_path
 import debug_toolbar
-
-api = NinjaAPI()
-
-@api.get("/async-hello")
-async def async_hello(request):
-    return {"message": "Hello World!"}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('api.urls')),
-    path('restaurant/', include('restaurant.urls')),
-    path('customer/', include('restaurant_customer.urls')),
-    path('address/', include('address.urls')),
-    path('__debug__/', include('debug_toolbar.urls'))
+    path('__debug__/', include(debug_toolbar.urls)),
+    re_path(r'^(?P<restaurant_name>[a-zA-Z0-9-_]+)/', include('restaurant.urls')),
+    path('api/', include('api.urls')),
 ]
