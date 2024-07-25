@@ -33,33 +33,37 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-#    - name: Wait for PostgreSQL to be ready
-#      run: |
-#        echo "Waiting for PostgreSQL to be ready..."
-#        count=0
-#        max_retries=60
-#        while ! pg_isready -h localhost -p 5432 &>/dev/null; do
-#          ((count++))
-#          echo "Waiting for PostgreSQL... attempt $count"
-#          if [ $count -gt $max_retries ]; then
-#            echo "PostgreSQL did not respond within $max_retries seconds."
-#            exit 1
-#          fi
-#          sleep 1
-#        done
-#        echo "PostgreSQL is ready"
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        echo "Waiting for PostgreSQL to be ready..."
+        count=0
+        max_retries=60
+        while ! pg_isready -h localhost -p 5432 &>/dev/null; do
+          ((count++))
+          echo "Waiting for PostgreSQL... attempt $count"
+          if [ $count -gt $max_retries ]; then
+            echo "PostgreSQL did not respond within $max_retries seconds."
+            exit 1
+          fi
+          sleep 1
+        done
+        echo "PostgreSQL is ready"
 
-#    - name: Run migrations and tests
-#      env:
-#        DB_ENGINE: ${{ secrets.DB_ENGINE }}
-#        DB_NAME: ${{ secrets.DB_NAME_DEV }}
-#        DB_USER: ${{ secrets.DB_USER }}
-#        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-#        DB_HOST: ${{ secrets.DB_HOST }}
-#        DB_PORT: ${{ secrets.DB_PORT }}
-#      run: |
-#        python manage.py migrate
-#        python manage.py test
+    - name: Set up environment variables
+      run: |
+        echo "DB_ENGINE=${{ secrets.DB_ENGINE }}" >> $GITHUB_ENV
+        echo "DB_NAME=${{ secrets.DB_NAME_DEV }}" >> $GITHUB_ENV
+        echo "DB_USER=${{ secrets.DB_USER }}" >> $GITHUB_ENV
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
+        echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
+        echo "DB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
+        echo "GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}" >> $GITHUB_ENV
+        echo "GOOGLE_OAUTH_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}" >> $GITHUB_ENV
+
+    - name: Run migrations and tests
+      run: |
+        python manage.py migrate
+        python manage.py test
 
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_PAT }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin

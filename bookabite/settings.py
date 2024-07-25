@@ -75,6 +75,18 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'APP': {
+            'client_id': 'GOOGLE_OAUTH_CLIENT_ID',
+            'secret': 'GOOGLE_OAUTH_CLIENT_SECRET',
+            'key': ''
+        }
+    }
+}
+
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
