@@ -1,11 +1,9 @@
 from ninja import Router, Schema
+from django.http import HttpRequest
 
 router = Router()
 
 # Define the schema for requests and responses
-class RestaurantSchema(Schema):
-    name: str
-    address: str
 
 class DashboardSchema(Schema):
     total_reservations: int
@@ -43,24 +41,24 @@ class ProfileSchema(Schema):
     email: str
 
 # Define endpoints
-@router.get("/dashboard", response=DashboardSchema)
-def get_dashboard(request):
-    # Your logic to fetch dashboard data
+@router.get("/{restaurant_name}/dashboard", response=DashboardSchema)
+def get_dashboard(request, restaurant_name: str):
+    # Your logic to fetch dashboard data for the specific restaurant
     return DashboardSchema(total_reservations=100, total_customers=50)
 
-@router.get("/reserves", response=ReservationSchema)
-def list_reservations(request):
-    # Your logic to list reservations
-    return [ReservationSchema(reserver="John Doe", time="12:00", date="2024-07-10")]
+@router.get("/{restaurant_name}/reservations", response=ReservationSchema)
+def list_reservations(request, restaurant_name: str):
+    # Your logic to list reservations for the specific restaurant
+    return [ReservationSchema(reserver="John Doe", amount_of_people=4, amount_of_hours="2", time="12:00", email="john@example.com", phone="123456789")]
 
-@router.get("/customers", response=CustomerSchema)
-def list_customers(request):
-    # Your logic to list customers
-    return [CustomerSchema(name="John Doe", email="john@example.com")]
+@router.get("/{restaurant_name}/customers", response=CustomerSchema)
+def list_customers(request, restaurant_name: str):
+    # Your logic to list customers for the specific restaurant
+    return [CustomerSchema(reserver="John Doe", amount_of_people=4, amount_of_hours="2", time="12:00", email="john@example.com", phone="123456789")]
 
-@router.get("/settings", response=SettingsSchema)
-def get_settings(request):
-    # Your logic to fetch settings
+@router.get("/{restaurant_name}/settings", response=SettingsSchema)
+def get_settings(request, restaurant_name: str):
+    # Your logic to fetch settings for the specific restaurant
     return [SettingsSchema(setting_key="theme", setting_value="dark")]
 
 @router.get("/profile", response=ProfileSchema)
