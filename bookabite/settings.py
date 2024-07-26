@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'reservation',
     'address',
     'ninja',
+    'corsheaders',
     #'api',
     # 'debug_toolbar'
 ]
@@ -97,6 +98,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://bookabite-restaurante.vercel.app",
 ]
 
 INTERNAL_IPS = [
