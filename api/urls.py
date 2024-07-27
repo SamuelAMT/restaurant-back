@@ -1,12 +1,7 @@
-from django.urls import path
-from ninja import NinjaAPI
-from .restaurant import router as restaurant_router
-from .auth import router as auth_router
+from django.urls import path, include
 
-api = NinjaAPI()
-api.add_router('/restaurants/', restaurant_router)
-api.add_router('/auth/', auth_router)
+app_name = 'api'
 
 urlpatterns = [
-    path("", api.urls),
+    path('v1/', include('api.v1.urls')),
 ]

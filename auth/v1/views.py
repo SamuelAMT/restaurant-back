@@ -1,6 +1,7 @@
 from django.contrib.auth import login as auth_login, authenticate, logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
 from .forms import RegisterForm, LoginForm
 
 @csrf_exempt
@@ -32,4 +33,11 @@ def logout_view(request):
     if request.method == 'POST':
         logout(request)
         return JsonResponse({'message': 'Successfully logged out'}, status=200)
+    return JsonResponse({'message': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def csrf(request):
+    if request.method == 'GET':
+        csrf_token = get_token(request)
+        return JsonResponse({'csrfToken': csrf_token}, status=200)
     return JsonResponse({'message': 'Invalid request method'}, status=405)
