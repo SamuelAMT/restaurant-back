@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'address',
     'ninja',
     'corsheaders',
-    #'api',
+    'api',
+    'custom_auth',
     # 'debug_toolbar'
 ]
 
