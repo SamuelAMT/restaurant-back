@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'api',
     'custom_auth',
-    # 'debug_toolbar'
+    'debug_toolbar'
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -91,7 +91,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
