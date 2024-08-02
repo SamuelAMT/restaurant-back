@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'api',
     'custom_auth',
     'debug_toolbar'
+    # add docker-credential-helpers
 ]
 
 AUTHENTICATION_BACKENDS = (
