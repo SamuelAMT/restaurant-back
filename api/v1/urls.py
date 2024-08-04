@@ -9,6 +9,7 @@ api.add_router('/restaurant/', restaurant_router)
 
 urlpatterns = [
     path("", api.urls),
+    """todo: fix swagger and openapi namespaces"""
     #path("openapi/", api.openapi_url),
     #path("swagger/", api.swagger_ui),
 ]
