@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vag!&vf9v9%&8c#ior%8rqnq@!p^6dybc7r$i^x@8w_hkxm%7v'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() in ['true', '1', 't', 'y', 'yes']
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'address',
     'ninja',
     'corsheaders',
+    'social_django',
     'api',
     'custom_auth',
     'debug_toolbar'
@@ -70,13 +71,6 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_EMAIL_REQUIRED = True
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-    }
-}
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
