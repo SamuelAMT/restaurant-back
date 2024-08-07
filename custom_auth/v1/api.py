@@ -5,7 +5,7 @@ from django.http import HttpRequest
 from ninja.security import HttpBearer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
-from .models import LoginLog
+from models import LoginLog
 
 router = Router()
 
