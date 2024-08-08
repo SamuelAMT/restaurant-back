@@ -2,10 +2,12 @@ from ninja import Router, Form, Schema
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpRequest
-from ninja.security import HttpBearer
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
-from models import LoginLog
+from datetime import datetime, timedelta
+import jwt
+from django.conf import settings
+from ninja.errors import HttpError
+from .models import LoginLog
 
 router = Router()
 
@@ -27,16 +29,27 @@ class ProfileSchema(Schema):
     email: str
 
 class TokenSchema(Schema):
-    refresh: str
     access: str
 
 class AuthBearer(HttpBearer):
     def authenticate(self, request, token):
         try:
-            RefreshToken(token)
-            return token
-        except Exception as e:
-            return None
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+            user = User.objects.get(id=payload["user_id"])
+            if not user.is_active:
+                raise HttpError(403, "User is not active")
+            return user
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, User.DoesNotExist):
+            raise HttpError(403, "Invalid token")
+
+def create_jwt_token(user):
+    payload = {
+        "user_id": user.id,
+        "exp": datetime.utcnow() + timedelta(hours=24),
+        "iat": datetime.utcnow(),
+    }
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+    return token
 
 @router.post("/register", response=MessageSchema)
 def register(request: HttpRequest, data: RegisterSchema):
@@ -56,12 +69,9 @@ def login_view(request: HttpRequest, data: LoginSchema):
     user = authenticate(request, username=data.username, password=data.password)
     if user is not None:
         login(request, user)
-        refresh = RefreshToken.for_user(user)
+        token = create_jwt_token(user)
         LoginLog.objects.create(user=user, login_time=timezone.now(), method='standard')
-        return {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        }, 200
+        return {'access': token}, 200
     else:
         return {"message": "Invalid credentials"}, 401
 
@@ -73,8 +83,5 @@ def logout_view(request: HttpRequest):
 
 @router.get("/profile", response=ProfileSchema, auth=AuthBearer())
 def profile_view(request):
-    user = request.user
-    if user.is_authenticated:
-        return {"username": user.username, "email": user.email}
-    else:
-        return {"message": "User not authenticated"}, 401
+    user = request.auth
+    return {"username": user.username, "email": user.email}
