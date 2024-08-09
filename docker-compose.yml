@@ -4,11 +4,11 @@ services:
   backend:
     build:
       context: .
-    container_name: backend
+    container_name: restaurant-backend
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://${DB_USER_DEV}:${DB_PASSWORD_DEV}@${DB_HOST_DEV}:${DB_PORT_DEV}/${DB_NAME_DEV}
+      - DATABASE_URL=postgres://${POSTGRES_USER_DEV}:${POSTGRES_PASSWORD_DEV}@${POSTGRES_HOST_DEV}:${POSTGRES_PORT_DEV}/${POSTGRES_NAME_DEV}
     volumes:
       - .:/app
     ports:
@@ -18,13 +18,13 @@ services:
 
   bookabite_dev:
     image: postgres:latest
-    container_name: bookabite-postgresql-dev
+    container_name: bookabite-dev
     env_file:
       - .env
     environment:
-      - POSTGRES_USER_DEV=${DB_USER_DEV}
-      - POSTGRES_PASSWORD_DEV=${DB_PASSWORD_DEV}
-      - POSTGRES_DB_DEV=${DB_NAME_DEV}
+      - POSTGRES_USER=${POSTGRES_USER_DEV}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEV}
+      - POSTGRES_DB=${POSTGRES_NAME_DEV}
     volumes:
       - pgdata_dev:/var/lib/postgresql/data
     ports:
