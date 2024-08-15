@@ -71,6 +71,6 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t samuelamt/restaurant-back-dev:latest .
-        docker tag samuelamt/restaurant-back-dev:latest samuelamt/restaurant-back-dev:latest
-        docker push samuelamt/restaurant-back-dev:latest
+        docker build -t samuelamt/bookabite-restaurant-back-dev:latest .
+        docker tag samuelamt/bookabite-restaurant-back-dev:latest samuelamt/bookabite-restaurant-back-dev:latest
+        docker push samuelamt/bookabite-restaurant-back-dev:latest
