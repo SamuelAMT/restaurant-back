@@ -8,31 +8,36 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER_DEV}:${POSTGRES_PASSWORD_DEV}@postgres:5432/${POSTGRES_NAME_DEV}
+      - DATABASE_URL=postgres://${POSTGRES_USER_DEV}:${POSTGRES_PASSWORD_DEV}@${POSTGRES_HOST_DEV}:${POSTGRES_PORT_DEV}/${POSTGRES_NAME_DEV}
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    #depends_on:
-    #  - postgres-dev
+    depends_on:
+      - postgres-dev
     networks:
       - bookabite-network
 
-  #postgres-dev:
-  #  image: bookabite-postgres-dev:latest
-  #  container_name: postgres-dev
-  #  env_file:
-  #    - .env
-  #  environment:
-  #    - POSTGRES_USER=${POSTGRES_USER_DEV}
-  #    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEV}
-  #    - POSTGRES_DB=${POSTGRES_NAME_DEV}
-  #  volumes:
-  #    - pgdata_dev:/var/lib/postgresql/data
-  #  ports:
-  #    - "5432:5432"
-  #  networks:
-  #    - bookabite-network
+  postgres-dev:
+    image: bookabite-postgres-dev:latest
+    container_name: postgres-dev
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER_DEV}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEV}
+      - POSTGRES_DB=${POSTGRES_NAME_DEV}
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - bookabite-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_DEV}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata_dev:
