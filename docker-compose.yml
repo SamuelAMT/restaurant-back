@@ -19,8 +19,8 @@ services:
       - bookabite-network
 
   postgres-dev:
-    image: bookabite-postgres-dev:latest
     container_name: postgres-dev
+    image: bookabite-postgres-dev:latest
     env_file:
       - .env
     environment:
