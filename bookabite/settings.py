@@ -10,9 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() in ['true', '1', 't', 'y', 'yes']
+DEBUG = bool(int(os.getenv('DEBUG', 0)))
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
@@ -138,12 +138,12 @@ WSGI_APPLICATION = 'bookabite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('POSTGRES_ENGINE_DEV'),
-        'NAME': os.getenv('POSTGRES_NAME_DEV'),
-        'USER': os.getenv('POSTGRES_USER_DEV'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD_DEV'),
-        'HOST': os.getenv('POSTGRES_HOST_DEV'),
-        'PORT': os.getenv('POSTGRES_PORT_DEV'),
+        'ENGINE': os.getenv('DB_ENGINE'),
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
+        'PORT': os.getenv('POSTGRES_PORT'),
         'ATOMIC_REQUESTS': True,
     },
     'homologation' : {
@@ -191,7 +191,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -201,7 +201,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
