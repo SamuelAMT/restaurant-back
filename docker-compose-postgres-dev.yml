@@ -1,23 +1,6 @@
 version: '3.8'
 
 services:
-  backend:
-    container_name: restaurant-backend
-    image: bookabite-restaurant-back-dev:latest
-    command: python manage.py runserver 0.0.0.0:8000
-    env_file:
-      - .env
-    environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER_DEV}:${POSTGRES_PASSWORD_DEV}@postgres-dev:${POSTGRES_PORT_DEV}/${POSTGRES_NAME_DEV}
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres-dev
-    networks:
-      - bookabite-network
-
   postgres-dev:
     container_name: postgres-dev
     image: bookabite-postgres-dev:latest
