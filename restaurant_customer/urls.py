@@ -1,7 +1,8 @@
 from django.urls import path
 from . import views
 
-# URLConf for restaurant app
+app_name = "restaurant_customer"
+
 urlpatterns = [
     path('', views.customer, name="customer"),
 ]
