@@ -3,6 +3,8 @@ version: '3.9'
 services:
   backend:
     container_name: restaurant-backend
+    build:
+      context: .
     image: samuelamt/bookabite-restaurant-back-dev:latest
     command: >
       sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
@@ -14,12 +16,14 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    depends_on:
+      - postgres-dev
     networks:
       - bookabite-network
 
   postgres-dev:
     container_name: postgres-dev
-    image: samuelamt/bookabite-postgres-dev:latest
+    image: postgres:16.4-alpine
     env_file:
       - .env
     environment:
