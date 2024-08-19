@@ -9,7 +9,7 @@ services:
     command: >
       sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     env_file:
-      - .env
+      - .env.development.local
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_NAME}
     volumes:
@@ -25,7 +25,7 @@ services:
     container_name: postgres-dev
     image: postgres:16.4-alpine
     env_file:
-      - .env
+      - .env.development.local
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -42,52 +42,52 @@ services:
       timeout: 10s
       retries: 10
 
-  #postgres-hom:
-  #  container_name: postgres-hom
-  #  image: samuelamt/bookabite-postgres-hom:latest
-  #  env_file:
-  #    - .env
-  #  environment:
-  #    - POSTGRES_USER=${POSTGRES_USER_HOM}
-  #    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_HOM}
-  #    - POSTGRES_DB=${POSTGRES_NAME_HOM}
-  #  volumes:
-  #    - pgdata_hom:/var/lib/postgresql/data
-  #  ports:
-  #    - "5433:5432"
-  #  networks:
-  #    - bookabite-network
-  #  healthcheck:
-  #    test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_HOM}"]
-  #    interval: 30s
-  #    timeout: 10s
-  #    retries: 10
+  postgres-hom:
+    container_name: postgres-hom
+    image: postgres:16.4-alpine
+    env_file:
+      - .env.test.local
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_NAME}
+    volumes:
+      - pgdata_hom:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - bookabite-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
 
-  #postgres:
-  #  container_name: postgres-prod
-  #  image: samuelamt/bookabite-postgres:latest
-  #  env_file:
-  #    - .env
-  #  environment:
-  #    - POSTGRES_USER=${POSTGRES_USER}
-  #    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #    - POSTGRES_DB=${POSTGRES_NAME}
-  #  volumes:
-  #    - pgdata_prod:/var/lib/postgresql/data
-  #  ports:
-  #    - "5434:5432"
-  #  networks:
-  #    - bookabite-network
-  #  healthcheck:
-  #    test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-  #    interval: 30s
-  #    timeout: 10s
-  #    retries: 10
+  postgres:
+    container_name: postgres-prod
+    image: postgres:16.4-alpine
+    env_file:
+      - .env.production.local
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_NAME}
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - bookabite-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
 
 volumes:
   pgdata_dev:
-  #pgdata_hom:
-  #pgdata_prod:
+  pgdata_hom:
+  pgdata_prod:
 
 networks:
   bookabite-network:
