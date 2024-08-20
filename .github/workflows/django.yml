@@ -12,7 +12,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:16.4-alpine
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER_DEV }}
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD_DEV }}
@@ -54,7 +54,7 @@ jobs:
         echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
         echo "POSTGRES_ENGINE=${{ secrets.POSTGRES_ENGINE_DEV }}" >> $GITHUB_ENV
         echo "POSTGRES_DB=${{ secrets.POSTGRES_NAME_DEV }}" >> $GITHUB_ENV
-        echo "POSTGRES_USER=${{ secrets.POSTGRES_ENGINE_DEV }}" >> $GITHUB_ENV
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER_DEV }}" >> $GITHUB_ENV
         echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD_DEV }}" >> $GITHUB_ENV
         echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST_DEV }}" >> $GITHUB_ENV
         echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT_DEV }}" >> $GITHUB_ENV
