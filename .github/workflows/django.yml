@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
+      postgres-dev:
         image: postgres:16.4-alpine
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER_DEV }}
