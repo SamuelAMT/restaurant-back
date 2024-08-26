@@ -3,9 +3,9 @@ version: '3.9'
 services:
   postgres-dev:
     container_name: postgres-dev
-    image: bookabite-postgres-dev:latest
+    image: postgres:16.4-alpine
     env_file:
-      - .env
+      - .env.development.local
     environment:
       - POSTGRES_USER=${POSTGRES_USER_DEV}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DEV}
@@ -13,7 +13,7 @@ services:
     volumes:
       - pgdata_dev:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "15000:5432"
     networks:
       - bookabite-network
     healthcheck:
