@@ -1,9 +1,11 @@
 from ninja import Router, Schema
 from django.http import HttpRequest
+from address.models import Address
+from restaurant.models import Restaurant
+from reservation.models import Reservation
+from restaurant_customer.models import RestaurantCustomer
 
 router = Router()
-
-# Define the schema for requests and responses
 
 class DashboardSchema(Schema):
     total_reservations: int
@@ -13,55 +15,114 @@ class DashboardSchema(Schema):
     canceled_reservations: int
 
 class ReservationSchema(Schema):
-    # Restaurant Customers in a specific day
     reserver: str
     amount_of_people: int
-    amount_of_hours: str
-    time: str
-    """date: str""" # We already have the calendar
+    amount_of_hours: int
+    time: int
+    date: str
     email: str
     phone: str
 
 class CustomerSchema(Schema):
-    # The difference between this schema from the above is that this one is for the all time restaurant customers
-    reserver: str
-    amount_of_people: int
-    amount_of_hours: str
-    time: str
-    """date: str""" # We already have the calendar
-    email: str
+    name: str
+    lastname: str
     phone: str
+    email: str
 
 class SettingsSchema(Schema):
     setting_key: str
     setting_value: str
 
 class ProfileSchema(Schema):
-    username: str
+    name: str
     email: str
+    phone: str
+    website: str
+    description: str
+    address: str
 
-# Define endpoints
+
 @router.get("/{restaurant_name}/dashboard", response=DashboardSchema)
-def get_dashboard(request, restaurant_name: str):
-    # Your logic to fetch dashboard data for the specific restaurant
-    return DashboardSchema(total_reservations=100, total_customers=50)
+def get_dashboard(request: HttpRequest, restaurant_name: str):
+    try:
+        restaurant = Restaurant.objects.get(name=restaurant_name)
+        total_reservations = restaurant.restaurant_visits.count()
+        total_customers = restaurant.customers.count()
+        canceled_reservations = 0
+        new_customers = 0
+        new_reservations = 0
 
-@router.get("/{restaurant_name}/reservations", response=ReservationSchema)
-def list_reservations(request, restaurant_name: str):
-    # Your logic to list reservations for the specific restaurant
-    return [ReservationSchema(reserver="John Doe", amount_of_people=4, amount_of_hours="2", time="12:00", email="john@example.com", phone="123456789")]
+        return DashboardSchema(
+            total_reservations=total_reservations,
+            new_customers=new_customers,
+            new_reservations=new_reservations,
+            total_customers=total_customers,
+            canceled_reservations=canceled_reservations
+        )
+    except Restaurant.DoesNotExist:
+        return {"error": "Restaurant not found"}, 404
 
-@router.get("/{restaurant_name}/customers", response=CustomerSchema)
-def list_customers(request, restaurant_name: str):
-    # Your logic to list customers for the specific restaurant
-    return [CustomerSchema(reserver="John Doe", amount_of_people=4, amount_of_hours="2", time="12:00", email="john@example.com", phone="123456789")]
 
-@router.get("/{restaurant_name}/settings", response=SettingsSchema)
-def get_settings(request, restaurant_name: str):
-    # Your logic to fetch settings for the specific restaurant
-    return [SettingsSchema(setting_key="theme", setting_value="dark")]
+@router.get("/{restaurant_name}/reservations", response=list[ReservationSchema])
+def list_reservations(request: HttpRequest, restaurant_name: str):
+    try:
+        restaurant = Restaurant.objects.get(name=restaurant_name)
+        reservations = Reservation.objects.filter(visit__restaurant=restaurant)
+        return [
+            ReservationSchema(
+                reserver=res.reserver,
+                amount_of_people=res.amount_of_people,
+                amount_of_hours=res.amount_of_hours,
+                time=res.time,
+                date=res.date,
+                email="example@example.com",
+                phone="123456789"
+            )
+            for res in reservations
+        ]
+    except Restaurant.DoesNotExist:
+        return {"error": "Restaurant not found"}, 404
+
+
+@router.get("/{restaurant_name}/customers", response=list[CustomerSchema])
+def list_customers(request: HttpRequest, restaurant_name: str):
+    try:
+        restaurant = Restaurant.objects.get(name=restaurant_name)
+        customers = restaurant.customers.all()
+        return [
+            CustomerSchema(
+                name=customer.name,
+                lastname=customer.lastname,
+                phone=customer.phone,
+                email=customer.email or ""
+            )
+            for customer in customers
+        ]
+    except Restaurant.DoesNotExist:
+        return {"error": "Restaurant not found"}, 404
+
+
+@router.get("/{restaurant_name}/settings", response=list[SettingsSchema])
+def get_settings(request: HttpRequest, restaurant_name: str):
+    settings = [
+        SettingsSchema(setting_key="theme", setting_value="dark"),
+        SettingsSchema(setting_key="currency", setting_value="BRL")
+    ]
+    return settings
+
 
 @router.get("/profile", response=ProfileSchema)
-def get_profile(request):
-    # Your logic to fetch profile
-    return ProfileSchema(username="john_doe", email="john@example.com")
+def get_profile(request: HttpRequest):
+    try:
+        restaurant = Restaurant.objects.first()
+        address = restaurant.addresses.first() if restaurant.addresses.exists() else None
+        return ProfileSchema(
+            name=restaurant.name,
+            email=restaurant.email or "",
+            phone=restaurant.phone or "",
+            website=restaurant.website or "",
+            description=restaurant.description or "",
+            address=f"{address.street}, {address.number} - {address.neighborhood}" if address else "No address"
+        )
+    except Restaurant.DoesNotExist:
+        return {"error": "Restaurant not found"}, 404
