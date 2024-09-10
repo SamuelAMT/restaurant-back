@@ -5,3 +5,4 @@
 .env.production.local
 /staticfiles/
 __pycache__/
+docker-compose.yml
