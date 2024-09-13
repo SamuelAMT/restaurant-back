@@ -7,7 +7,8 @@ from datetime import datetime, timedelta
 import jwt
 from django.conf import settings
 from ninja.errors import HttpError
-from .models import LoginLog
+from ninja.security import HttpBearer
+from ..models import LoginLog
 
 router = Router()
 
