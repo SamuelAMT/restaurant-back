@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import jwt
 from django.conf import settings
 from ninja.errors import HttpError
@@ -46,8 +46,8 @@ class AuthBearer(HttpBearer):
 def create_jwt_token(user):
     payload = {
         "user_id": user.id,
-        "exp": datetime.utcnow() + timedelta(hours=24),
-        "iat": datetime.utcnow(),
+        "exp": datetime.now(timezone.utc) + timedelta(days=90),
+        "iat": datetime.now(timezone.utc),
     }
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
     return token
