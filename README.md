@@ -9,9 +9,9 @@ Welcome to BookABite, a SaaS platform designed to make restaurant reservations s
 • 🔐 Secure: Robust authentication and security features to protect user data.</br>
 </br>
 ## 🛠️ Tech Stack
-• Backend: Django, Django Ninja</br>
+• Backend: Django and Django Ninja</br>
 • Database: PostgreSQL</br>
-• API Documentation: Swagger, Postman</br>
+• API Documentation: Swagger and Postman</br>
 • Containerization: Docker and Docker Compose</br>
 </br>
 ## 🚀 Getting Started
