@@ -13,6 +13,7 @@ Welcome to BookABite, a SaaS platform designed to make restaurant reservations s
 • Database: PostgreSQL</br>
 • API Documentation: Swagger and Postman</br>
 • Containerization: Docker and Docker Compose</br>
+• Hosting: Vercel
 </br>
 ## 🚀 Getting Started
 ### Prerequisites</br>
