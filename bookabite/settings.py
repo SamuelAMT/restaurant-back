@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 env_files = [
 Path('.env.development.local'),
@@ -104,6 +105,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'bookabite.middleware.TokenAuthenticationMiddleware',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -184,6 +186,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length': 8},
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -193,6 +196,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# CSRF Protection
+CSRF_COOKIE_HTTPONLY = True
+CSRF_TRUSTED_ORIGINS = ['https://bookabite.com.br']
+
+# Token expiration time (if needed globally)
+JWT_ACCESS_TOKEN_LIFETIME = timedelta(minutes=15)
+JWT_REFRESH_TOKEN_LIFETIME = timedelta(days=90)
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
