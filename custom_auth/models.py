@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class BlacklistedToken(models.Model):
     token = models.CharField(max_length=500)
     blacklisted_at = models.DateTimeField(auto_now_add=True)
+
 
 class LoginLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

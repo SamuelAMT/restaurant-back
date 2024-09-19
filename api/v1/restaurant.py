@@ -7,12 +7,14 @@ from restaurant_customer.models import RestaurantCustomer
 
 router = Router()
 
+
 class DashboardSchema(Schema):
     total_reservations: int
     new_customers: int
-    new_reservations: int    
+    new_reservations: int
     total_customers: int
     canceled_reservations: int
+
 
 class ReservationSchema(Schema):
     reserver: str
@@ -23,15 +25,18 @@ class ReservationSchema(Schema):
     email: str
     phone: str
 
+
 class CustomerSchema(Schema):
     name: str
     lastname: str
     phone: str
     email: str
 
+
 class SettingsSchema(Schema):
     setting_key: str
     setting_value: str
+
 
 class ProfileSchema(Schema):
     name: str
@@ -57,7 +62,7 @@ def get_dashboard(request: HttpRequest, restaurant_name: str):
             new_customers=new_customers,
             new_reservations=new_reservations,
             total_customers=total_customers,
-            canceled_reservations=canceled_reservations
+            canceled_reservations=canceled_reservations,
         )
     except Restaurant.DoesNotExist:
         return {"error": "Restaurant not found"}, 404
@@ -76,7 +81,7 @@ def list_reservations(request: HttpRequest, restaurant_name: str):
                 time=res.time,
                 date=res.date,
                 email="example@example.com",
-                phone="123456789"
+                phone="123456789",
             )
             for res in reservations
         ]
@@ -94,7 +99,7 @@ def list_customers(request: HttpRequest, restaurant_name: str):
                 name=customer.name,
                 lastname=customer.lastname,
                 phone=customer.phone,
-                email=customer.email or ""
+                email=customer.email or "",
             )
             for customer in customers
         ]
@@ -106,7 +111,7 @@ def list_customers(request: HttpRequest, restaurant_name: str):
 def get_settings(request: HttpRequest, restaurant_name: str):
     settings = [
         SettingsSchema(setting_key="theme", setting_value="dark"),
-        SettingsSchema(setting_key="currency", setting_value="BRL")
+        SettingsSchema(setting_key="currency", setting_value="BRL"),
     ]
     return settings
 
@@ -115,14 +120,18 @@ def get_settings(request: HttpRequest, restaurant_name: str):
 def get_profile(request: HttpRequest):
     try:
         restaurant = Restaurant.objects.first()
-        address = restaurant.addresses.first() if restaurant.addresses.exists() else None
+        address = (
+            restaurant.addresses.first() if restaurant.addresses.exists() else None
+        )
         return ProfileSchema(
             name=restaurant.name,
             email=restaurant.email or "",
             phone=restaurant.phone or "",
             website=restaurant.website or "",
             description=restaurant.description or "",
-            address=f"{address.street}, {address.number} - {address.neighborhood}" if address else "No address"
+            address=f"{address.street}, {address.number} - {address.neighborhood}"
+            if address
+            else "No address",
         )
     except Restaurant.DoesNotExist:
         return {"error": "Restaurant not found"}, 404

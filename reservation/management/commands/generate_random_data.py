@@ -5,8 +5,9 @@ from restaurant.models import Restaurant
 from restaurant_customer.models import RestaurantCustomer
 from reservation.models import Reservation, RestaurantVisit
 
+
 class Command(BaseCommand):
-    help = 'Generate random data for testing'
+    help = "Generate random data for testing"
 
     def handle(self, *args, **kwargs):
         fake = Faker()
@@ -21,7 +22,7 @@ class Command(BaseCommand):
                 email=fake.email(),
                 website=fake.url(),
                 description=fake.text(),
-                image=fake.image_url()
+                image=fake.image_url(),
             )
 
             # Create fake customers and reservations
@@ -32,12 +33,11 @@ class Command(BaseCommand):
                     country_code=fake.country_code(),
                     phone=fake.phone_number(),
                     email=fake.email(),
-                    birthdate=fake.date_of_birth()
+                    birthdate=fake.date_of_birth(),
                 )
 
                 visit = RestaurantVisit.objects.create(
-                    restaurant=restaurant,
-                    restaurant_customer=customer
+                    restaurant=restaurant, restaurant_customer=customer
                 )
 
                 for _ in range(random.randint(1, 5)):
@@ -47,7 +47,7 @@ class Command(BaseCommand):
                         amount_of_hours=random.randint(1, 5),
                         time=random.randint(0, 23),
                         date=fake.date_this_year(),
-                        visit=visit
+                        visit=visit,
                     )
 
-        self.stdout.write(self.style.SUCCESS('Successfully generated random data'))
+        self.stdout.write(self.style.SUCCESS("Successfully generated random data"))

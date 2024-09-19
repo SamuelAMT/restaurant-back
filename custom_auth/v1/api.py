@@ -9,9 +9,16 @@ from django.conf import settings
 from ninja.errors import HttpError
 from ninja.security import HttpBearer
 from ..models import LoginLog, BlacklistedToken
-from .schemas import RegisterSchema, LoginSchema, TokenSchema, MessageSchema, ProfileSchema
+from .schemas import (
+    RegisterSchema,
+    LoginSchema,
+    TokenSchema,
+    MessageSchema,
+    ProfileSchema,
+)
 
 router = Router()
+
 
 class AuthBearer(HttpBearer):
     def authenticate(self, request, token):
@@ -26,6 +33,7 @@ class AuthBearer(HttpBearer):
         except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, User.DoesNotExist):
             raise HttpError(403, "Invalid token")
 
+
 def create_jwt_token(user, token_type="access", expiration_days=90):
     exp_time = now() + timedelta(days=expiration_days)
     payload = {
@@ -37,18 +45,22 @@ def create_jwt_token(user, token_type="access", expiration_days=90):
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
     return token
 
+
 @router.post("/register", response=MessageSchema)
 def register(request: HttpRequest, data: RegisterSchema):
     if data.password1 != data.password2:
         return {"message": "Passwords do not match"}, 400
-    
+
     try:
-        user = User.objects.create_user(username=data.username, email=data.email, password=data.password1)
+        user = User.objects.create_user(
+            username=data.username, email=data.email, password=data.password1
+        )
         user.save()
         login(request, user)
         return {"message": "User registered successfully"}, 201
     except Exception as e:
         return {"message": str(e)}, 400
+
 
 @router.post("/login", response={200: TokenSchema, 401: MessageSchema})
 def login_view(request: HttpRequest, data: LoginSchema):
@@ -60,21 +72,23 @@ def login_view(request: HttpRequest, data: LoginSchema):
         LoginLog.objects.create(
             user=user,
             login_time=now(),
-            method='standard',
-            ip_address=request.META.get('REMOTE_ADDR'),
-            user_agent=request.META.get('HTTP_USER_AGENT', ''),
+            method="standard",
+            ip_address=request.META.get("REMOTE_ADDR"),
+            user_agent=request.META.get("HTTP_USER_AGENT", ""),
         )
-        return {'access': access_token, 'refresh': refresh_token}, 200
+        return {"access": access_token, "refresh": refresh_token}, 200
     else:
         return {"message": "Invalid credentials"}, 401
+
 
 @router.post("/logout", response=MessageSchema, auth=AuthBearer())
 def logout_view(request: HttpRequest):
     user = request.user
-    token = request.META.get('HTTP_AUTHORIZATION').split()[1]
+    token = request.META.get("HTTP_AUTHORIZATION").split()[1]
     BlacklistedToken.objects.create(token=token)
     logout(request)
     return {"message": "Successfully logged out"}, 200
+
 
 @router.get("/profile", response=ProfileSchema, auth=AuthBearer())
 def profile_view(request):
