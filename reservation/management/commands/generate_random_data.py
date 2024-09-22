@@ -1,4 +1,4 @@
-import random
+""" import random
 from django.core.management.base import BaseCommand
 from faker import Faker
 from restaurant.models import Restaurant
@@ -51,3 +51,4 @@ class Command(BaseCommand):
                     )
 
         self.stdout.write(self.style.SUCCESS("Successfully generated random data"))
+ """

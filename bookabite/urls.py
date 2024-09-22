@@ -14,4 +14,6 @@ urlpatterns = [
     path("auth/", include("custom_auth.urls")),
     path("accounts/", include("allauth.urls")),
     path("__debug__/", include("debug_toolbar.urls")),
+    path("api/openapi/", api.openapi_url),
+    path("api/swagger/", api.swagger_ui),
 ]

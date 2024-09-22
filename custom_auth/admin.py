@@ -1,6 +1,6 @@
-from django.contrib import admin
-from .models import LoginLog
+#from django.contrib import admin
+#from .models import LoginLog
 
-# Register your models here.
+# fetch to LoginLog of prisma if needed
 
-admin.site.register(LoginLog)
+#admin.site.register(LoginLog)

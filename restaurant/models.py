@@ -1,4 +1,4 @@
-from django.db import models
+"""from django.db import models
 
 
 class Restaurant(models.Model):
@@ -22,3 +22,4 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+"""
