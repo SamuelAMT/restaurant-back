@@ -1,6 +1,7 @@
 from django.db import models
 from django.db import IntegrityError
 import uuid
+from restaurant_customer.models import RestaurantCustomer
 
 
 class RestaurantVisit(models.Model):
@@ -17,11 +18,6 @@ class RestaurantVisit(models.Model):
 
 
 class Reservation(models.Model):
-    reserver = models.CharField(max_length=100, db_index=True)
-    amount_of_people = models.IntegerField()
-    amount_of_hours = models.IntegerField()
-    time = models.IntegerField(db_index=True)
-    date = models.DateField(db_index=True)
     reservation_hash = models.CharField(
         max_length=100,
         unique=True,
@@ -31,6 +27,21 @@ class Reservation(models.Model):
         default=uuid.uuid4,
         db_index=True,
     )
+    reserver = models.CharField(max_length=100, db_index=True)
+    amount_of_people = models.IntegerField()
+    amount_of_hours = models.IntegerField()
+    time = models.IntegerField(db_index=True)
+    date = models.DateField(db_index=True)
+    status = models.CharField(max_length=20, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    user = models.ForeignKey(
+        RestaurantCustomer, on_delete=models.CASCADE, related_name="bookings"
+    )
+
+    def __str__(self):
+        return f"Booking {self.reservation_hash} by {self.reserver}"
 
     class Meta:
         indexes = [

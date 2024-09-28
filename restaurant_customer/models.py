@@ -2,17 +2,15 @@ from django.db import models
 
 
 class RestaurantCustomer(models.Model):
-    name = models.CharField(max_length=100, db_index=True)
-    lastname = models.CharField(max_length=100, db_index=True)
-    country_code = models.CharField(max_length=3)
-    phone = models.CharField(
-        max_length=20, primary_key=True, serialize=False, db_index=True
-    )
-    email = models.EmailField(max_length=70, blank=True, null=True)
-    birthdate = models.DateField(
-        blank=True,
-        null=True,
-    )
+    id = models.CharField(max_length=100, primary_key=True, default='', db_index=True)
+    name = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(max_length=70, unique=True)
+    country_code = models.CharField(max_length=3, null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    birthdate = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     # Adapted to avoid circular imports error
     # Instead it's calling the model as a string to avoid it

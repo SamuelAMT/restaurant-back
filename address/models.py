@@ -1,9 +1,8 @@
 from django.db import models
 from restaurant.models import Restaurant
 
-# Change the class name to Place
 class Address(models.Model):
-    address_id = models.AutoField(primary_key=True, db_index=True)
+    address_id = models.AutoField(primary_key=True, default='', db_index=True)
     cep = models.CharField(max_length=9)
     street = models.CharField(max_length=30)
     number = models.CharField(max_length=10)
@@ -11,6 +10,7 @@ class Address(models.Model):
     city = models.CharField(max_length=30)
     state = models.CharField(max_length=2)
     country = models.CharField(max_length=30)
+    complement = models.CharField(max_length=100, null=True, blank=True)
     
     restaurant = models.ForeignKey(
         Restaurant,
