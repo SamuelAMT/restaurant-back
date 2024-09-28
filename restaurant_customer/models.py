@@ -1,4 +1,4 @@
-""" from django.db import models
+from django.db import models
 
 
 class RestaurantCustomer(models.Model):
@@ -29,4 +29,3 @@ class RestaurantCustomer(models.Model):
 
     def __str__(self):
         return self.name
- """

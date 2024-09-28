@@ -1,4 +1,4 @@
-""" from django.db import models
+from django.db import models
 from restaurant.models import Restaurant
 
 # Change the class name to Place
@@ -24,4 +24,4 @@ class Address(models.Model):
         indexes = [models.Index(fields=['address_id'])]
 
     def __str__(self):
-        return f"{self.address_id} - {self.cep}, {self.street}, {self.number} - {self.neighborhood}, {self.city} - {self.state} - {self.country}" """
+        return f"{self.address_id} - {self.cep}, {self.street}, {self.number} - {self.neighborhood}, {self.city} - {self.state} - {self.country}"
