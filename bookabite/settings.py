@@ -12,17 +12,23 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 from datetime import timedelta
+from dotenv import load_dotenv
+from urllib.parse import urlparse
 
-env_files = [
-    Path(".env.development.local"),
-    Path(".env.test.local"),
-    Path(".env.production.local"),
-]
+load_dotenv()
 
-for env_file in env_files:
-    load_dotenv(env_file)
+database_url = os.getenv("DATABASE_URL")
+
+if not database_url:
+    raise ValueError("DATABASE_URL environment variable is not set")
+
+tmpPostgres = urlparse(database_url)
+
+print(f"Parsed URL: {tmpPostgres}")
+print(f"Path: {tmpPostgres.path}, Type: {type(tmpPostgres.path)}")
+
+database_name = tmpPostgres.path.lstrip('/')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -146,33 +152,14 @@ WSGI_APPLICATION = "bookabite.wsgi.application"
 
 
 DATABASES = {
-    "default": {
-        "ENGINE": os.getenv("DB_ENGINE"),
-        "NAME": os.getenv("POSTGRES_DB"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT"),
-        "ATOMIC_REQUESTS": True,
-    },
-    "homologation": {
-        "ENGINE": os.getenv("DB_ENGINE"),
-        "NAME": os.getenv("POSTGRES_NAME"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT"),
-        "ATOMIC_REQUESTS": True,
-    },
-    "production": {
-        "ENGINE": os.getenv("DB_ENGINE"),
-        "NAME": os.getenv("POSTGRES_NAME"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT"),
-        "ATOMIC_REQUESTS": True,
-    },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': database_name,
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': tmpPostgres.port or 5432,
+    }
 }
 
 
