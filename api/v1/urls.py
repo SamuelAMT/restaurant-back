@@ -3,9 +3,11 @@ from ninja import NinjaAPI
 from .reservation import reservation_router
 from .restaurant import router as restaurant_router
 
-api = NinjaAPI(title="Restaurant API v1:1.0.0")
+app_name = "api-v1"
 
+api = NinjaAPI(title="Restaurant API v1:1.0.0")
 api = NinjaAPI(title="Restaurant API v1", urls_namespace="restaurant-api")
+
 api.add_router("/reservation/", reservation_router)
 api.add_router("/restaurant/", restaurant_router)
 
