@@ -2,10 +2,10 @@ from django.contrib import admin
 from django.urls import include, path
 import debug_toolbar
 from ninja import NinjaAPI
-from .views import router as prisma_router
+from .views import router as restaurant_router
 
 api = NinjaAPI()
-api.add_router("/myapp/", prisma_router)
+api.add_router("/myapp/", restaurant_router)
 app_name = "bookabite"
 
 urlpatterns = [
