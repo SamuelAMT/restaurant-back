@@ -10,7 +10,7 @@ class Role(models.TextChoices):
     RESTAURANTEMPLOYEE = "RESTAURANTEMPLOYEE", "RestaurantEmployee"
 
 
-class Admin(BaseUserManager):
+class AccountManager(BaseUserManager):
     def create_user(self, email, password=None):
         if not email:
             raise ValueError("Users must have an email address")
@@ -61,7 +61,7 @@ class Account(models.Model):
 
     USERNAME_FIELD = "email"
 
-    objects = Admin()
+    objects = AccountManager()
 
     def __str__(self):
         return self.email or f"Account {self.provider} - {self.provider_account_id}"
