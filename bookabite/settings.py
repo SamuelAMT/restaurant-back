@@ -162,6 +162,10 @@ DATABASES = {
     }
 }
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
+SESSION_COOKIE_AGE = 1209600  # Two weeks (timeout)
+SESSION_SAVE_EVERY_REQUEST = True
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
