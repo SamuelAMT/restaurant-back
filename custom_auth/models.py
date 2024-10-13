@@ -97,6 +97,23 @@ class VerificationToken(models.Model):
         ]
         verbose_name = "Verification Token"
         verbose_name_plural = "Verification Tokens"
+        
+
+class Session(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    session_token = models.CharField(max_length=100)
+    expires = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Session for {self.account.email}"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["session_token"], name="session_token_idx"),
+            models.Index(fields=["expires"], name="expires_idx"),
+        ]
+        verbose_name = "Session"
+        verbose_name_plural = "Sessions"
 
 
 class LoginLog(models.Model):

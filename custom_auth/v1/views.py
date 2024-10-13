@@ -5,7 +5,7 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmVie
 from django.shortcuts import render, redirect
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes, force_str
 from .models import Account
 
 # User Registration
@@ -21,7 +21,7 @@ def create_user(request):
 def setup_password(request, token):
     if request.method == 'POST':
         password = request.POST['password']
-        uid = force_text(urlsafe_base64_decode(token))
+        uid = force_str(urlsafe_base64_decode(token))
         try:
             user = Account.objects.get(pk=uid)
             user.set_password(password)

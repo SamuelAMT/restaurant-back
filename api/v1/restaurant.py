@@ -5,7 +5,7 @@ from restaurant.models import Restaurant
 from reservation.models import Reservation
 from restaurant_customer.models import RestaurantCustomer
 
-router = Router()
+restaurant_router = Router()
 
 
 class DashboardSchema(Schema):
@@ -47,7 +47,7 @@ class ProfileSchema(Schema):
     address: str
 
 
-@router.get("/{restaurant_name}/dashboard", response=DashboardSchema)
+@restaurant_router.get("/{restaurant_name}/dashboard", response=DashboardSchema)
 def get_dashboard(request: HttpRequest, restaurant_name: str):
     try:
         restaurant = Restaurant.objects.get(name=restaurant_name)
@@ -68,7 +68,9 @@ def get_dashboard(request: HttpRequest, restaurant_name: str):
         return {"error": "Restaurant not found"}, 404
 
 
-@router.get("/{restaurant_name}/reservations", response=list[ReservationSchema])
+@restaurant_router.get(
+    "/{restaurant_name}/reservations", response=list[ReservationSchema]
+)
 def list_reservations(request: HttpRequest, restaurant_name: str):
     try:
         restaurant = Restaurant.objects.get(name=restaurant_name)
@@ -89,7 +91,7 @@ def list_reservations(request: HttpRequest, restaurant_name: str):
         return {"error": "Restaurant not found"}, 404
 
 
-@router.get("/{restaurant_name}/customers", response=list[CustomerSchema])
+@restaurant_router.get("/{restaurant_name}/customers", response=list[CustomerSchema])
 def list_customers(request: HttpRequest, restaurant_name: str):
     try:
         restaurant = Restaurant.objects.get(name=restaurant_name)
@@ -107,7 +109,7 @@ def list_customers(request: HttpRequest, restaurant_name: str):
         return {"error": "Restaurant not found"}, 404
 
 
-@router.get("/{restaurant_name}/settings", response=list[SettingsSchema])
+@restaurant_router.get("/{restaurant_name}/settings", response=list[SettingsSchema])
 def get_settings(request: HttpRequest, restaurant_name: str):
     settings = [
         SettingsSchema(setting_key="theme", setting_value="dark"),
@@ -116,7 +118,7 @@ def get_settings(request: HttpRequest, restaurant_name: str):
     return settings
 
 
-@router.get("/profile", response=ProfileSchema)
+@restaurant_router.get("/profile", response=ProfileSchema)
 def get_profile(request: HttpRequest):
     try:
         restaurant = Restaurant.objects.first()

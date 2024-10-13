@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes, force_str
 from django.conf import settings
 from .models import Account, Session, LoginLog
 
@@ -22,7 +22,7 @@ def create_user(request):
 def setup_password(request, token):
     if request.method == 'POST':
         password = request.POST['password']
-        uid = force_text(urlsafe_base64_decode(token))
+        uid = force_str(urlsafe_base64_decode(token))
         try:
             user = Account.objects.get(pk=uid)
             user.set_password(password)
@@ -82,7 +82,7 @@ def reset_password(request, uidb64, token):
     if request.method == 'POST':
         password = request.POST['password']
         try:
-            uid = force_text(urlsafe_base64_decode(uidb64))
+            uid = force_str(urlsafe_base64_decode(uidb64))
             user = Account.objects.get(pk=uid)
             if default_token_generator.check_token(user, token):
                 user.set_password(password)
@@ -94,3 +94,15 @@ def reset_password(request, uidb64, token):
                 return JsonResponse({'error': 'Invalid token'}, status=400)
         except Account.DoesNotExist:
             return JsonResponse({'error': 'User does not exist'}, status=404)
+        
+def change_password(request):
+    if request.method == 'POST':
+        old_password = request.POST['old_password']
+        new_password = request.POST['new_password']
+        user = authenticate(request, username=request.user.email, password=old_password)
+        if user is not None:
+            user.set_password(new_password)
+            user.save()
+            return JsonResponse({'message': 'Password changed successfully'}, status=200)
+        else:
+            return JsonResponse({'error': 'Invalid credentials'}, status=400)
