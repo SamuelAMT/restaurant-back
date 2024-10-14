@@ -1,3 +1,66 @@
+#I'm using Django 5.0.9. I still couldn't fix it. How could we do it?
+#(my_venv) C:\Users\Tavares\Documents\BookABite\Restaurant\restaurant-back>python manage.py makemigrations
+#Parsed URL: ParseResult(scheme='postgresql', netloc='mydatabasedb_user:mypassword@ep-summer-base-a5g27g6d.us-east-2.aws.neon.tech', path='/mydatabasedb', params='', query='sslmode=require', fragment='')
+#Path: /mydatabasedb, Type: <class 'str'>
+#Traceback (most recent call last):
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\restaurant-back\manage.py", line 23, in <module>
+#    main()
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\restaurant-back\manage.py", line 19, in main
+#    execute_from_command_line(sys.argv)
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\core\management\__init__.py", line 442, in execute_from_command_line
+#    utility.execute()
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\core\management\__init__.py", line 436, in execute
+#    self.fetch_command(subcommand).run_from_argv(self.argv)
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\core\management\base.py", line 413, in run_from_argv
+#    self.execute(*args, **cmd_options)
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\core\management\base.py", line 454, in execute
+#    self.check()
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\core\management\base.py", line 486, in check
+#    all_issues = checks.run_checks(
+#                 ^^^^^^^^^^^^^^^^^^
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\core\checks\registry.py", line 88, in run_checks
+#    new_errors = check(app_configs=app_configs, databases=databases)
+#                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\core\checks\urls.py", line 42, in check_url_namespaces_unique
+#    all_namespaces = _load_all_namespaces(resolver)
+#                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\core\checks\urls.py", line 61, in _load_all_namespaces
+#    url_patterns = getattr(resolver, "url_patterns", [])
+#                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\utils\functional.py", line 47, in __get__
+#    res = instance.__dict__[self.name] = self.func(instance)
+#                                         ^^^^^^^^^^^^^^^^^^^
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\urls\resolvers.py", line 738, in url_patterns
+#    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+#                       ^^^^^^^^^^^^^^^^^^^
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\utils\functional.py", line 47, in __get__
+#    res = instance.__dict__[self.name] = self.func(instance)
+#                                         ^^^^^^^^^^^^^^^^^^^
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\django\urls\resolvers.py", line 731, in urlconf_module
+#    return import_module(self.urlconf_name)
+#           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#  File "C:\Program Files\Python312\Lib\importlib\__init__.py", line 90, in import_module
+#    return _bootstrap._gcd_import(name[level:], package, level)
+#           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+#  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+#  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+#  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+#  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+#  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\restaurant-back\bookabite\urls.py", line 5, in <module>
+#    from custom_auth.api import auth_router
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\restaurant-back\custom_auth\api.py", line 1, in <module>
+#    from custom_auth.views import create_user, login, logout, request_password_reset, reset_password, setup_password, change_password
+#  File "C:\Users\Tavares\Documents\BookABite\Restaurant\restaurant-back\custom_auth\views.py", line 1, in <module>
+#    from ninja import Schema, Request
+#ImportError: cannot import name 'Request' from 'ninja' (C:\Users\Tavares\Documents\BookABite\Restaurant\my_venv\Lib\site-packages\ninja\__init__.py)
+#
+#views.py
+#from ninja import Schema, Request
+#
+#I don't know why but none of the three options that you suggested worked, none of them were recognized.
+
 annotated-types==0.7.0
 asgiref==3.8.1
 certifi==2024.7.4
