@@ -1,7 +1,8 @@
 from ninja import Router, Schema
 from restaurant_customer.models import RestaurantCustomer
 
-router = Router()
+restaurant_customer_router = Router()
+
 
 class CustomerSchema(Schema):
     id: str
@@ -10,7 +11,8 @@ class CustomerSchema(Schema):
     email: str
     phone: str
 
-@router.get("/{customer_id}", response=CustomerSchema)
+
+@restaurant_customer_router.get("/{customer_id}", response=CustomerSchema)
 def get_customer(request, customer_id: str):
     try:
         customer = RestaurantCustomer.objects.get(id=customer_id)

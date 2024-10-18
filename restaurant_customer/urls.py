@@ -1,8 +1,8 @@
 from django.urls import path
-from . import views
+from .api import restaurant_customer_router
 
 app_name = "restaurant_customer"
 
 urlpatterns = [
-    path("", views.customer, name="customer"),
+    path("api/", restaurant_customer_router.urls),
 ]

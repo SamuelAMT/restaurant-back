@@ -1,18 +1,18 @@
 from django.urls import path
 from ninja import NinjaAPI
-from .reservation import reservation_router
-from .restaurant import router as restaurant_router
+from api.custom_auth import auth_router
+from restaurant.api import restaurant_router
+from restaurant_customer.api import restaurant_customer_router
+from reservation.api import reservation_router
 
-app_name = "api-v1"
+api = NinjaAPI()
 
-api = NinjaAPI(title="Restaurant API v1:1.0.0")
-api = NinjaAPI(title="Restaurant API v1", urls_namespace="restaurant-api")
 
-api.add_router("/reservation/", reservation_router)
+api.add_router("/auth/", auth_router)
 api.add_router("/restaurant/", restaurant_router)
+api.add_router("/restaurant-customer/", restaurant_customer_router)
+api.add_router("/reservations/", reservation_router)
 
 urlpatterns = [
-    path("", api.urls),
-    # path("openapi/", api.openapi_url),
-    # path("swagger/", api.swagger_ui),
+    path("api/v1/", api.urls),
 ]

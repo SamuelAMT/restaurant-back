@@ -1,6 +1,6 @@
-from ninja import Schema, Request
+from ninja import Schema
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -33,7 +33,7 @@ class PasswordResetRequestSchema(Schema):
     email: str
 
 
-def create_user(request: Request, payload: UserCreateSchema):
+def create_user(request: HttpRequest, payload: UserCreateSchema):
     email = payload.email
     password = payload.password
     if Account.objects.filter(email=email).exists():
@@ -42,9 +42,9 @@ def create_user(request: Request, payload: UserCreateSchema):
     return JsonResponse({"message": "User created successfully"}, status=201)
 
 
-def login(request: Request, payload: LoginSchema):
+def login(request: HttpRequest, payload: LoginSchema):
     email = payload.email
-    password = payload.password
+    password = payload.password 
     user = authenticate(username=email, password=password)
     if user is not None:
         auth_login(request, user)
@@ -57,13 +57,13 @@ def login(request: Request, payload: LoginSchema):
     return JsonResponse({"error": "Invalid credentials"}, status=400)
 
 
-def logout(request: Request):
+def logout(request: HttpRequest):
     auth_logout(request)
     LoginLog.objects.create(account=None, ip_address="127.0.0.1", action="logout")
     return JsonResponse({"message": "Logged out successfully"}, status=200)
 
 
-def request_password_reset(request: Request, payload: PasswordResetRequestSchema):
+def request_password_reset(request: HttpRequest, payload: PasswordResetRequestSchema):
     email = payload.email
     try:
         user = Account.objects.get(email=email)
@@ -83,7 +83,7 @@ def request_password_reset(request: Request, payload: PasswordResetRequestSchema
 
 
 def reset_password(
-    request: Request, uidb64: str, token: str, payload: PasswordResetSchema
+    request: HttpRequest, uidb64: str, token: str, payload: PasswordResetSchema
 ):
     password = payload.password
     try:
@@ -99,7 +99,7 @@ def reset_password(
         return JsonResponse({"error": "User does not exist"}, status=404)
 
 
-def setup_password(request: Request, token: str, payload: PasswordResetSchema):
+def setup_password(request: HttpRequest, token: str, payload: PasswordResetSchema):
     password = payload.password
     uid = force_str(urlsafe_base64_decode(token))
     try:
@@ -111,7 +111,7 @@ def setup_password(request: Request, token: str, payload: PasswordResetSchema):
         return JsonResponse({"error": "Invalid token"}, status=400)
 
 
-def change_password(request: Request, payload: ChangePasswordSchema):
+def change_password(request: HttpRequest, payload: ChangePasswordSchema):
     old_password = payload.old_password
     new_password = payload.new_password
     user = authenticate(username="current_email", password=old_password)

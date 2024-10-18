@@ -1,8 +1,8 @@
 from django.urls import path
-from api.v1.restaurant import router as restaurant_router
+from .api import restaurant_router
 
 app_name = "restaurant"
 
 urlpatterns = [
-    path("", restaurant_router.urls),
+    path("api/", restaurant_router.urls),
 ]
