@@ -8,11 +8,12 @@ app_name = "bookabite"
 
 api = NinjaAPI()
 
+api.add_router("/auth/", auth_router)
+
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("api.v1.urls", namespace="api-v1")), # API Versioning
-    # path("auth/", include("custom_auth.urls")),
+    path("api/", include("api.v1.urls", namespace="api-v1")),  # API Versioning
     path("__debug__/", include("debug_toolbar.urls")),
-    path("api/openapi/", api.openapi_url),
+    path("api/openapi/", api.openapi),
     path("api/swagger/", api.swagger_ui),
 ]

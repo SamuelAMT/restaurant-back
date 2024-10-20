@@ -5,6 +5,8 @@ from restaurant.api import restaurant_router
 from restaurant_customer.api import restaurant_customer_router
 from reservation.api import reservation_router
 
+app_name = "api-v1"
+
 api = NinjaAPI()
 
 
