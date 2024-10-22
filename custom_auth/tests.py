@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from custom_auth.v1.models import CustomUser
+from custom_auth.models import CustomUser
 
 class AuthTests(TestCase):
     def setUp(self):

@@ -149,11 +149,11 @@ WSGI_APPLICATION = "bookabite.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': database_name,
+        'NAME': tmpPostgres.path.replace('/', ''),
         'USER': tmpPostgres.username,
         'PASSWORD': tmpPostgres.password,
         'HOST': tmpPostgres.hostname,
-        'PORT': tmpPostgres.port or 5432,
+        'PORT': 5432,
     }
 }
 

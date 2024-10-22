@@ -1,6 +1,14 @@
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+    Group,
+    Permission,
+)
+
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
+import uuid
 
 
 class Role(models.TextChoices):
@@ -27,6 +35,7 @@ class AccountManager(BaseUserManager):
 
 
 class Account(models.Model):
+    account_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     type = models.CharField(max_length=50)
     provider = models.CharField(max_length=50)
     provider_account_id = models.CharField(max_length=100)
@@ -41,7 +50,7 @@ class Account(models.Model):
     restaurant = models.ForeignKey(
         "restaurant.Restaurant",
         on_delete=models.CASCADE,
-        related_name="accounts",
+        related_name="restaurant_accounts",
         null=True,
         blank=True,
     )
@@ -82,27 +91,86 @@ class Account(models.Model):
         verbose_name_plural = "Accounts"
 
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        email = self.normalize_email(email)
+        extra_fields.setdefault("role", Role.RESTAURANTEMPLOYEE)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("role", Role.ADMIN)
+
+        return self.create_user(email, password, **extra_fields)
+
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    custom_user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    role = models.CharField(max_length=50, choices=Role.choices, default=Role.RESTAURANTEMPLOYEE)
+    
+    groups = models.ManyToManyField(
+        Group,
+        related_name="customeruser_set",
+        blank=True,
+        help_text="The groups this user belongs to.",
+        verbose_name="groups",
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name="customeruser_set",
+        blank=True,
+        help_text="Specific permissions for this user.",
+        verbose_name="user permissions",
+    )
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return self.email
+
+
 class VerificationToken(models.Model):
-    identifier = models.CharField(max_length=100)
-    token = models.CharField(max_length=100)
+    token = models.CharField(max_length=100, primary_key=True, unique=True)
     expires = models.DateTimeField()
 
     def __str__(self):
-        return f"Token for {self.identifier}"
+        return f"Token for {self.token}"
 
     class Meta:
         indexes = [
-            models.Index(fields=["identifier"], name="identifier_idx"),
             models.Index(fields=["token"], name="token_idx"),
         ]
         verbose_name = "Verification Token"
         verbose_name_plural = "Verification Tokens"
-        
+
+
+def get_default_account():
+    # This method returns a specific account ID in case of null or blank values
+    return Account.objects.get(id="default_account_id")
+
 
 class Session(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    session_token = models.CharField(max_length=100)
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, null=False, default=get_default_account
+    )
+    session_token = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    ip_address = models.GenericIPAddressField(default="0.0.0.0")
+    created_at = models.DateTimeField(auto_now_add=True)
     expires = models.DateTimeField(default=timezone.now)
+    last_active_at = models.DateTimeField(auto_now=True)
+    is_expired = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Session for {self.account.email}"
@@ -117,10 +185,11 @@ class Session(models.Model):
 
 
 class LoginLog(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    ip_address = models.GenericIPAddressField()
-    user_agent = models.TextField()
-    action = models.CharField(max_length=50)
+    login_log_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=False, default=get_default_account)
+    ip_address = models.GenericIPAddressField(default="0.0.0.0")
+    user_agent = models.TextField(default="Unknown")
+    action = models.CharField(max_length=50, default="login")
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

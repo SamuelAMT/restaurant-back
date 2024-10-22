@@ -1,8 +1,9 @@
 from django.db import models
-from custom_auth.models import Role, Account, Session
+from custom_auth.models import Role
+import uuid
 
 class Restaurant(models.Model):
-    id = models.CharField(max_length=100, primary_key=True, db_index=True)
+    restaurant_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True, db_index=True)
     cnpj = models.CharField(max_length=14, unique=True, db_index=True)
     name = models.CharField(max_length=100, db_index=True)
     country_code = models.CharField(max_length=3, blank=False, null=False)
@@ -17,15 +18,15 @@ class Restaurant(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     customers = models.ManyToManyField("restaurant_customer.RestaurantCustomer", related_name="restaurants")
-    accounts = models.ManyToManyField('Account', related_name='restaurants')
-    sessions = models.ManyToManyField('Session', related_name='restaurants')
-    addresses = models.ManyToManyField('Address', related_name='restaurants')
-    employees = models.ManyToManyField('RestaurantEmployee', related_name='restaurants')
-    login_logs = models.ManyToManyField('LoginLog', related_name='restaurants')
+    accounts = models.ManyToManyField('custom_auth.Account', related_name='restaurants')
+    sessions = models.ManyToManyField('custom_auth.Session', related_name='restaurants')
+    addresses = models.ManyToManyField('address.Address', related_name='restaurants')
+    employees = models.ManyToManyField('restaurant.RestaurantEmployee', related_name='restaurants')
+    login_logs = models.ManyToManyField('custom_auth.LoginLog', related_name='restaurants')
 
     class Meta:
         indexes = [
-            models.Index(fields=['id', 'name'], name='restaurant__id_name_idx'),
+            models.Index(fields=['restaurant_id', 'name'], name='restaurant__id_name_idx'),
         ]
 
     def __str__(self):
@@ -33,7 +34,7 @@ class Restaurant(models.Model):
 
 
 class RestaurantEmployee(models.Model):
-    id = models.CharField(max_length=100, primary_key=True, db_index=True)
+    restaurant_employee_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True, db_index=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=70, unique=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
@@ -41,7 +42,12 @@ class RestaurantEmployee(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='employees')
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='restaurant_employees')
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['restaurant_employee_id', 'email'], name='rest_employee__id_email_idx'),
+        ]
 
     def __str__(self):
         return self.name or self.email

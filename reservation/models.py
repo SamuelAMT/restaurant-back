@@ -1,7 +1,9 @@
 from django.db import models
 from django.db import IntegrityError
 import uuid
+from django.utils import timezone
 from restaurant_customer.models import RestaurantCustomer
+
 
 class RestaurantVisit(models.Model):
     restaurant = models.ForeignKey(
@@ -9,12 +11,14 @@ class RestaurantVisit(models.Model):
         on_delete=models.CASCADE,
         related_name="restaurant_visits",
     )
-    # Uncommented this for consistency
     restaurant_customer = models.ForeignKey(
-       'restaurant_customer.RestaurantCustomer',
-       on_delete=models.CASCADE,
-       related_name='restaurant_visits',
+        "restaurant_customer.RestaurantCustomer",
+        on_delete=models.CASCADE,
+        related_name="restaurant_visits",
+        null=True
+        
     )
+
 
 class Reservation(models.Model):
     reservation_hash = models.CharField(
@@ -32,11 +36,11 @@ class Reservation(models.Model):
     time = models.IntegerField(db_index=True)
     date = models.DateField(db_index=True)
     status = models.CharField(max_length=20, default="pending")
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(null=True, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
     user = models.ForeignKey(
-        RestaurantCustomer, on_delete=models.CASCADE, related_name="bookings"
+        RestaurantCustomer, on_delete=models.CASCADE, related_name="bookings", null=True
     )
 
     visit = models.ForeignKey(

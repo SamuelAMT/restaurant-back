@@ -1,8 +1,8 @@
+import uuid
 from django.db import models
 
-
 class RestaurantCustomer(models.Model):
-    id = models.CharField(max_length=100, primary_key=True, default='', db_index=True)
+    restaurant_customer_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)
     name = models.CharField(max_length=100)
     lastname = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=70, unique=True)
@@ -26,4 +26,4 @@ class RestaurantCustomer(models.Model):
         ]
 
     def __str__(self):
-        return self.name
+        return f"{self.name} {self.lastname}"

@@ -6,7 +6,7 @@ class AccountAdmin(admin.ModelAdmin):
     search_fields = ('email',)
 
 class SessionAdmin(admin.ModelAdmin):
-    list_display = ('account', 'session_key', 'ip_address', 'created_at', 'last_active_at', 'is_expired')
+    list_display = ('account', 'session_token', 'ip_address', 'created_at', 'expires', 'last_active_at', 'is_expired')
     search_fields = ('account__email', 'session_key')
 
 class LoginLogAdmin(admin.ModelAdmin):

@@ -14,7 +14,7 @@ class Address(models.Model):
     restaurant = models.ForeignKey(
         "restaurant.Restaurant",
         on_delete=models.CASCADE,
-        related_name='addresses',
+        related_name='restaurant_addresses',
         null=True,
     )
 
