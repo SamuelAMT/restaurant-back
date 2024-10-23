@@ -43,11 +43,6 @@ class RestaurantEmployee(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='restaurant_employees')
-    
-    class Meta:
-        indexes = [
-            models.Index(fields=['restaurant_employee_id', 'email'], name='rest_employee__id_email_idx'),
-        ]
 
     def __str__(self):
         return self.name or self.email

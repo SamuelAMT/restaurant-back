@@ -65,6 +65,7 @@ class Account(models.Model):
     email = models.EmailField(unique=True, max_length=255)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    is_system_account = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -157,8 +158,11 @@ class VerificationToken(models.Model):
 
 
 def get_default_account():
-    # This method returns a specific account ID in case of null or blank values
-    return Account.objects.get(id="default_account_id")
+    default_account_id = uuid.UUID("123e4567-e89b-12d3-a456-426614174000")
+    try:
+        return Account.objects.get(account_id=default_account_id).pk
+    except Account.DoesNotExist:
+        raise ValueError("System account does not exist. Please create a system account with the specified UUID.")
 
 
 class Session(models.Model):
@@ -194,3 +198,4 @@ class LoginLog(models.Model):
 
     def __str__(self):
         return f"{self.action.capitalize()} log for {self.account.email} on {self.timestamp}"
+    
