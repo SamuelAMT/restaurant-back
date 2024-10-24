@@ -155,6 +155,17 @@ class VerificationToken(models.Model):
         ]
         verbose_name = "Verification Token"
         verbose_name_plural = "Verification Tokens"
+        
+class BlacklistedToken(models.Model):
+    token = models.CharField(max_length=500, unique=True)
+    blacklisted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.token
+
+    class Meta:
+        verbose_name = "Blacklisted Token"
+        verbose_name_plural = "Blacklisted Tokens"
 
 
 def get_default_account():
