@@ -16,7 +16,7 @@ from datetime import timedelta
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 
-load_dotenv()
+load_dotenv('.env.local')
 
 database_url = os.getenv("DATABASE_URL")
 
