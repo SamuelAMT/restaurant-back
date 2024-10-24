@@ -30,7 +30,6 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(max_length=255, unique=True)),
                 ('is_active', models.BooleanField(default=True)),
                 ('is_admin', models.BooleanField(default=False)),
-                ('is_system_account', models.BooleanField(default=False)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
             ],
