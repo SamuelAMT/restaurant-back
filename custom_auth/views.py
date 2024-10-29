@@ -34,6 +34,9 @@ class PasswordResetSchema(Schema):
 
 class PasswordResetRequestSchema(Schema):
     email: str
+    
+def testing_endpoints(request):
+    return render(request, 'custom_auth/testing_endpoints.html')
 
 
 def create_user(request: HttpRequest, payload: UserCreateSchema):

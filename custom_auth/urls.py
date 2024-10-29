@@ -14,6 +14,7 @@ urlpatterns = [
     path('account/change-password/', views.account_change_password, name='account_change_password'),
 
     # CustomUser URLs
+    path('testing/', views.testing_endpoints, name='testing_endpoints'),
     path('user/register/', views.create_user, name='user_register'),
     path('user/setup-password/<str:token>/', views.setup_user_password, name='user_setup_password'),
     path('user/login/', views.user_login, name='user_login'),
