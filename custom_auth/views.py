@@ -36,13 +36,47 @@ def testing_endpoints(request):
     return render(request, 'auth/testing_endpoints.html')
 
 # Admin account registration
-def create_account(request: HttpRequest, payload: UserCreateSchema):
-    email = payload.email
-    password = payload.password
-    if Account.objects.filter(email=email).exists():
-        return JsonResponse({"error": "Email already exists"}, status=400)
-    admin_account = Account.objects.create_user(email=email, password=password, is_admin=True)
-    return JsonResponse({"message": "Admin account created successfully"}, status=201)
+#def create_account(request: HttpRequest, payload: UserCreateSchema):
+#    email = payload.email
+#    password = payload.password
+#    if Account.objects.filter(email=email).exists():
+#        return JsonResponse({"error": "Email already exists"}, status=400)
+#    admin_account = Account.objects.create_user(email=email, password=password, is_admin=True)
+#    return JsonResponse({"message": "Admin account created successfully"}, status=201)
+
+# Main account registration view
+def create_account(request, uidb64, token):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = Account.objects.get(pk=uid)
+            if default_token_generator.check_token(user, token):
+                user.email = email
+                user.set_password(password)
+                user.is_admin = True
+                user.save()
+                return JsonResponse({"message": "Admin account created successfully"}, status=201)
+            else:
+                return JsonResponse({"error": "Invalid or expired link"}, status=400)
+        except Account.DoesNotExist:
+            return JsonResponse({"error": "Invalid token"}, status=400)
+    else:
+        return render(request, "custom_auth/register.html", {"uidb64": uidb64, "token": token})
+
+# Send registration link to user
+def send_registration_link(email, user_id):
+    uid = urlsafe_base64_encode(force_bytes(user_id))
+    token = default_token_generator.make_token(user_id)
+    registration_url = f"{settings.FRONTEND_URL}/account/register/{uid}/{token}/"
+    # Send email logic
+    send_mail(
+        "Complete your registration",
+        f"Please complete your registration by visiting: {registration_url}",
+        "no-reply@yourdomain.com",
+        [email],
+    )
 
 # Custom user registration by admin
 def create_user(request: HttpRequest, payload: UserCreateSchema):
@@ -58,14 +92,18 @@ def create_user(request: HttpRequest, payload: UserCreateSchema):
 # Setup password view
 def setup_password(request: HttpRequest, token: str, payload: PasswordResetSchema):
     password = payload.password
-    uid = force_str(urlsafe_base64_decode(token))
+    uid = force_str(urlsafe_base64_decode(request.GET.get("uid")))
     try:
         user = Account.objects.get(pk=uid)
-        user.set_password(password)
-        user.save()
-        return JsonResponse({"message": "Password set successfully"}, status=200)
+        if default_token_generator.check_token(user, token):
+            user.set_password(password)
+            user.save()
+            return JsonResponse({"message": "Password set successfully"}, status=200)
+        else:
+            return JsonResponse({"error": "Invalid or expired token"}, status=400)
     except Account.DoesNotExist:
-        return JsonResponse({"error": "Invalid token"}, status=400)
+        return JsonResponse({"error": "User not found"}, status=404)
+
 
 # Login view
 def login(request: HttpRequest, payload: LoginSchema):

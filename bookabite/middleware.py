@@ -2,17 +2,18 @@ import jwt
 from django.conf import settings
 from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
-from custom_auth.models import Account, BlacklistedToken  # Updated to use custom Account model if needed
+from custom_auth.models import Account, BlacklistedToken
 
 class TokenAuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        # Update excluded paths to match your current authentication endpoints
         excluded_paths = [
             "/auth/login/", 
             "/auth/register/", 
             "/auth/csrf/",
             "/auth/password-reset/",
-            "/auth/password-reset-confirm/"
+            "/auth/password-reset-confirm/",
+            "/custom_auth/templates/custom_auth/testing_endpoints.html",
+            "/account/register/",
         ]
         
         if request.path in excluded_paths:

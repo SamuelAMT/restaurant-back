@@ -6,6 +6,7 @@ app_name = 'custom_auth'
 urlpatterns = [
     # Restaurant Account URLs (admin by default)
     path('testing/', views.testing_endpoints, name='testing_endpoints'),
+    path("account/register/<str:uidb64>/<str:token>/", views.create_account, name="account_register"),
     path('account/register/', views.create_account, name='account_register'),  # Admin account registration
     path('account/setup-password/<str:token>/', views.setup_password, name='account_setup_password'),
     path('account/login/', views.login, name='account_login'),
