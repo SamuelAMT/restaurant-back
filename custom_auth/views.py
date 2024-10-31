@@ -33,7 +33,7 @@ class PasswordResetRequestSchema(Schema):
 
 # Testing endpoint
 def testing_endpoints(request):
-    return render(request, 'custom_auth/testing_endpoints.html')
+    return render(request, 'auth/testing_endpoints.html')
 
 # Admin account registration
 def create_account(request: HttpRequest, payload: UserCreateSchema):

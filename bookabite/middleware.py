@@ -2,12 +2,19 @@ import jwt
 from django.conf import settings
 from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
-from django.contrib.auth.models import User
-from custom_auth.models import BlacklistedToken
+from custom_auth.models import Account, BlacklistedToken  # Updated to use custom Account model if needed
 
 class TokenAuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        excluded_paths = ["/auth/login/", "/auth/register/", "/auth/csrf/"]
+        # Update excluded paths to match your current authentication endpoints
+        excluded_paths = [
+            "/auth/login/", 
+            "/auth/register/", 
+            "/auth/csrf/",
+            "/auth/password-reset/",
+            "/auth/password-reset-confirm/"
+        ]
+        
         if request.path in excluded_paths:
             return None
 
@@ -24,9 +31,13 @@ class TokenAuthenticationMiddleware(MiddlewareMixin):
         try:
             # Decode JWT
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-            user = User.objects.get(id=payload["user_id"])
+            user = Account.objects.get(id=payload["user_id"])  # Using Account model
             request.user = user
-        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError, User.DoesNotExist):
-            return JsonResponse({"message": "Invalid or expired token"}, status=403)
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({"message": "Token has expired"}, status=403)
+        except jwt.InvalidTokenError:
+            return JsonResponse({"message": "Invalid token"}, status=403)
+        except Account.DoesNotExist:
+            return JsonResponse({"message": "User not found"}, status=403)
 
         return None
