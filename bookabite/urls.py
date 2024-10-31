@@ -12,7 +12,8 @@ openapi_urls = get_openapi_urls(api)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("api.v1.urls", namespace="api-v1")),  # API Versioning
+    path("api/", include("api.v1.urls", namespace="api-v1")), # API Versioning
+    path('custom_auth/', include('custom_auth.urls', namespace='custom_auth')),
     path("__debug__/", include("debug_toolbar.urls")),
     path("api/openapi/", include(openapi_urls)),
 ]

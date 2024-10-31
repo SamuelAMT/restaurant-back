@@ -12,42 +12,50 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.tokens import default_token_generator
 from .models import Account, Session, LoginLog
 
-
+# Schemas for validation
 class UserCreateSchema(Schema):
     email: str
     password: str
-
 
 class LoginSchema(Schema):
     email: str
     password: str
 
-
 class ChangePasswordSchema(Schema):
     old_password: str
     new_password: str
 
-
 class PasswordResetSchema(Schema):
     password: str
 
-
 class PasswordResetRequestSchema(Schema):
     email: str
-    
+
+# Testing endpoint
 def testing_endpoints(request):
     return render(request, 'custom_auth/testing_endpoints.html')
 
+# Admin account registration
+def create_account(request: HttpRequest, payload: UserCreateSchema):
+    email = payload.email
+    password = payload.password
+    if Account.objects.filter(email=email).exists():
+        return JsonResponse({"error": "Email already exists"}, status=400)
+    admin_account = Account.objects.create_user(email=email, password=password, is_admin=True)
+    return JsonResponse({"message": "Admin account created successfully"}, status=201)
 
+# Custom user registration by admin
 def create_user(request: HttpRequest, payload: UserCreateSchema):
     email = payload.email
     password = payload.password
     if Account.objects.filter(email=email).exists():
         return JsonResponse({"error": "Email already exists"}, status=400)
-    user = Account.objects.create_user(email=email, password=password)
+    if not request.user.is_authenticated or not request.user.is_admin:
+        return JsonResponse({"error": "Only admins can create custom users"}, status=403)
+    user = Account.objects.create_user(email=email, password=password, is_admin=False)
     return JsonResponse({"message": "User created successfully"}, status=201)
 
-
+# Setup password view
 def setup_password(request: HttpRequest, token: str, payload: PasswordResetSchema):
     password = payload.password
     uid = force_str(urlsafe_base64_decode(token))
@@ -59,7 +67,7 @@ def setup_password(request: HttpRequest, token: str, payload: PasswordResetSchem
     except Account.DoesNotExist:
         return JsonResponse({"error": "Invalid token"}, status=400)
 
-
+# Login view
 def login(request: HttpRequest, payload: LoginSchema):
     email = payload.email
     password = payload.password
@@ -74,13 +82,13 @@ def login(request: HttpRequest, payload: LoginSchema):
         return JsonResponse({"message": "Login successful"}, status=200)
     return JsonResponse({"error": "Invalid credentials"}, status=400)
 
-
+# Logout view
 def logout(request: HttpRequest):
     auth_logout(request)
     LoginLog.objects.create(account=None, ip_address="127.0.0.1", action="logout")
     return JsonResponse({"message": "Logged out successfully"}, status=200)
 
-
+# Password reset request
 def request_password_reset(request: HttpRequest, payload: PasswordResetRequestSchema):
     email = payload.email
     try:
@@ -99,7 +107,7 @@ def request_password_reset(request: HttpRequest, payload: PasswordResetRequestSc
     except Account.DoesNotExist:
         return JsonResponse({"error": "Email not found"}, status=404)
 
-
+# Reset password view
 def reset_password(
     request: HttpRequest, uidb64: str, token: str, payload: PasswordResetSchema
 ):
@@ -116,18 +124,18 @@ def reset_password(
     except Account.DoesNotExist:
         return JsonResponse({"error": "User does not exist"}, status=404)
 
-
+# Change password view
 def change_password(request: HttpRequest, payload: ChangePasswordSchema):
     old_password = payload.old_password
     new_password = payload.new_password
-    user = authenticate(username="current_email", password=old_password)
+    user = authenticate(username=request.user.email, password=old_password)
     if user is not None:
         user.set_password(new_password)
         user.save()
         return JsonResponse({"message": "Password changed successfully"}, status=200)
     return JsonResponse({"error": "Invalid credentials"}, status=400)
 
-
+# Views for login, logout, and password reset using Django views
 def login_view(request):
     if request.method == 'POST':
         email = request.POST['email']
@@ -138,19 +146,15 @@ def login_view(request):
             return redirect('home')
         return JsonResponse({'error': 'Invalid credentials'}, status=400)
 
-
 def logout_view(request):
     auth_logout(request)
     return redirect('login')
 
-
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'auth/password_reset.html'
 
-
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'auth/password_reset_confirm.html'
-
 
 def change_password_view(request):
     if request.method == 'POST':
