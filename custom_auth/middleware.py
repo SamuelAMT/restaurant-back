@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+""" from django.http import JsonResponse
 from custom_auth.models import Session
 from django.utils import timezone
 
@@ -21,3 +21,4 @@ class TokenAuthMiddleware:
                 return JsonResponse({"error": "Invalid session token"}, status=401)
 
         return self.get_response(request)
+ """

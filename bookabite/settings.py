@@ -104,9 +104,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    #"allauth.account.middleware.AccountMiddleware",
     "corsheaders.middleware.CorsMiddleware",
-    "bookabite.middleware.TokenAuthenticationMiddleware",
+    #"allauth.account.middleware.AccountMiddleware",
+    #"bookabite.middleware.TokenAuthenticationMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
