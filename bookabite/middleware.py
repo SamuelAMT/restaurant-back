@@ -1,4 +1,4 @@
-import jwt
+""" import jwt
 from django.conf import settings
 from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
@@ -42,3 +42,4 @@ class TokenAuthenticationMiddleware(MiddlewareMixin):
             return JsonResponse({"message": "User not found"}, status=403)
 
         return None
+ """
