@@ -50,14 +50,14 @@ class Account(models.Model):
     restaurant = models.ForeignKey(
         "restaurant.Restaurant",
         on_delete=models.CASCADE,
-        related_name="restaurant_accounts",
+        related_name="auth_accounts",
         null=True,
         blank=True,
     )
     employee = models.ForeignKey(
         "restaurant.RestaurantEmployee",
         on_delete=models.CASCADE,
-        related_name="accounts",
+        related_name="staff_accounts",
         null=True,
         blank=True,
     )

@@ -15,7 +15,7 @@ class RestaurantCustomer(models.Model):
     # Adapted to avoid circular imports error
     # Instead it's calling the model as a string to avoid it
     reservations = models.ManyToManyField(
-        "reservation.Reservation", related_name="restaurant_customers"
+        "reservation.Reservation", related_name="customers"
     )
 
     class Meta:

@@ -9,14 +9,13 @@ class RestaurantVisit(models.Model):
     restaurant = models.ForeignKey(
         "restaurant.Restaurant",
         on_delete=models.CASCADE,
-        related_name="restaurant_visits",
+        related_name="visits",
     )
-    restaurant_customer = models.ForeignKey(
+    customer = models.ForeignKey(
         "restaurant_customer.RestaurantCustomer",
         on_delete=models.CASCADE,
-        related_name="restaurant_visits",
-        null=True
-        
+        related_name="visits",
+        null=True,
     )
 
 
@@ -39,8 +38,11 @@ class Reservation(models.Model):
     created_at = models.DateTimeField(null=True, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    user = models.ForeignKey(
-        RestaurantCustomer, on_delete=models.CASCADE, related_name="bookings", null=True
+    customer = models.ForeignKey(
+        RestaurantCustomer,
+        on_delete=models.CASCADE,
+        related_name="customer_reservations",
+        null=True
     )
 
     visit = models.ForeignKey(

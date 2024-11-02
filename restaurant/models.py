@@ -21,7 +21,7 @@ class Restaurant(models.Model):
     accounts = models.ManyToManyField('custom_auth.Account', related_name='restaurants')
     sessions = models.ManyToManyField('custom_auth.Session', related_name='restaurants')
     addresses = models.ManyToManyField('address.Address', related_name='restaurants')
-    employees = models.ManyToManyField('restaurant.RestaurantEmployee', related_name='restaurants')
+    employees = models.ManyToManyField('RestaurantEmployee', related_name='restaurants')
     login_logs = models.ManyToManyField('custom_auth.LoginLog', related_name='restaurants')
 
     class Meta:
@@ -42,7 +42,7 @@ class RestaurantEmployee(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='restaurant_employees')
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='staff')
 
     def __str__(self):
         return self.name or self.email
