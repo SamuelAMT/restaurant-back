@@ -2,18 +2,28 @@ from django.contrib import admin
 from django.urls import include, path
 import debug_toolbar
 from ninja import NinjaAPI
-from ninja.openapi.urls import get_openapi_urls
+from api.custom_auth import auth_router
+from restaurant.api import restaurant_router
+from restaurant_customer.api import restaurant_customer_router
+from reservation.api import reservation_router
 
 app_name = "bookabite"
 
-api = NinjaAPI()
+api = NinjaAPI(
+    title="BookABite API",
+    version="1.0.0",
+    description="API for restaurant management and reservations",
+    docs_url="/docs/",
+)
 
-openapi_urls = get_openapi_urls(api)
+api.add_router("/auth/", auth_router)
+api.add_router("/restaurant/", restaurant_router)
+api.add_router("/restaurant-customer/", restaurant_customer_router)
+api.add_router("/reservations/", reservation_router)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("api.v1.urls", namespace="api-v1")), # API Versioning
-    path('custom_auth/', include('custom_auth.urls', namespace='auth')),
+    path("custom_auth/", include("custom_auth.urls", namespace="auth")),
     path("__debug__/", include("debug_toolbar.urls")),
-    path("api/openapi/", include(openapi_urls)),
+    path("api/", api.urls),
 ]
