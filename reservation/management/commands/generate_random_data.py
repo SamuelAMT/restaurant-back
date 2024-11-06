@@ -33,7 +33,7 @@ class Command(BaseCommand):
                     country_code=fake.country_code(),
                     phone=fake.phone_number(),
                     email=fake.email(),
-                    birthdate=fake.date_of_birth(),
+                    birthday=fake.date_of_birth(),
                 )
 
                 visit = RestaurantVisit.objects.create(

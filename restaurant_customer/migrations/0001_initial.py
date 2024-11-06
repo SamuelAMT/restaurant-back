@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(max_length=70, unique=True)),
                 ('country_code', models.CharField(blank=True, max_length=3, null=True)),
                 ('phone', models.CharField(blank=True, max_length=20, null=True)),
-                ('birthdate', models.DateField(blank=True, null=True)),
+                ('birthday', models.DateField(blank=True, null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('reservations', models.ManyToManyField(related_name='restaurant_customers', to='reservation.reservation')),

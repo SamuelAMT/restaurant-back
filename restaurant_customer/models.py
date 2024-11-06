@@ -8,7 +8,7 @@ class RestaurantCustomer(models.Model):
     email = models.EmailField(max_length=70, unique=True)
     country_code = models.CharField(max_length=3, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
-    birthdate = models.DateField(null=True, blank=True)
+    birthday = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
