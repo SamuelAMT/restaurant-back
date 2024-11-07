@@ -27,6 +27,7 @@ class ReservationSchema(Schema):
     email: str
     phone: str
     birthday: Optional[str] = None
+    observation: Optional[str] = None
 
 class CustomerSchema(Schema):
     name: str
@@ -78,6 +79,7 @@ def list_reservations(request: HttpRequest, restaurant_id: str):
             email=res.email,
             phone=res.phone,
             birthday=str(res.birthday) if res.birthday else None,
+            observation=res.observation,
         )
         for res in reservations
     ]
@@ -94,6 +96,7 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
         email=payload.email,
         phone=payload.phone,
         birthday=payload.birthday,
+        observation=payload.observation,
         visit=restaurant.restaurantvisit_set.first(),
     )
     return reservation

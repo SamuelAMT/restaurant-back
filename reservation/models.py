@@ -35,6 +35,7 @@ class Reservation(models.Model):
     time = models.IntegerField(db_index=True)
     date = models.DateField(db_index=True)
     birthday = models.DateField(null=True, blank=True)
+    observation = models.TextField(max_length=250, null=True, blank=True)
     status = models.CharField(max_length=20, default="pending")
     created_at = models.DateTimeField(null=True, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)

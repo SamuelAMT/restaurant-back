@@ -18,6 +18,7 @@ class CreateReservationSchema(Schema):
     email: str
     phone: str
     birthday: Optional[str] = None
+    observation: Optional[str] = None
 
 
 @reservation_router.get("/")
@@ -37,6 +38,7 @@ def create_reservation(request, payload: CreateReservationSchema):
         email=payload.email,
         phone=payload.phone,
         birthday=payload.birthday,
+        observation=payload.observation,
         visit=restaurant,
     )
     return reservation
