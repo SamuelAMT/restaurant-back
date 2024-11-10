@@ -11,13 +11,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
-import dj_database_url
+#import dj_database_url
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 #from urllib.parse import urlparse
 
-load_dotenv('.env.local')
+# Now it's values from .env are being managed by Vercel secrets
+#load_dotenv('.env.local')
 
 # Parse database configuration from $DATABASE_URL [Old way without dj_database_url]
 
@@ -167,7 +168,7 @@ DATABASES = {
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {
             'sslmode': os.getenv('DB_SSLMODE'),
             'options': os.getenv('DB_OPTIONS'),
