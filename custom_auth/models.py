@@ -35,7 +35,9 @@ class AccountManager(BaseUserManager):
 
 
 class Account(models.Model):
-    account_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    account_id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, unique=True
+    )
     type = models.CharField(max_length=50)
     provider = models.CharField(max_length=50)
     provider_account_id = models.CharField(max_length=100)
@@ -112,12 +114,16 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    custom_user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    custom_user_id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, unique=True
+    )
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    role = models.CharField(max_length=50, choices=Role.choices, default=Role.RESTAURANTEMPLOYEE)
-    
+    role = models.CharField(
+        max_length=50, choices=Role.choices, default=Role.RESTAURANTEMPLOYEE
+    )
+
     groups = models.ManyToManyField(
         Group,
         related_name="customeruser_set",
@@ -155,7 +161,8 @@ class VerificationToken(models.Model):
         ]
         verbose_name = "Verification Token"
         verbose_name_plural = "Verification Tokens"
-        
+
+
 class BlacklistedToken(models.Model):
     token = models.CharField(max_length=500, unique=True)
     blacklisted_at = models.DateTimeField(auto_now_add=True)
@@ -173,35 +180,18 @@ def get_default_account():
     try:
         return Account.objects.get(account_id=default_account_id).pk
     except Account.DoesNotExist:
-        raise ValueError("System account does not exist. Please create a system account with the specified UUID.")
-
-
-class Session(models.Model):
-    account = models.ForeignKey(
-        Account, on_delete=models.CASCADE, null=False, default=get_default_account
-    )
-    session_token = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    ip_address = models.GenericIPAddressField(default="0.0.0.0")
-    created_at = models.DateTimeField(auto_now_add=True)
-    expires = models.DateTimeField(default=timezone.now)
-    last_active_at = models.DateTimeField(auto_now=True)
-    is_expired = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Session for {self.account.email}"
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["session_token"], name="session_token_idx"),
-            models.Index(fields=["expires"], name="expires_idx"),
-        ]
-        verbose_name = "Session"
-        verbose_name_plural = "Sessions"
+        raise ValueError(
+            "System account does not exist. Please create a system account with the specified UUID."
+        )
 
 
 class LoginLog(models.Model):
-    login_log_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=False, default=get_default_account)
+    login_log_id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, unique=True
+    )
+    account = models.ForeignKey(
+        Account, on_delete=models.CASCADE, null=False, default=get_default_account
+    )
     ip_address = models.GenericIPAddressField(default="0.0.0.0")
     user_agent = models.TextField(default="Unknown")
     action = models.CharField(max_length=50, default="login")
@@ -209,4 +199,3 @@ class LoginLog(models.Model):
 
     def __str__(self):
         return f"{self.action.capitalize()} log for {self.account.email} on {self.timestamp}"
-    

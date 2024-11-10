@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Account, CustomUser, Role, Session, LoginLog, VerificationToken, BlacklistedToken
+from .models import Account, CustomUser, Role, LoginLog, VerificationToken, BlacklistedToken
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
@@ -13,11 +13,6 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_display = ('email', 'role', 'is_active', 'is_staff')
     list_filter = ('role', 'is_active', 'is_staff')
     search_fields = ('email',)
-
-@admin.register(Session)
-class SessionAdmin(admin.ModelAdmin):
-    list_display = ('account', 'created_at', 'expires', 'is_expired')
-    list_filter = ('is_expired', 'created_at')
 
 @admin.register(LoginLog)
 class LoginLogAdmin(admin.ModelAdmin):

@@ -1,16 +1,22 @@
-from custom_auth.views import (
-    create_user,
-    login,
-    logout,
-    setup_password,
-    request_password_reset,
-    reset_password,
-    change_password,
-)
 from ninja import Router, Schema
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout as auth_logout
+from django.http import HttpRequest
+from custom_auth.models import LoginLog
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView
+from custom_auth.authentication import JWTAuth
+from custom_auth.serializers import CustomTokenObtainPairSerializer
+from custom_auth.views import CustomTokenObtainPairView
 
 auth_router = Router()
+
+
+class MessageSchema(Schema):
+    message: str
+
+
+class ErrorSchema(Schema):
+    detail: str
 
 
 class LoginSchema(Schema):
@@ -18,40 +24,112 @@ class LoginSchema(Schema):
     password: str
 
 
-@auth_router.post("/register/")
+class TokenSchema(Schema):
+    access: str
+    refresh: str
+
+
+# Users are being created through the Django admin panel
+""" @auth_router.post("/register/")
 def register(request, payload):
-    return create_user(request, payload)
+    return create_user(request, payload) """
 
-
-@auth_router.post("/login/")
+# Authenticate user and provide JWT tokens
+@auth_router.post("/login/", response={200: TokenSchema, 401: ErrorSchema})
 def login(request, payload: LoginSchema):
-    user = authenticate(username=payload.email, password=payload.password)
+    email = payload.email
+    password = payload.password
+    user = authenticate(request, username=email, password=password)
     if user is not None:
-        return {"message": "Login successful"}
+        refresh = RefreshToken.for_user(user)
+        return {
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "email": user.email,
+            "is_admin": user.is_staff,
+        }
     else:
-        return {"error": "Invalid credentials"}, 400
+        return 401, {"detail": "Invalid credentials"}
+
+@auth_router.post("/token/", response={200: TokenSchema, 401: str})
+def obtain_token(request, payload: LoginSchema):
+    user = authenticate(request, username=payload.email, password=payload.password)
+    if user is not None:
+        refresh = RefreshToken.for_user(user)
+        token = CustomTokenObtainPairSerializer.get_token(user)
+        return {
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "email": user.email,
+            "is_admin": user.is_staff,
+        }
+    return 401, "Invalid credentials"
+
+# Logs out the user session and Creates a logout log entry
+@auth_router.post("/logout/", response=MessageSchema)
+def api_logout(request: HttpRequest):
+    auth_logout(request)
+    LoginLog.objects.create(
+        account=None,
+        ip_address=request.META.get("REMOTE_ADDR", ""),
+        action="logout"
+    )
+    return {"message": "Logged out successfully"}
 
 
-@auth_router.post("/logout/")
-def logout(request):
-    return logout(request)
+# Refresh token after expiration
+@auth_router.post("/token/refresh/", response={200: TokenSchema, 401: ErrorSchema})
+def token_refresh(request, payload: dict):
+    response = TokenRefreshView.as_view()(request._request)
+    if response.status_code == 200:
+        data = response.data
+        return data
+    else:
+        return response.status_code, {"detail": "Token refresh failed"}
 
 
+# Extracts the refresh token from the Auth header and set Blacklist of expired tokens
+@auth_router.post(
+    "/logout/expired/", auth=JWTAuth(), response={200: MessageSchema, 400: ErrorSchema}
+)
+def logout_expired(request: HttpRequest):
+    try:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            refresh_token = auth_header.split()[1]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return {"message": "Logout successful"}
+        else:
+            return 400, {"detail": "Authorization header missing or malformed"}
+    except Exception:
+        return 400, {"detail": "Invalid token"}
+
+
+# Manual password reset through `python manage.py changepassword <user>` in terminal
+"""
 @auth_router.post("/password-reset-request/")
 def request_password_reset(request, payload):
     return request_password_reset(request, payload)
-
 
 @auth_router.post("/password-reset/{uidb64}/{token}/")
 def reset_password(request, uidb64, token, payload):
     return reset_password(request, uidb64, token, payload)
 
-
 @auth_router.post("/setup-password/{token}/")
 def setup_password(request, token, payload):
     return setup_password(request, token, payload)
 
-
 @auth_router.post("/change-password/")
 def change_password(request, payload):
     return change_password(request, payload)
+"""
+
+# Protected profile endpoint that returns user information.
+@auth_router.get("/profile/", auth=JWTAuth(), response={200: Schema, 401: ErrorSchema})
+def profile(request: HttpRequest):
+    user = request.user
+    return {
+        "email": user.email,
+        "name": user.get_full_name(),
+    }

@@ -1,9 +1,12 @@
 from django.urls import path
-from custom_auth import views
+from . import views
 
 app_name = 'custom_auth'
 
 urlpatterns = [
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    
     # Restaurant Account URLs (admin by default)
     #path('testing/', views.testing_endpoints, name='testing_endpoints'),
     #path("account/register/<str:uidb64>/<str:token>/", views.create_account, name="account_register"),

@@ -19,7 +19,6 @@ class Restaurant(models.Model):
 
     customers = models.ManyToManyField("restaurant_customer.RestaurantCustomer", related_name="restaurants")
     accounts = models.ManyToManyField('custom_auth.Account', related_name='restaurants')
-    sessions = models.ManyToManyField('custom_auth.Session', related_name='restaurants')
     addresses = models.ManyToManyField('address.Address', related_name='restaurants')
     employees = models.ManyToManyField('RestaurantEmployee', related_name='restaurants')
     login_logs = models.ManyToManyField('custom_auth.LoginLog', related_name='restaurants')
