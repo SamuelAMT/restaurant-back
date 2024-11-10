@@ -11,24 +11,27 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-from urllib.parse import urlparse
+#from urllib.parse import urlparse
 
 load_dotenv('.env.local')
 
-database_url = os.getenv("DATABASE_URL")
+# Parse database configuration from $DATABASE_URL [Old way without dj_database_url]
 
-if not database_url:
-    raise ValueError("DATABASE_URL environment variable is not set")
-
-tmpPostgres = urlparse(database_url)
-
-print(f"Parsed URL: {tmpPostgres}")
-print(f"Path: {tmpPostgres.path}, Type: {type(tmpPostgres.path)}")
-
-database_name = tmpPostgres.path.lstrip('/')
+#database_url = os.getenv("DATABASE_URL")
+#
+#if not database_url:
+#    raise ValueError("DATABASE_URL environment variable is not set")
+#
+#tmpPostgres = urlparse(database_url)
+#
+#print(f"Parsed URL: {tmpPostgres}")
+#print(f"Path: {tmpPostgres.path}, Type: {type(tmpPostgres.path)}")
+#
+#database_name = tmpPostgres.path.lstrip('/')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,7 +47,6 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = bool(int(os.getenv("DEBUG", 0)))
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
-
 
 # Application definition
 
@@ -150,14 +152,35 @@ WSGI_APPLICATION = "bookabite.wsgi.application"
 
 DATABASES = {
     'default': {
+        #'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+
+        # Previous PostgreSQL configuration
+        #'ENGINE': 'django.db.backends.postgresql',
+        #'NAME': tmpPostgres.path.replace('/', ''),
+        #'USER': tmpPostgres.username,
+        #'PASSWORD': tmpPostgres.password,
+        #'HOST': tmpPostgres.hostname,
+        #'PORT': 5432,
+        
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/', ''),
-        'USER': tmpPostgres.username,
-        'PASSWORD': tmpPostgres.password,
-        'HOST': tmpPostgres.hostname,
-        'PORT': 5432,
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        'OPTIONS': {
+            'sslmode': os.getenv('DB_SSLMODE'),
+            'options': os.getenv('DB_OPTIONS'),
+        },
     }
 }
+
+
+if 'ENGINE' not in DATABASES['default']:
+    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+
+if 'NAME' not in DATABASES['default']:
+    DATABASES['default']['NAME'] = os.getenv('DB_NAME')
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
 SESSION_COOKIE_AGE = 1209600  # Two weeks (timeout)
