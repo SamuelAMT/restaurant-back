@@ -79,6 +79,7 @@ AUTHENTICATION_BACKENDS = (
     #"allauth.account.auth_backends.AuthenticationBackend",
 )
 
+
 SITE_ID = 1
 
 LOGIN_REDIRECT_URL = "/"
@@ -206,6 +207,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+AUTH_USER_MODEL = 'custom_auth.CustomUser'
 
 # CSRF Protection
 CSRF_COOKIE_HTTPONLY = True
