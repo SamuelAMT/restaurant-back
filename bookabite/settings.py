@@ -14,11 +14,11 @@ import os
 #import dj_database_url
 from pathlib import Path
 from datetime import timedelta
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 #from urllib.parse import urlparse
 
 # Now it's values from .env are being managed by Vercel secrets
-#load_dotenv('.env.local')
+load_dotenv('.env.local')
 
 # Parse database configuration from $DATABASE_URL [Old way without dj_database_url]
 
