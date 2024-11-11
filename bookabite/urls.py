@@ -16,10 +16,10 @@ api = NinjaAPI(
     docs_url="/docs/",
 )
 
-api.add_router("/auth/", auth_router)
-api.add_router("/restaurant/", restaurant_router)
-api.add_router("/restaurant-customer/", restaurant_customer_router)
-api.add_router("/reservations/", reservation_router)
+api.add_router("/auth/", auth_router, tags=["Authentication"])
+api.add_router("/restaurant/", restaurant_router, tags=["Restaurant"])
+api.add_router("/restaurant-customer/", restaurant_customer_router, tags=["Customer"])
+api.add_router("/reservations/", reservation_router, tags=["Reservations"])
 
 urlpatterns = [
     path("admin/", admin.site.urls),
