@@ -13,7 +13,7 @@ class Restaurant(models.Model):
     website = models.URLField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     image = models.URLField(blank=True, null=True)
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.RESTAURANT)
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.RESTAURANT_ADMIN)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -37,7 +37,7 @@ class RestaurantEmployee(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     email = models.EmailField(max_length=70, unique=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.RESTAURANTEMPLOYEE)
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.RESTAURANT_STAFF)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

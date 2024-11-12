@@ -14,8 +14,8 @@ import uuid
 class Role(models.TextChoices):
     RESTAURANTCUSTOMER = "RESTAURANTCUSTOMER", "RestaurantCustomer"
     ADMIN = "ADMIN", "Admin"
-    RESTAURANT = "RESTAURANT", "Restaurant"
-    RESTAURANTEMPLOYEE = "RESTAURANTEMPLOYEE", "RestaurantEmployee"
+    RESTAURANT_ADMIN = "RESTAURANT_ADMIN", "Restaurant Admin"
+    RESTAURANT_STAFF = "RESTAURANT_STAFF", "Restaurant Staff"
 
 
 class AccountManager(BaseUserManager):
@@ -99,16 +99,16 @@ class CustomUserManager(BaseUserManager):
         if not email:
             raise ValueError("The Email field must be set")
         email = self.normalize_email(email)
-        #extra_fields.setdefault("role", Role.RESTAURANTEMPLOYEE)
+        extra_fields.setdefault('is_active', True)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("role", Role.ADMIN)
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("role", Role.ADMIN)
         return self.create_user(email, password, **extra_fields)
 
 
@@ -122,7 +122,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     role = models.CharField(
-        max_length=50, choices=Role.choices, default=Role.RESTAURANTEMPLOYEE
+        max_length=50, choices=Role.choices, default=Role.RESTAURANT_STAFF
     )
 
     groups = models.ManyToManyField(
@@ -141,7 +141,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
 
