@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Role, LoginLog, VerificationToken, BlacklistedToken
+from .models import CustomUser, Role, LoginLog, VerificationToken
 #from .models import Account 
 from django.contrib.auth.admin import UserAdmin
 
@@ -41,7 +41,3 @@ class LoginLogAdmin(admin.ModelAdmin):
 @admin.register(VerificationToken)
 class VerificationTokenAdmin(admin.ModelAdmin):
     list_display = ('token', 'expires')
-    
-@admin.register(BlacklistedToken)
-class BlacklistedTokenAdmin(admin.ModelAdmin):
-    list_display = ('token', 'blacklisted_at')

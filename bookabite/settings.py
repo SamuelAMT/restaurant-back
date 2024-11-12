@@ -66,7 +66,6 @@ INSTALLED_APPS = [
     "ninja",
     "rest_framework",
     "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "api",
     "custom_auth",
@@ -233,11 +232,11 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'custom_user_id',
+    'USER_ID_CLAIM': 'user_id',
+    'BLACKLIST_AFTER_ROTATION': False,
+    'TOKEN_BLACKLIST_ENABLED': False,
 }
-
-SIMPLE_JWT.update({
-    'BLACKLIST_AFTER_ROTATION': True,
-})
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
