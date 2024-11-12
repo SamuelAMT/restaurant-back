@@ -12,7 +12,8 @@ from django.conf import settings
 #from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.shortcuts import render, redirect
 from django.contrib.auth.tokens import default_token_generator
-from .models import Account, LoginLog
+from .models import LoginLog
+#from .models import Account
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
 
