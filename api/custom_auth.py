@@ -70,7 +70,6 @@ def obtain_token(request, payload: LoginSchema):
 def api_logout(request: HttpRequest):
     auth_logout(request)
     LoginLog.objects.create(
-        account=None,
         ip_address=request.META.get("REMOTE_ADDR", ""),
         action="logout"
     )
