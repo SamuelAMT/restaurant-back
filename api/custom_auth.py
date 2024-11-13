@@ -66,11 +66,14 @@ def obtain_token(request, payload: LoginSchema):
     return 401, "Invalid credentials"
 
 # Logs out the user session and Creates a logout log entry
-@auth_router.post("/logout/", response=MessageSchema)
+@auth_router.post("/logout/", auth=JWTAuth(), response=MessageSchema)
 def api_logout(request: HttpRequest):
+    # Capture the user before logging out
+    user = request.user
     auth_logout(request)
     LoginLog.objects.create(
-        ip_address=request.META.get("REMOTE_ADDR", ""),
+        custom_user=user,
+        ip_address=request.META.get("REMOTE_ADDR", request.META.get('HTTP_X_FORWARDED_FOR', '')),
         action="logout"
     )
     return {"message": "Logged out successfully"}
@@ -130,5 +133,5 @@ def profile(request: HttpRequest):
     user = request.user
     return {
         "email": user.email,
-        "name": user.get_full_name(),
+        "first_name": user.first_name,
     }
