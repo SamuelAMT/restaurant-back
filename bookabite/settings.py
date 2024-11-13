@@ -100,6 +100,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -109,7 +110,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     #"allauth.account.middleware.AccountMiddleware",
     #"bookabite.middleware.TokenAuthenticationMiddleware",
 ]
@@ -119,6 +119,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "https://bookabite-restaurante.vercel.app",
 ]
+
+# In case of needing credentials (cookies, authorization headers, etc.)
+#CORS_ALLOW_CREDENTIALS = True
 
 INTERNAL_IPS = [
     # ...
