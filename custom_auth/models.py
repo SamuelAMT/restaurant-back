@@ -7,8 +7,9 @@ from django.contrib.auth.models import (
 )
 
 from django.db import models
-from django.utils import timezone
+from django.conf import settings
 import uuid
+from django.utils import timezone
 
 
 class Role(models.TextChoices):
@@ -183,7 +184,7 @@ class LoginLog(models.Model):
 #        Account, on_delete=models.CASCADE, null=False, default=get_default_account
 #    )
     custom_user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, null=False
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
     ip_address = models.GenericIPAddressField(default="0.0.0.0")
     user_agent = models.TextField(default="Unknown")
