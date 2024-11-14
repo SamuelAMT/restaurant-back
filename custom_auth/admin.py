@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models import CustomUser, Role, LoginLog, VerificationToken
 #from .models import Account 
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth import get_user_model
 
 #@admin.register(Account)
 #class AccountAdmin(admin.ModelAdmin):
@@ -15,22 +16,23 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
     list_display = ('email', 'first_name', 'last_name', 'role', 'is_active', 'is_staff')
-    list_filter = ('role', 'is_active', 'is_staff')
-
+    list_filter = ('role', 'is_active', 'is_staff', 'is_superuser', 'groups')
+    
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('first_name', 'last_name')}),
         ('Roles and Permissions', {'fields': ('role', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important Dates', {'fields': ('last_login',)}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'first_name', 'last_name', 'role', 'is_active', 'is_staff', 'is_superuser'),
+            'fields': ('email', 'password1', 'password2', 'first_name', 'last_name', 'role', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
     )
 
-    search_fields = ('email',)
+    search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
 
 @admin.register(LoginLog)

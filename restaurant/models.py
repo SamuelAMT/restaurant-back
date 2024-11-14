@@ -1,9 +1,10 @@
 from django.db import models
 from custom_auth.models import Role
 import uuid
+from django.conf import settings
 
 class Restaurant(models.Model):
-    restaurant_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True, db_index=True)
+    restaurant_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)
     cnpj = models.CharField(max_length=14, unique=True, db_index=True)
     name = models.CharField(max_length=100, db_index=True)
     country_code = models.CharField(max_length=3, blank=False, null=False)
@@ -16,6 +17,7 @@ class Restaurant(models.Model):
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.RESTAURANT_ADMIN)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    admin = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='restaurants')
 
     customers = models.ManyToManyField("restaurant_customer.RestaurantCustomer", related_name="restaurants")
     #accounts = models.ManyToManyField('custom_auth.Account', related_name='restaurants')

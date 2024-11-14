@@ -13,10 +13,10 @@ from django.utils import timezone
 
 
 class Role(models.TextChoices):
-    RESTAURANTCUSTOMER = "RESTAURANTCUSTOMER", "RestaurantCustomer"
-    ADMIN = "ADMIN", "Admin"
-    RESTAURANT_ADMIN = "RESTAURANT_ADMIN", "Restaurant Admin"
-    RESTAURANT_STAFF = "RESTAURANT_STAFF", "Restaurant Staff"
+    SUPERADMIN = 'SUPERADMIN', 'Super Admin'
+    RESTAURANT_ADMIN = 'RESTAURANT_ADMIN', 'Restaurant Admin'
+    RESTAURANT_SUB_ADMIN = 'RESTAURANT_SUB_ADMIN', 'Restaurant Sub Admin'
+    RESTAURANT_STAFF = 'RESTAURANT_STAFF', 'Restaurant Staff'
 
 
 #class AccountManager(BaseUserManager):
@@ -96,35 +96,35 @@ class Role(models.TextChoices):
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, email, password=None, role=Role.RESTAURANT_STAFF, **extra_fields):
         if not email:
-            raise ValueError("The Email field must be set")
+            raise ValueError("Users must have an email address")
         email = self.normalize_email(email)
-        extra_fields.setdefault('is_active', True)
-        user = self.model(email=email, **extra_fields)
+        user = self.model(email=email, role=role, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
+    def create_restaurant_admin(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        return self.create_user(email, password, role=Role.RESTAURANT_ADMIN, **extra_fields)
+
     def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("role", Role.ADMIN)
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        return self.create_user(email, password, **extra_fields)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, role=Role.SUPERADMIN, **extra_fields)
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    custom_user_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, unique=True
-    )
+    custom_user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.RESTAURANT_STAFF)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
-    is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    role = models.CharField(
-        max_length=50, choices=Role.choices, default=Role.RESTAURANT_STAFF
-    )
+    is_active = models.BooleanField(default=True)
+    
+    restaurant = models.OneToOneField('restaurant.Restaurant', on_delete=models.CASCADE)
 
     groups = models.ManyToManyField(
         Group,
