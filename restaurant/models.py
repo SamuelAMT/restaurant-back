@@ -17,7 +17,7 @@ class Restaurant(models.Model):
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.RESTAURANT_ADMIN)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    admin = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='restaurants')
+    admin = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE, related_name='restaurants')
 
     customers = models.ManyToManyField("restaurant_customer.RestaurantCustomer", related_name="restaurants")
     #accounts = models.ManyToManyField('custom_auth.Account', related_name='restaurants')

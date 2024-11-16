@@ -10,6 +10,7 @@ from django.db import models
 from django.conf import settings
 import uuid
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 class Role(models.TextChoices):
@@ -124,7 +125,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     
-    restaurant = models.OneToOneField('restaurant.Restaurant', on_delete=models.CASCADE, related_name='custom_user')
+    restaurant = models.ForeignKey('restaurant.Restaurant', on_delete=models.CASCADE, related_name='users', null=True, blank=True)
 
     groups = models.ManyToManyField(
         Group,
@@ -140,6 +141,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         help_text="Specific permissions for this user.",
         verbose_name="user permissions",
     )
+    
+    def clean(self):
+        super().clean()
+        if not self.is_superuser and self.restaurant is None:
+            raise ValidationError('Non-superusers must be associated with a restaurant.')
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['first_name', 'last_name']
