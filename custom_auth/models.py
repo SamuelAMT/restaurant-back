@@ -124,7 +124,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     
-    restaurant = models.OneToOneField('restaurant.Restaurant', on_delete=models.CASCADE)
+    restaurant = models.OneToOneField('restaurant.Restaurant', on_delete=models.CASCADE, related_name='custom_user')
 
     groups = models.ManyToManyField(
         Group,
