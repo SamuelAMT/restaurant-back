@@ -8,6 +8,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Add custom claims
         token['email'] = user.email
-        token['is_admin'] = user.is_staff  # Based on user model
+        token['is_admin'] = user.is_staff
 
         return token

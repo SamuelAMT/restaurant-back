@@ -4,6 +4,7 @@ from ninja import Router, Schema
 from typing import List
 from pydantic import EmailStr, AnyUrl
 from django.http import HttpRequest
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -25,6 +26,12 @@ class AddressSchema(Schema):
     state: str
     country: str
     complement: str = None
+    
+class AdminCreateSchema(Schema):
+    email: EmailStr
+    first_name: str
+    last_name: str
+    password: str
 
 class RestaurantCreateSchema(Schema):
     cnpj: str
@@ -37,7 +44,7 @@ class RestaurantCreateSchema(Schema):
     website: AnyUrl
     description: str
     role: str
-    admin: int
+    admin: AdminCreateSchema
     addresses: List[AddressSchema]
 
 class RestaurantSchema(Schema):
@@ -48,7 +55,11 @@ class RestaurantSchema(Schema):
     phone: str
     email: EmailStr
     email_verified: EmailStr
-    image: AnyUrl
+    image: str
+    website: str
+    description: str
+    role: str
+    admin: str
 
 class DashboardSchema(Schema):
     total_reservations: int
@@ -90,14 +101,24 @@ class ProfileSchema(Schema):
 @restaurant_router.post("/", response=RestaurantSchema)
 @transaction.atomic
 def create_restaurant(request: HttpRequest, payload: RestaurantCreateSchema):
-    # Validate and fetch the admin user
     User = get_user_model()
-    try:
-        admin_user = User.objects.get(id=payload.admin)
-    except User.DoesNotExist:
-        raise HttpError(status_code=400, message="Admin user does not exist.")
+    admin_data = payload.admin
 
-    # Create the Restaurant instance
+    admin_user = User.objects.filter(email=admin_data.email).first()
+
+    if admin_user:
+        if Restaurant.objects.filter(admin=admin_user).exists():
+            raise HttpError(status_code=400, message="Admin user is already assigned to another restaurant.")
+    else:
+        admin_user = User.objects.create_user(
+            email=admin_data.email,
+            first_name=admin_data.first_name,
+            last_name=admin_data.last_name,
+            password=admin_data.password,
+            role='RESTAURANT_ADMIN',
+            is_staff=True,
+        )
+
     restaurant = Restaurant.objects.create(
         cnpj=payload.cnpj,
         name=payload.name,
@@ -134,11 +155,10 @@ def create_restaurant(request: HttpRequest, payload: RestaurantCreateSchema):
         email=restaurant.email,
         email_verified=restaurant.email_verified,
         image=restaurant.image,
-        website=restaurant.website,
+        website=str(restaurant.website) if restaurant.website else '',
         description=restaurant.description,
         role=restaurant.role,
-        admin=restaurant.admin.id,
-
+        admin=str(admin_user.custom_user_id),
     )
 
 @restaurant_router.get("/{restaurant_id}/dashboard", response=DashboardSchema)
