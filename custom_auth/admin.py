@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 #    list_display = ('email', 'is_admin', 'is_active', 'created_at')
 #    list_filter = ('is_admin', 'is_active', 'created_at')
 #    search_fields = ('email',)
-#    ordering = ('-created_at',)
+#    ordering = ('created_at',) 
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
@@ -35,12 +35,5 @@ class CustomUserAdmin(UserAdmin):
 
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
-
-@admin.register(LoginLog)
-class LoginLogAdmin(admin.ModelAdmin):
-    list_display = ('custom_user', 'action', 'ip_address', 'timestamp')
-    list_filter = ('action', 'timestamp')
-
-@admin.register(VerificationToken)
-class VerificationTokenAdmin(admin.ModelAdmin):
-    list_display = ('token', 'expires')
+    
+    filter_horizontal = ('groups',)

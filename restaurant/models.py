@@ -2,6 +2,8 @@ from django.db import models
 from custom_auth.models import Role
 import uuid
 from django.conf import settings
+from cloudinary.models import CloudinaryField
+from django.core.exceptions import ValidationError
 
 class Restaurant(models.Model):
     restaurant_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)
@@ -11,9 +13,9 @@ class Restaurant(models.Model):
     phone = models.CharField(max_length=20)
     email = models.EmailField(max_length=70, blank=True, null=True)
     email_verified = models.EmailField(null=True, blank=True)
+    image = CloudinaryField('image', null=True, blank=True)
     website = models.URLField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    image = models.URLField(blank=True, null=True)
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.RESTAURANT_ADMIN)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -21,7 +23,7 @@ class Restaurant(models.Model):
 
     customers = models.ManyToManyField("restaurant_customer.RestaurantCustomer", related_name="restaurants")
     #accounts = models.ManyToManyField('custom_auth.Account', related_name='restaurants')
-    addresses = models.ManyToManyField('address.Address', related_name='restaurants')
+    #addresses = models.OneToOneField('address.Address',on_delete=models.CASCADE, related_name='restaurants')
     employees = models.ManyToManyField('RestaurantEmployee', related_name='restaurants')
     login_logs = models.ManyToManyField('custom_auth.LoginLog', related_name='restaurants')
 

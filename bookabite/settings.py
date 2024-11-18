@@ -15,6 +15,10 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+import cloudinary
+import helpers
+#import cloudinary.uploader
+#from cloudinary.utils import cloudinary_url
 #from urllib.parse import urlparse
 
 # Now it's values from .env are being managed by Vercel secrets
@@ -70,14 +74,17 @@ INSTALLED_APPS = [
     "api",
     "custom_auth",
     "debug_toolbar",
+    "cloudinary",
+    "cloudinary_storage",
     # add docker-credential-helpers
 ]
+
+helpers.cloudinary_init()
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     #"allauth.account.auth_backends.AuthenticationBackend",
 )
-
 
 SITE_ID = 1
 
@@ -149,7 +156,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "bookabite.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -179,7 +185,6 @@ DATABASES = {
     }
 }
 
-
 if 'ENGINE' not in DATABASES['default']:
     DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 
@@ -189,7 +194,6 @@ if 'NAME' not in DATABASES['default']:
 SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
 SESSION_COOKIE_AGE = 1209600  # Two weeks (timeout)
 SESSION_SAVE_EVERY_REQUEST = True
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -241,6 +245,8 @@ SIMPLE_JWT = {
     'TOKEN_BLACKLIST_ENABLED': False,
 }
 
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -252,13 +258,11 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Default primary key field type
