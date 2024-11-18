@@ -5,6 +5,9 @@ from typing import List
 from pydantic import EmailStr, AnyUrl
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from django.db import transaction
+from ninja.errors import HttpError
 from typing import Optional
 from address.models import Address
 from restaurant.models import Restaurant
@@ -35,9 +38,6 @@ class RestaurantCreateSchema(Schema):
     description: str
     role: str
     admin: int
-    customers: List[int]
-    employees: List[int]
-    login_logs: List[int]
     addresses: List[AddressSchema]
 
 class RestaurantSchema(Schema):
@@ -88,7 +88,16 @@ class ProfileSchema(Schema):
     address: str
 
 @restaurant_router.post("/", response=RestaurantSchema)
+@transaction.atomic
 def create_restaurant(request: HttpRequest, payload: RestaurantCreateSchema):
+    # Validate and fetch the admin user
+    User = get_user_model()
+    try:
+        admin_user = User.objects.get(id=payload.admin)
+    except User.DoesNotExist:
+        raise HttpError(status_code=400, message="Admin user does not exist.")
+
+    # Create the Restaurant instance
     restaurant = Restaurant.objects.create(
         cnpj=payload.cnpj,
         name=payload.name,
@@ -96,16 +105,12 @@ def create_restaurant(request: HttpRequest, payload: RestaurantCreateSchema):
         phone=payload.phone,
         email=payload.email,
         email_verified=payload.email_verified,
-        image=payload.image,
-        website=payload.website,
+        image=str(payload.image),
+        website=str(payload.website),
         description=payload.description,
         role=payload.role,
-        admin_id=payload.admin,
+        admin=admin_user,
     )
-
-    restaurant.customers.set(payload.customers)
-    restaurant.employees.set(payload.employees)
-    restaurant.login_logs.set(payload.login_logs)
 
     for addr in payload.addresses:
         Address.objects.create(
@@ -129,6 +134,11 @@ def create_restaurant(request: HttpRequest, payload: RestaurantCreateSchema):
         email=restaurant.email,
         email_verified=restaurant.email_verified,
         image=restaurant.image,
+        website=restaurant.website,
+        description=restaurant.description,
+        role=restaurant.role,
+        admin=restaurant.admin.id,
+
     )
 
 @restaurant_router.get("/{restaurant_id}/dashboard", response=DashboardSchema)

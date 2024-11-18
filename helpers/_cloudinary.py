@@ -2,7 +2,9 @@ import os
 import cloudinary
 from decouple import Config, RepositoryEnv # os.getenv() but using os.environ instead
 
-if os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True':
+DJANGO_DEVELOPMENT = os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True'
+
+if 'DJANGO_DEVELOPMENT':
     config = Config(repository=RepositoryEnv('.env.local'))
 else:
     config = Config()
