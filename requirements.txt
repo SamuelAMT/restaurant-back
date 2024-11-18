@@ -10,6 +10,7 @@ dj-database-url==2.3.0
 Django==5.0.9
 django-cors-headers==4.4.0
 django-debug-toolbar==4.4.2
+djago-extensions
 django-ninja==1.2.2
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1

@@ -17,12 +17,11 @@ from datetime import timedelta
 from dotenv import load_dotenv
 import cloudinary
 import helpers
-#import cloudinary.uploader
-#from cloudinary.utils import cloudinary_url
 #from urllib.parse import urlparse
 
 # Now it's values from .env are being managed by Vercel secrets
-load_dotenv('.env.local')
+if os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True':
+    load_dotenv('.env.local')
 
 # Parse database configuration from $DATABASE_URL [Old way without dj_database_url]
 
@@ -76,6 +75,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "cloudinary",
     "cloudinary_storage",
+    "django_extensions",
     # add docker-credential-helpers
 ]
 

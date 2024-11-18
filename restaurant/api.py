@@ -1,6 +1,8 @@
 # restaurant/api.py
 
 from ninja import Router, Schema
+from typing import List
+from pydantic import EmailStr, AnyUrl
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from typing import Optional
@@ -10,6 +12,43 @@ from reservation.models import Reservation
 from restaurant_customer.models import RestaurantCustomer
 
 restaurant_router = Router()
+
+class AddressSchema(Schema):
+    cep: str
+    street: str
+    number: str
+    neighborhood: str
+    city: str
+    state: str
+    country: str
+    complement: str = None
+
+class RestaurantCreateSchema(Schema):
+    cnpj: str
+    name: str
+    country_code: str
+    phone: str
+    email: EmailStr
+    email_verified: EmailStr
+    image: AnyUrl
+    website: AnyUrl
+    description: str
+    role: str
+    admin: int
+    customers: List[int]
+    employees: List[int]
+    login_logs: List[int]
+    addresses: List[AddressSchema]
+
+class RestaurantSchema(Schema):
+    restaurant_id: str
+    cnpj: str
+    name: str
+    country_code: str
+    phone: str
+    email: EmailStr
+    email_verified: EmailStr
+    image: AnyUrl
 
 class DashboardSchema(Schema):
     total_reservations: int
@@ -47,6 +86,50 @@ class ProfileSchema(Schema):
     website: str
     description: str
     address: str
+
+@restaurant_router.post("/", response=RestaurantSchema)
+def create_restaurant(request: HttpRequest, payload: RestaurantCreateSchema):
+    restaurant = Restaurant.objects.create(
+        cnpj=payload.cnpj,
+        name=payload.name,
+        country_code=payload.country_code,
+        phone=payload.phone,
+        email=payload.email,
+        email_verified=payload.email_verified,
+        image=payload.image,
+        website=payload.website,
+        description=payload.description,
+        role=payload.role,
+        admin_id=payload.admin,
+    )
+
+    restaurant.customers.set(payload.customers)
+    restaurant.employees.set(payload.employees)
+    restaurant.login_logs.set(payload.login_logs)
+
+    for addr in payload.addresses:
+        Address.objects.create(
+            restaurant=restaurant,
+            cep=addr.cep,
+            street=addr.street,
+            number=addr.number,
+            neighborhood=addr.neighborhood,
+            city=addr.city,
+            state=addr.state,
+            country=addr.country,
+            complement=addr.complement,
+        )
+
+    return RestaurantSchema(
+        restaurant_id=str(restaurant.restaurant_id),
+        cnpj=restaurant.cnpj,
+        name=restaurant.name,
+        country_code=restaurant.country_code,
+        phone=restaurant.phone,
+        email=restaurant.email,
+        email_verified=restaurant.email_verified,
+        image=restaurant.image,
+    )
 
 @restaurant_router.get("/{restaurant_id}/dashboard", response=DashboardSchema)
 def get_dashboard(request: HttpRequest, restaurant_id: str):
