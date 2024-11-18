@@ -4,5 +4,6 @@
 .env.test.local
 .env.production.local
 /staticfiles/
+*.pyc
 __pycache__/
 docker-compose.yml
