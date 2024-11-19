@@ -20,8 +20,7 @@ import helpers
 #from urllib.parse import urlparse
 
 # Now it's values from .env are being managed by Vercel secrets
-if os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True':
-    load_dotenv('.env.local')
+
 
 # Parse database configuration from $DATABASE_URL [Old way without dj_database_url]
 
@@ -39,13 +38,16 @@ if os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True':
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(dotenv_path=BASE_DIR / '.env.local')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
+
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY environment variable is not set")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.getenv("DEBUG", 0)))
