@@ -4,7 +4,7 @@ from decouple import Config, RepositoryEnv # os.getenv() but using os.environ in
 
 DJANGO_DEVELOPMENT = os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True'
 
-if 'DJANGO_DEVELOPMENT':
+if DJANGO_DEVELOPMENT:
     config = Config(repository=RepositoryEnv('.env.local'))
 else:
     config = Config()
