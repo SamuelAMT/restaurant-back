@@ -22,6 +22,7 @@ psycopg==3.2.3
 psycopg-binary==3.2.3
 pycparser==2.22
 pydantic==2.8.2
+pydantic[email]
 pydantic_core==2.20.1
 PyJWT==2.9.0
 python-dateutil==2.9.0.post0
