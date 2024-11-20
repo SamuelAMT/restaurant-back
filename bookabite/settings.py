@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+import logging
 import cloudinary
 #from urllib.parse import urlparse
 
@@ -29,7 +30,12 @@ if not SECRET_KEY:
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.getenv("DEBUG", 0)))
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
+logger.info(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
+
 
 import helpers
 
@@ -201,7 +207,13 @@ AUTH_USER_MODEL = 'custom_auth.CustomUser'
 
 # CSRF Protection
 CSRF_COOKIE_HTTPONLY = True
-CSRF_TRUSTED_ORIGINS = ["https://bookabite.com.br"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://bookabite.com.br",
+    'https://bookabite-restaurant-back.vercel.app',
+    'https://restaurant-back-git-develop-samuel-mirandas-projects.vercel.app',
+    'https://bookabite-restaurante.vercel.app',
+    'http://localhost:3000',
+    ]
 
 # Token expiration time (if needed globally)
 JWT_ACCESS_TOKEN_LIFETIME = timedelta(minutes=15)
