@@ -3,11 +3,12 @@ asgiref==3.8.1
 certifi==2024.7.4
 cffi==1.16.0
 charset-normalizer==3.3.2
-cloudinary
+cloudinary==1.41.0
 cryptography==43.0.1
 defusedxml==0.8.0rc2
 dj-database-url==2.3.0
 Django==5.0.9
+django-cloudinary-storage==0.3.0
 django-cors-headers==4.4.0
 django-debug-toolbar==4.4.2
 django-extensions
@@ -24,7 +25,7 @@ pydantic==2.8.2
 pydantic_core==2.20.1
 PyJWT==2.9.0
 python-dateutil==2.9.0.post0
-python-decouple
+python-decouple==3.8
 python-dotenv==1.0.1
 requests==2.32.3
 six==1.16.0
