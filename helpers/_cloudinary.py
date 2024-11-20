@@ -1,17 +1,9 @@
 import os
 import cloudinary
-from decouple import Config, RepositoryEnv, AutoConfig # os.getenv() but using os.environ instead
 
-DJANGO_DEVELOPMENT = os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True'
-
-if DJANGO_DEVELOPMENT:
-    config = Config(repository=RepositoryEnv('.env.local'))
-else:
-    config = AutoConfig()
-
-CLOUDINARY_CLOUD_NAME = config("CLOUDINARY_CLOUD_NAME")
-CLOUDINARY_API_KEY = config("CLOUDINARY_API_KEY")
-CLOUDINARY_API_SECRET = config("CLOUDINARY_API_SECRET")
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
 
 def cloudinary_init():
     cloudinary.config(

@@ -3,12 +3,10 @@
 
 import os
 import sys
-import dotenv
 
 
 def main():
     """Run administrative tasks."""
-    dotenv.load_dotenv(dotenv_path=".env.local")
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bookabite.settings")
     try:
         from django.core.management import execute_from_command_line
