@@ -14,7 +14,6 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-import logging
 import cloudinary
 #from urllib.parse import urlparse
 
@@ -31,10 +30,7 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.getenv("DEBUG", 0)))
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
-logger.info(f"ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 
 
 import helpers
@@ -112,7 +108,6 @@ if DEBUG:
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://localhost:8000",
     "https://bookabite-restaurante.vercel.app",
 ]
 
