@@ -11,41 +11,19 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
-#import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import cloudinary
-import helpers
 #from urllib.parse import urlparse
-
-# Now it's values from .env are being managed by Vercel secrets
-
-
-# Parse database configuration from $DATABASE_URL [Old way without dj_database_url]
-
-#database_url = os.getenv("DATABASE_URL")
-#
-#if not database_url:
-#    raise ValueError("DATABASE_URL environment variable is not set")
-#
-#tmpPostgres = urlparse(database_url)
-#
-#print(f"Parsed URL: {tmpPostgres}")
-#print(f"Path: {tmpPostgres.path}, Type: {type(tmpPostgres.path)}")
-#
-#database_name = tmpPostgres.path.lstrip('/')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(dotenv_path=BASE_DIR / '.env.local')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+DJANGO_DEVELOPMENT = os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True'
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
-
 if not SECRET_KEY:
     raise ValueError("SECRET_KEY environment variable is not set")
 
@@ -54,7 +32,8 @@ DEBUG = bool(int(os.getenv("DEBUG", 0)))
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
 
-# Application definition
+
+import helpers
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -74,12 +53,14 @@ INSTALLED_APPS = [
     "corsheaders",
     "api",
     "custom_auth",
-    "debug_toolbar",
     "cloudinary",
     "cloudinary_storage",
     "django_extensions",
     # add docker-credential-helpers
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
 
 helpers.cloudinary_init()
 
@@ -110,9 +91,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     #"django.middleware.csrf.CsrfViewMiddleware",
@@ -123,9 +103,11 @@ MIDDLEWARE = [
     #"bookabite.middleware.TokenAuthenticationMiddleware",
 ]
 
+if DEBUG:
+    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://localhost:8000",
     "https://bookabite-restaurante.vercel.app",
 ]
 
@@ -156,7 +138,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "bookabite.wsgi.application"
+ASGI_APPLICATION = "bookabite.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -220,7 +202,13 @@ AUTH_USER_MODEL = 'custom_auth.CustomUser'
 
 # CSRF Protection
 CSRF_COOKIE_HTTPONLY = True
-CSRF_TRUSTED_ORIGINS = ["https://bookabite.com.br"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://bookabite.com.br",
+    'https://bookabite-restaurant-back.vercel.app',
+    'https://restaurant-back-git-develop-samuel-mirandas-projects.vercel.app',
+    'https://bookabite-restaurante.vercel.app',
+    'http://localhost:3000',
+    ]
 
 # Token expiration time (if needed globally)
 JWT_ACCESS_TOKEN_LIFETIME = timedelta(minutes=15)
@@ -263,9 +251,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "/static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

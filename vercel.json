@@ -1,13 +1,28 @@
 {
-    "builds": [{
-        "src": "bookabite/wsgi.py",
-        "use": "@vercel/python",
-        "config": { "maxLambdaSize": "15mb", "runtime": "python3.12" }
-    }],
+    "builds": [
+        {
+            "src": "bookabite/asgi.py",
+            "use": "@vercel/python",
+            "config": { 
+                "maxLambdaSize": "15mb", 
+                "runtime": "python3.12",
+                "includeFiles": [
+                    "staticfiles/**"
+                ]
+            }
+        }
+    ],
     "routes": [
         {
+            "src": "/static/(.*)",
+            "headers": {
+                "Cache-Control": "public, max-age=31536000, immutable"
+            },
+            "dest": "/staticfiles/$1"
+        },
+        {
             "src": "/(.*)",
-            "dest": "bookabite/wsgi.py"
+            "dest": "bookabite/asgi.py"
         }
     ]
 }

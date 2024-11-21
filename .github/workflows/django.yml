@@ -10,15 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres-dev:
-        image: postgres:16.4-alpine
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER_DEV }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD_DEV }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_NAME_DEV }}
-        options: --health-cmd "pg_isready" --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -33,44 +24,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-  #  - name: Wait for PostgreSQL to be ready
-  #    run: |
-  #      echo "Waiting for PostgreSQL to be ready..."
-  #      count=0
-  #      max_retries=60
-  #      while ! pg_isready -h localhost -p 5432 &>/dev/null; do
-  #        ((count++))
-  #        echo "Waiting for PostgreSQL... attempt $count"
-  #        if [ $count -gt $max_retries ]; then
-  #          echo "PostgreSQL did not respond within $max_retries seconds."
-  #          exit 1
-  #        fi
-  #        sleep 1
-  #      done
-  #      echo "PostgreSQL is ready"
-
     - name: Set up environment variables
       run: |
         echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
-        echo "POSTGRES_ENGINE=${{ secrets.POSTGRES_ENGINE_DEV }}" >> $GITHUB_ENV
-        echo "POSTGRES_DB=${{ secrets.POSTGRES_NAME_DEV }}" >> $GITHUB_ENV
-        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER_DEV }}" >> $GITHUB_ENV
-        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD_DEV }}" >> $GITHUB_ENV
-        echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST_DEV }}" >> $GITHUB_ENV
-        echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT_DEV }}" >> $GITHUB_ENV
-        echo "GOOGLE_OAUTH_CLIENT_ID=${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}" >> $GITHUB_ENV
-        echo "GOOGLE_OAUTH_CLIENT_SECRET=${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}" >> $GITHUB_ENV
 
 #    - name: Run migrations and tests
 #      run: |
 #        python manage.py migrate
 #        python manage.py test
-
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_PAT }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-    - name: Build and push Docker image
-      run: |
-        docker build -t samuelamt/bookabite-restaurant-back-dev:latest .
-        docker tag samuelamt/bookabite-restaurant-back-dev:latest samuelamt/bookabite-restaurant-back-dev:latest
-        docker push samuelamt/bookabite-restaurant-back-dev:latest
