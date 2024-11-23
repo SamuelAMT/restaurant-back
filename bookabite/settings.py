@@ -15,7 +15,6 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import cloudinary
-#from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
