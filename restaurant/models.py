@@ -28,9 +28,8 @@ class Restaurant(models.Model):
     login_logs = models.ManyToManyField('custom_auth.LoginLog', related_name='restaurants')
 
     class Meta:
-        indexes = [
-            models.Index(fields=['restaurant_id', 'name'], name='restaurant__id_name_idx'),
-        ]
+        indexes = [models.Index(fields=['restaurant_id', 'name'], name='restaurant__id_name_idx')]
+        db_table = 'restaurant'
 
     def __str__(self):
         return self.name
