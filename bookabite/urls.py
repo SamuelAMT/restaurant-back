@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import include, path
 import debug_toolbar
 from ninja import NinjaAPI
+from .views import homepage_view
 from api.custom_auth import auth_router
 from restaurant.api import restaurant_router
 from restaurant_customer.api import restaurant_customer_router
@@ -22,6 +23,7 @@ api.add_router("/restaurant-customer/", restaurant_customer_router, tags=["Custo
 api.add_router("/reservations/", reservation_router, tags=["Reservations"])
 
 urlpatterns = [
+    path("", homepage_view, name="homepage"),
     path("admin/", admin.site.urls),
     path("custom_auth/", include("custom_auth.urls", namespace="auth")),
     path("__debug__/", include("debug_toolbar.urls")),
