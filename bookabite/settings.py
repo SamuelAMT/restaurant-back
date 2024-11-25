@@ -115,9 +115,7 @@ CORS_ALLOWED_ORIGINS = [
 #CORS_ALLOW_CREDENTIALS = True
 
 INTERNAL_IPS = [
-    # ...
     "127.0.0.1",
-    # ...
 ]
 
 ROOT_URLCONF = "bookabite.urls"
@@ -142,7 +140,6 @@ ASGI_APPLICATION = "bookabite.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
 
 DATABASES = {
     'default': {
@@ -235,9 +232,6 @@ SIMPLE_JWT = {
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
 
