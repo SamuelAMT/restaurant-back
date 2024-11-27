@@ -1,5 +1,3 @@
-# restaurant/api.py
-
 from ninja import Router, Schema
 from typing import List
 from pydantic import EmailStr, AnyUrl

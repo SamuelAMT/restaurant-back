@@ -21,8 +21,6 @@ class RestaurantVisit(models.Model):
 
 class Reservation(models.Model):
     reservation_hash = models.CharField(
-        max_length=100,
-        unique=True,
         blank=False,
         primary_key=True,
         serialize=False,
@@ -36,7 +34,18 @@ class Reservation(models.Model):
     date = models.DateField(db_index=True)
     birthday = models.DateField(null=True, blank=True)
     observation = models.TextField(max_length=250, null=True, blank=True)
-    status = models.CharField(max_length=20, default="pending")
+    
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("confirmed", "Confirmed"),
+        ("canceled", "Canceled"),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending"
+        )
+    
     created_at = models.DateTimeField(null=True, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 

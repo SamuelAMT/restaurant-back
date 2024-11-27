@@ -1,15 +1,12 @@
-from ninja import Router, Schema
-from typing import Optional
-from restaurant.models import Restaurant
-from reservation.models import Reservation
-from restaurant.api import ReservationSchema
+import uuid
 from django.shortcuts import get_object_or_404
+from django.http import HttpRequest
+from ninja import Router, Schema
+from .models import Reservation, RestaurantVisit
 
 reservation_router = Router()
 
-
-class CreateReservationSchema(Schema):
-    restaurant_id: str
+class ReservationRequestSchema(Schema):
     reserver: str
     amount_of_people: int
     amount_of_hours: int
@@ -17,28 +14,41 @@ class CreateReservationSchema(Schema):
     date: str
     email: str
     phone: str
-    birthday: Optional[str] = None
-    observation: Optional[str] = None
+    visit_id: int
 
+class ReservationResponseSchema(Schema):
+    reservation_hash: str
+    reserver: str
+    amount_of_people: int
+    amount_of_hours: int
+    time: int
+    date: str
+    email: str
+    phone: str
 
-@reservation_router.get("/")
-def get_reservations(request):
-    return {"reservations": "list of reservations"}
+@reservation_router.post("/reservation", response=ReservationResponseSchema)
+def create_reservation(request: HttpRequest, payload: ReservationRequestSchema):
+    visit = get_object_or_404(RestaurantVisit, id=payload.visit_id)
 
-
-@reservation_router.post("/reservations/", response=ReservationSchema)
-def create_reservation(request, payload: CreateReservationSchema):
-    restaurant = get_object_or_404(Restaurant, restaurant_id=payload.restaurant_id)
-    reservation = Reservation.objects.create(
+    reservation = Reservation(
         reserver=payload.reserver,
         amount_of_people=payload.amount_of_people,
         amount_of_hours=payload.amount_of_hours,
         time=payload.time,
         date=payload.date,
+        reservation_hash=str(uuid.uuid4()),
+        visit=visit,
+    )
+
+    reservation.save()
+
+    return ReservationResponseSchema(
+        reservation_hash=reservation.reservation_hash,
+        reserver=reservation.reserver,
+        amount_of_people=reservation.amount_of_people,
+        amount_of_hours=reservation.amount_of_hours,
+        time=reservation.time,
+        date=reservation.date,
         email=payload.email,
         phone=payload.phone,
-        birthday=payload.birthday,
-        observation=payload.observation,
-        visit=restaurant,
     )
-    return reservation
