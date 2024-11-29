@@ -36,14 +36,14 @@ class Reservation(models.Model):
     observation = models.TextField(max_length=250, null=True, blank=True)
     
     STATUS_CHOICES = [
-        ("pending", "Pending"),
         ("confirmed", "Confirmed"),
         ("canceled", "Canceled"),
+        ("finished", "Finished"),
     ]
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default="pending"
+        default="confirmed",
         )
     
     created_at = models.DateTimeField(null=True, default=timezone.now)
