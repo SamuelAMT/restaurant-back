@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+# Oracle Free Tier for hosting
+
 import os
 from pathlib import Path
 from datetime import timedelta

@@ -7,6 +7,7 @@ from .models import Reservation, RestaurantVisit
 reservation_router = Router()
 
 class ReservationRequestSchema(Schema):
+# Attach a reservation to a restaurant
     reserver: str
     amount_of_people: int
     amount_of_hours: int
