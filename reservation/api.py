@@ -2,7 +2,9 @@ import uuid
 from django.shortcuts import get_object_or_404
 from django.http import HttpRequest
 from ninja import Router, Schema
-from .models import Reservation, RestaurantVisit
+from typing import Optional
+from .models import Reservation
+from restaurant.models import Restaurant
 
 reservation_router = Router()
 
@@ -15,7 +17,9 @@ class ReservationRequestSchema(Schema):
     date: str
     email: str
     phone: str
-    visit_id: int
+    restaurant_id: str
+    birthday: Optional[str] = None
+    observation: Optional[str] = None
 
 class ReservationResponseSchema(Schema):
     reservation_hash: str
@@ -29,19 +33,21 @@ class ReservationResponseSchema(Schema):
 
 @reservation_router.post("/reservation", response=ReservationResponseSchema)
 def create_reservation(request: HttpRequest, payload: ReservationRequestSchema):
-    visit = get_object_or_404(RestaurantVisit, id=payload.visit_id)
+    restaurant = get_restaurant_from_request(request)
 
-    reservation = Reservation(
+    reservation = Reservation.objects.create(
+        restaurant=restaurant,
         reserver=payload.reserver,
         amount_of_people=payload.amount_of_people,
         amount_of_hours=payload.amount_of_hours,
         time=payload.time,
         date=payload.date,
+        email=payload.email,
+        phone=payload.phone,
+        birthday=payload.birthday,
+        observation=payload.observation,
         reservation_hash=str(uuid.uuid4()),
-        visit=visit,
     )
-
-    reservation.save()
 
     return ReservationResponseSchema(
         reservation_hash=reservation.reservation_hash,
@@ -50,6 +56,6 @@ def create_reservation(request: HttpRequest, payload: ReservationRequestSchema):
         amount_of_hours=reservation.amount_of_hours,
         time=reservation.time,
         date=reservation.date,
-        email=payload.email,
-        phone=payload.phone,
+        email=reservation.email,
+        phone=reservation.phone,
     )

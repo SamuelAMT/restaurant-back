@@ -1,4 +1,5 @@
 from ninja import Router, Schema
+import uuid
 from typing import List
 from pydantic import EmailStr, AnyUrl
 from django.http import HttpRequest
@@ -198,7 +199,9 @@ def list_reservations(request: HttpRequest, restaurant_id: str):
 @restaurant_router.post("/{restaurant_id}/reservations", response=ReservationSchema)
 def create_reservation(request: HttpRequest, restaurant_id: str, payload: ReservationSchema):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
+    
     reservation = Reservation.objects.create(
+        restaurant=restaurant,
         reserver=payload.reserver,
         amount_of_people=payload.amount_of_people,
         amount_of_hours=payload.amount_of_hours,
@@ -208,8 +211,9 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
         phone=payload.phone,
         birthday=payload.birthday,
         observation=payload.observation,
-        visit=restaurant.restaurantvisit_set.first(),
+        reservation_hash=str(uuid.uuid4()),
     )
+    
     return reservation
 
 @restaurant_router.get("/{restaurant_id}/customers", response=list[CustomerSchema])

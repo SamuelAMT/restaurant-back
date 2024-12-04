@@ -3,26 +3,7 @@ from django.db import IntegrityError
 import uuid
 from django.utils import timezone
 from restaurant_customer.models import RestaurantCustomer
-
-
-class RestaurantVisit(models.Model):
-    visit_id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-        db_index=True,
-    )
-    restaurant = models.ForeignKey(
-        "restaurant.Restaurant",
-        on_delete=models.CASCADE,
-        related_name="visits",
-    )
-    customer = models.ForeignKey(
-        "restaurant_customer.RestaurantCustomer",
-        on_delete=models.CASCADE,
-        related_name="visits",
-        null=True,
-    )
+from restaurant.models import Restaurant
 
 
 class Reservation(models.Model):
@@ -38,9 +19,19 @@ class Reservation(models.Model):
     amount_of_hours = models.IntegerField()
     time = models.IntegerField(db_index=True)
     date = models.DateField(db_index=True)
+    email = models.EmailField(max_length=70, unique=True, null=True)
+    country_code = models.CharField(max_length=3, null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
     observation = models.TextField(max_length=250, null=True, blank=True)
-    
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.CASCADE,
+        related_name="reservations",
+        null=False,
+        blank=False,
+    )
+
     STATUS_CHOICES = [
         ("confirmed", "Confirmed"),
         ("canceled", "Canceled"),
@@ -50,8 +41,8 @@ class Reservation(models.Model):
         max_length=20,
         choices=STATUS_CHOICES,
         default="confirmed",
-        )
-    
+    )
+
     created_at = models.DateTimeField(null=True, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -59,14 +50,9 @@ class Reservation(models.Model):
         RestaurantCustomer,
         on_delete=models.CASCADE,
         related_name="customer_reservations",
-        null=True
+        null=True,
     )
 
-    visit = models.ForeignKey(
-        RestaurantVisit,
-        on_delete=models.CASCADE,
-        related_name="reservations",
-    )
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -81,7 +67,7 @@ class Reservation(models.Model):
             super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.amount_of_people} - {self.amount_of_hours} - {self.time} - {self.date} - {self.reservation_hash} - {self.reserver}"
+        return f"{self.amount_of_people} - {self.amount_of_hours} - {self.time} - {self.date} - {self.reservation_hash} - {self.reserver} - {self.email} - {self.country_code} - {self.phone} - {self.birthday} - {self.observation} - {self.restaurant}"
 
     class Meta:
         indexes = [

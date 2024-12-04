@@ -14,3 +14,9 @@ class ReservationAdmin(admin.ModelAdmin):
         if not obj:
             return ('status',)
         return ()
+    
+    def save_model(self, request, obj, form, change):
+        if not obj.restaurant:
+            # Set the restaurant based on the admin user's associated restaurant
+            obj.restaurant = request.user.restaurant
+        super().save_model(request, obj, form, change)
