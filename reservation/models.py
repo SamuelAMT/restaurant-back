@@ -6,6 +6,12 @@ from restaurant_customer.models import RestaurantCustomer
 
 
 class RestaurantVisit(models.Model):
+    visit_id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        db_index=True,
+    )
     restaurant = models.ForeignKey(
         "restaurant.Restaurant",
         on_delete=models.CASCADE,

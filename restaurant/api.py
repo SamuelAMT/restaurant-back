@@ -162,7 +162,7 @@ def create_restaurant(request: HttpRequest, payload: RestaurantCreateSchema):
 @restaurant_router.get("/{restaurant_id}/dashboard", response=DashboardSchema)
 def get_dashboard(request: HttpRequest, restaurant_id: str):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
-    total_reservations = restaurant.reservation_set.count()
+    total_reservations = Reservation.objects.filter(visit__restaurant=restaurant).count()
     total_customers = restaurant.customers.count()
     canceled_reservations = 0
     new_customers = 0
