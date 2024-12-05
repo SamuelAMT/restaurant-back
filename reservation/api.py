@@ -17,7 +17,6 @@ class ReservationRequestSchema(Schema):
     date: str
     email: str
     phone: str
-    restaurant_id: str
     birthday: Optional[str] = None
     observation: Optional[str] = None
 
@@ -31,9 +30,9 @@ class ReservationResponseSchema(Schema):
     email: str
     phone: str
 
-@reservation_router.post("/reservation", response=ReservationResponseSchema)
-def create_reservation(request: HttpRequest, payload: ReservationRequestSchema):
-    restaurant = get_restaurant_from_request(request)
+@reservation_router.post("/restaurant/{restaurant_id}/reservation", response=ReservationResponseSchema)
+def create_reservation(request, restaurant_id: str, payload: ReservationRequestSchema):
+    restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
 
     reservation = Reservation.objects.create(
         restaurant=restaurant,
@@ -55,7 +54,7 @@ def create_reservation(request: HttpRequest, payload: ReservationRequestSchema):
         amount_of_people=reservation.amount_of_people,
         amount_of_hours=reservation.amount_of_hours,
         time=reservation.time,
-        date=reservation.date,
+        date=str(reservation.date),
         email=reservation.email,
         phone=reservation.phone,
     )
