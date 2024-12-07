@@ -3,9 +3,9 @@ from .models import Reservation
 
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('reserver', 'date', 'time', 'amount_of_people')
+    list_display = ('reserver', 'date', 'start_time', 'end_time', 'amount_of_people')
     search_fields = ('reserver', 'reservation_hash')
-    list_filter = ('date', 'time')
+    list_filter = ('date', 'start_time', 'end_time',)
     readonly_fields = ('reservation_hash', 'status')
     
     exclude = ()
