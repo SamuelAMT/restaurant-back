@@ -12,11 +12,6 @@ class RestaurantCustomer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # Adapted to avoid circular imports error
-    # Instead it's calling the model as a string to avoid it
-    reservations = models.ManyToManyField(
-        "reservation.Reservation", related_name="customers"
-    )
 
     class Meta:
         indexes = [
@@ -27,3 +22,7 @@ class RestaurantCustomer(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.lastname}"
+    
+    @property
+    def reservations(self):
+        return self.customer_reservations.all()

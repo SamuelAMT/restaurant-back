@@ -20,7 +20,7 @@ class Reservation(models.Model):
     start_time = models.TimeField(db_index=True, null=False, blank=False)
     end_time = models.TimeField(db_index=True, null=False, blank=False)
     date = models.DateField(db_index=True)
-    email = models.EmailField(max_length=70, unique=True, null=True)
+    email = models.EmailField(max_length=70, null=False, blank=False)
     country_code = models.CharField(max_length=3, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
@@ -52,6 +52,7 @@ class Reservation(models.Model):
         on_delete=models.CASCADE,
         related_name="customer_reservations",
         null=True,
+        blank=True,
     )
 
 
