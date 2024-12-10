@@ -1,5 +1,6 @@
 from ninja import Router, Schema
 import uuid
+from datetime import time
 from typing import List
 from pydantic import EmailStr, AnyUrl
 from django.http import HttpRequest
@@ -71,7 +72,8 @@ class ReservationSchema(Schema):
     reserver: str
     amount_of_people: int
     amount_of_hours: int
-    time: int
+    start_time: time
+    end_time: time
     date: str
     email: str
     phone: str
@@ -163,11 +165,13 @@ def create_restaurant(request: HttpRequest, payload: RestaurantCreateSchema):
 @restaurant_router.get("/{restaurant_id}/dashboard", response=DashboardSchema)
 def get_dashboard(request: HttpRequest, restaurant_id: str):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
-    total_reservations = Reservation.objects.filter(visit__restaurant=restaurant).count()
+    total_reservations = Reservation.objects.filter(restaurant=restaurant).count()
     total_customers = restaurant.customers.count()
-    canceled_reservations = 0
+    canceled_reservations = Reservation.objects.filter(
+        restaurant=restaurant, status="canceled").count()
     new_customers = 0
-    new_reservations = 0
+    new_reservations = Reservation.objects.filter(
+        restaurant=restaurant, status="confirmed").count() # Frontend should filter by date
 
     return DashboardSchema(
         total_reservations=total_reservations,
@@ -186,7 +190,8 @@ def list_reservations(request: HttpRequest, restaurant_id: str):
             reserver=res.reserver,
             amount_of_people=res.amount_of_people,
             amount_of_hours=res.amount_of_hours,
-            time=res.time,
+            start_time=res.start_time,
+            end_time=res.end_time,
             date=str(res.date),
             email=res.email,
             phone=res.phone,
@@ -205,7 +210,8 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
         reserver=payload.reserver,
         amount_of_people=payload.amount_of_people,
         amount_of_hours=payload.amount_of_hours,
-        time=payload.time,
+        start_time=payload.start_time,
+        end_time=payload.end_time,
         date=payload.date,
         email=payload.email,
         phone=payload.phone,

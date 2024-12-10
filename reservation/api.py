@@ -1,4 +1,5 @@
 import uuid
+from datetime import time
 from django.shortcuts import get_object_or_404
 from django.http import HttpRequest
 from ninja import Router, Schema
@@ -14,8 +15,8 @@ class ReservationRequestSchema(Schema):
     reserver: str
     amount_of_people: int
     amount_of_hours: int
-    start_time: int
-    end_time: int
+    start_time: time
+    end_time: time
     date: str
     email: str
     country_code: str
@@ -28,8 +29,8 @@ class ReservationResponseSchema(Schema):
     reserver: str
     amount_of_people: int
     amount_of_hours: int
-    start_time: int
-    end_time: int
+    start_time: time
+    end_time: time
     date: str
     email: str
     country_code: str
