@@ -167,11 +167,11 @@ def get_dashboard(request: HttpRequest, restaurant_id: str):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
     total_reservations = Reservation.objects.filter(restaurant=restaurant).count()
     total_customers = restaurant.customers.count()
-    canceled_reservations = Reservation.objects.filter(
+    canceled_reservations = Reservation.objects.filter( # Frontend should filter by date
         restaurant=restaurant, status="canceled").count()
     new_customers = 0
-    new_reservations = Reservation.objects.filter(
-        restaurant=restaurant, status="confirmed").count() # Frontend should filter by date
+    new_reservations = Reservation.objects.filter( # Frontend should filter by date
+        restaurant=restaurant, status="confirmed").count()
 
     return DashboardSchema(
         total_reservations=total_reservations,
