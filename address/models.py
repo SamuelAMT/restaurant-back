@@ -21,6 +21,7 @@ class Address(models.Model):
     class Meta:
         unique_together = (('cep', 'street', 'number', 'neighborhood', 'city', 'state', 'country'),)
         indexes = [models.Index(fields=['address_id'])]
+        db_table = 'address'
 
     def __str__(self):
         return f"{self.address_id} - {self.cep}, {self.street}, {self.number} - {self.neighborhood}, {self.city} - {self.state} - {self.country}"
