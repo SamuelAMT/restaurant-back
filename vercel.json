@@ -15,15 +15,12 @@
                     "reservation/static/**",
                     "custom_auth/static/**"
                 ]
-            },
-            "build": {
-                "env": {
-                    "DJANGO_DEVELOPMENT": "False"
-                },
-                "command": "pip install -r requirements.txt && python manage.py collectstatic --no-input"
             }
         }
     ],
+    "scripts": {
+        "build": "pip install -r requirements.txt && python manage.py collectstatic --no-input"
+    },
     "routes": [
         {
             "src": "/static/(.*)",
