@@ -3,22 +3,16 @@
         {
             "src": "bookabite/asgi.py",
             "use": "@vercel/python",
-            "config": { 
-                "maxLambdaSize": "15mb", 
+            "config": {
+                "maxLambdaSize": "15mb",
                 "runtime": "python3.12",
-                "includeFiles": [
-                    "staticfiles/**"
-                ]
+                "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput"
             }
         }
     ],
     "routes": [
         {
-            "src": "/static/(.*)",
-            "headers": {
-                "Cache-Control": "public, max-age=31536000, immutable"
-            },
-            "dest": "/staticfiles/$1"
+            "handle": "filesystem"
         },
         {
             "src": "/(.*)",
