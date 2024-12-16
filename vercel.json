@@ -3,8 +3,8 @@
         {
             "src": "bookabite/asgi.py",
             "use": "@vercel/python",
-            "config": { 
-                "maxLambdaSize": "15mb", 
+            "config": {
+                "maxLambdaSize": "15mb",
                 "runtime": "python3.12",
                 "includeFiles": [
                     "staticfiles/**",
@@ -14,13 +14,11 @@
                     "restaurant/static/**",
                     "reservation/static/**",
                     "custom_auth/static/**"
-                ]
+                ],
+                "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --no-input"
             }
         }
     ],
-    "scripts": {
-        "build": "pip install -r requirements.txt && python manage.py collectstatic --no-input"
-    },
     "routes": [
         {
             "src": "/static/(.*)",
