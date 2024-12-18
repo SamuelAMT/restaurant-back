@@ -1,5 +1,6 @@
 from ninja import Schema
 from ninja.errors import HttpError
+from pydantic import EmailStr
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
@@ -25,11 +26,11 @@ class ErrorSchema(Schema):
     detail: str
     
 class UserCreateSchema(Schema):
-    email: str
+    email: EmailStr
     password: str
 
 class LoginSchema(Schema):
-    email: str
+    email: EmailStr
     password: str
 
 class ChangePasswordSchema(Schema):
@@ -40,7 +41,7 @@ class PasswordResetSchema(Schema):
     password: str
 
 class PasswordResetRequestSchema(Schema):
-    email: str
+    email: EmailStr
 
 # Admin account registration
 #def create_account(request: HttpRequest, payload: UserCreateSchema):

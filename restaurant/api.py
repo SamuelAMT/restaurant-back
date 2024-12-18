@@ -75,7 +75,8 @@ class ReservationSchema(Schema):
     start_time: time
     end_time: time
     date: str
-    email: str
+    email: EmailStr
+    country_code: str
     phone: str
     birthday: Optional[str] = None
     observation: Optional[str] = None
@@ -84,7 +85,7 @@ class CustomerSchema(Schema):
     name: str
     lastname: str
     phone: str
-    email: str
+    email: EmailStr
     birthday: Optional[str] = None
 
 class SettingsSchema(Schema):
@@ -93,7 +94,7 @@ class SettingsSchema(Schema):
 
 class ProfileSchema(Schema):
     name: str
-    email: str
+    email: EmailStr
     phone: str
     website: str
     description: str
@@ -184,7 +185,7 @@ def get_dashboard(request: HttpRequest, restaurant_id: str):
 @restaurant_router.get("/{restaurant_id}/reservations", response=list[ReservationSchema])
 def list_reservations(request: HttpRequest, restaurant_id: str):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
-    reservations = Reservation.objects.filter(visit__restaurant=restaurant)
+    reservations = Reservation.objects.filter(restaurant=restaurant)
     return [
         ReservationSchema(
             reserver=res.reserver,
@@ -194,6 +195,7 @@ def list_reservations(request: HttpRequest, restaurant_id: str):
             end_time=res.end_time,
             date=str(res.date),
             email=res.email,
+            country_code=res.country_code,
             phone=res.phone,
             birthday=str(res.birthday) if res.birthday else None,
             observation=res.observation,
@@ -214,6 +216,7 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
         end_time=payload.end_time,
         date=payload.date,
         email=payload.email,
+        country_code=payload.country_code,
         phone=payload.phone,
         birthday=payload.birthday,
         observation=payload.observation,

@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpRequest
 from ninja import Router, Schema
 from typing import Optional
+from pydantic import EmailStr
 from .models import Reservation
 from restaurant.models import Restaurant
 from restaurant_customer.models import RestaurantCustomer
@@ -18,7 +19,7 @@ class ReservationRequestSchema(Schema):
     start_time: time
     end_time: time
     date: str
-    email: str
+    email: EmailStr
     country_code: str
     phone: str
     birthday: Optional[str] = None
@@ -32,9 +33,11 @@ class ReservationResponseSchema(Schema):
     start_time: time
     end_time: time
     date: str
-    email: str
+    email: EmailStr
     country_code: str
     phone: str
+    birthday: Optional[str] = None
+    observation: Optional[str] = None
 
 @reservation_router.post("/restaurant/{restaurant_id}/reservation", response=ReservationResponseSchema)
 def create_reservation(request, restaurant_id: str, payload: ReservationRequestSchema):

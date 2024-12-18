@@ -1,6 +1,7 @@
 from ninja import Router, Schema
 from django.contrib.auth import authenticate, logout as auth_logout
 from django.http import HttpRequest
+from pydantic import EmailStr
 from custom_auth.models import LoginLog
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -20,7 +21,7 @@ class ErrorSchema(Schema):
 
 
 class LoginSchema(Schema):
-    email: str
+    email: EmailStr
     password: str
 
 

@@ -1,5 +1,6 @@
 from ninja import Router, Schema
 from typing import Optional
+from pydantic import EmailStr
 from restaurant_customer.models import RestaurantCustomer
 
 restaurant_customer_router = Router()
@@ -7,7 +8,8 @@ restaurant_customer_router = Router()
 class CustomerSchema(Schema):
     name: str
     lastname: str
-    email: str
+    email: EmailStr
+    country_code: str
     phone: str
     birthday: Optional[str] = None
 
@@ -25,6 +27,7 @@ def create_customer(request, payload: CustomerSchema):
         name=payload.name,
         lastname=payload.lastname,
         email=payload.email,
+        country_code=payload.country_code,
         phone=payload.phone,
         birthday=payload.birthday,
     )
