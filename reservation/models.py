@@ -19,6 +19,7 @@ class Reservation(models.Model):
     amount_of_hours = models.IntegerField()
     start_time = models.TimeField(db_index=True, null=False, blank=False)
     end_time = models.TimeField(db_index=True, null=False, blank=False)
+    # TODO: Change to reservation_date in order to avoid conflicts with date field
     date = models.DateField(db_index=True)
     email = models.EmailField(max_length=70, null=False, blank=False)
     country_code = models.CharField(max_length=3, null=True, blank=True)

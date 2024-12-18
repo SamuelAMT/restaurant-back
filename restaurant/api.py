@@ -1,8 +1,8 @@
 from ninja import Router, Schema
 import uuid
-from datetime import time
+from datetime import datetime, date, time
 from typing import List
-from pydantic import EmailStr, AnyUrl
+from pydantic import EmailStr, AnyUrl, field_validator
 from django.http import HttpRequest
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
@@ -75,19 +75,42 @@ class ReservationSchema(Schema):
     amount_of_hours: int
     start_time: time
     end_time: time
-    date: str
+    date: date
     email: EmailStr
     country_code: str
     phone: str
-    birthday: Optional[str] = None
+    birthday: Optional[date] = None
     observation: Optional[str] = None
+    
+    @field_validator('start_time', 'end_time', mode='before')
+    def parse_time(cls, value):
+        if isinstance(value, time):
+            return value
+        return datetime.strptime(value, '%H:%M').time()
+
+
+    @field_validator('date', mode='before')
+    def parse_date(cls, value):
+        if isinstance(value, date):
+            return value
+        return datetime.strptime(value, '%d-%m-%Y').date()
+    
+    
+    @field_validator('birthday', mode='before')
+    def parse_birthday(cls, value):
+        if not value:
+            return None
+        if isinstance(value, date):
+            return value
+        return datetime.strptime(value, '%d-%m-%Y').date()
+    
 
 class CustomerSchema(Schema):
     name: str
     lastname: str
     phone: str
     email: EmailStr
-    birthday: Optional[str] = None
+    birthday: Optional[date] = None
 
 class SettingsSchema(Schema):
     setting_key: str
@@ -100,6 +123,7 @@ class ProfileSchema(Schema):
     website: str
     description: str
     address: str
+
 
 @restaurant_router.post("/", response=RestaurantSchema)
 @transaction.atomic

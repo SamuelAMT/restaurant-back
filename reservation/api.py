@@ -1,10 +1,10 @@
 import uuid
-from datetime import time
+from datetime import datetime, date, time
 from django.shortcuts import get_object_or_404
 from django.http import HttpRequest
 from ninja import Router, Schema
 from typing import Optional
-from pydantic import EmailStr
+from pydantic import EmailStr, field_validator
 from .models import Reservation
 from restaurant.models import Restaurant
 from restaurant_customer.models import RestaurantCustomer
@@ -18,12 +18,36 @@ class ReservationRequestSchema(Schema):
     amount_of_hours: int
     start_time: time
     end_time: time
-    date: str
+    date: date
     email: EmailStr
     country_code: str
     phone: str
-    birthday: Optional[str] = None
+    birthday: Optional[date] = None
     observation: Optional[str] = None
+    
+    
+    @field_validator('start_time', 'end_time', mode='before')
+    def parse_time(cls, value):
+        if isinstance(value, time):
+            return value
+        return datetime.strptime(value, '%H:%M').time()
+
+
+    @field_validator('date', mode='before')
+    def parse_date(cls, value):
+        if isinstance(value, date):
+            return value
+        return datetime.strptime(value, '%d-%m-%Y').date()
+    
+    
+    @field_validator('birthday', mode='before')
+    def parse_birthday(cls, value):
+        if not value:
+            return None
+        if isinstance(value, date):
+            return value
+        return datetime.strptime(value, '%d-%m-%Y').date()
+
 
 class ReservationResponseSchema(Schema):
     reservation_hash: str
@@ -32,12 +56,36 @@ class ReservationResponseSchema(Schema):
     amount_of_hours: int
     start_time: time
     end_time: time
-    date: str
+    date: date
     email: EmailStr
     country_code: str
     phone: str
-    birthday: Optional[str] = None
+    birthday: Optional[date] = None
     observation: Optional[str] = None
+
+    
+    @field_validator('start_time', 'end_time', mode='before')
+    def parse_time(cls, value):
+        if isinstance(value, time):
+            return value
+        return datetime.strptime(value, '%H:%M').time()
+
+
+    @field_validator('date', mode='before')
+    def parse_date(cls, value):
+        if isinstance(value, date):
+            return value
+        return datetime.strptime(value, '%d-%m-%Y').date()
+    
+    
+    @field_validator('birthday', mode='before')
+    def parse_birthday(cls, value):
+        if not value:
+            return None
+        if isinstance(value, date):
+            return value
+        return datetime.strptime(value, '%d-%m-%Y').date()
+
 
 @reservation_router.post("/restaurant/{restaurant_id}/reservation", response=ReservationResponseSchema)
 def create_reservation(request, restaurant_id: str, payload: ReservationRequestSchema):
@@ -67,7 +115,6 @@ def create_reservation(request, restaurant_id: str, payload: ReservationRequestS
         phone=payload.phone,
         birthday=payload.birthday,
         observation=payload.observation,
-        reservation_hash=str(uuid.uuid4()),
     )
 
     return ReservationResponseSchema(
@@ -77,8 +124,10 @@ def create_reservation(request, restaurant_id: str, payload: ReservationRequestS
         amount_of_hours=reservation.amount_of_hours,
         start_time=reservation.start_time,
         end_time=payload.end_time,
-        date=str(reservation.date),
+        date=(reservation.date),
         email=reservation.email,
         country_code=reservation.country_code,
         phone=reservation.phone,
+        birthday=reservation.birthday,
+        observation=reservation.observation,
     )

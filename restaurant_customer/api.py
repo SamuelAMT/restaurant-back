@@ -1,4 +1,5 @@
 from ninja import Router, Schema
+from datetime import date
 from typing import Optional
 from pydantic import EmailStr
 from restaurant_customer.models import RestaurantCustomer
@@ -11,7 +12,7 @@ class CustomerSchema(Schema):
     email: EmailStr
     country_code: str
     phone: str
-    birthday: Optional[str] = None
+    birthday: Optional[date] = None
 
 @restaurant_customer_router.get("/{customer_id}", response=CustomerSchema)
 def get_customer(request, customer_id: str):
