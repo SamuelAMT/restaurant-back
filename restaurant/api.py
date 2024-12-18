@@ -69,6 +69,7 @@ class DashboardSchema(Schema):
     canceled_reservations: int
 
 class ReservationSchema(Schema):
+    reservation_hash: str
     reserver: str
     amount_of_people: int
     amount_of_hours: int
@@ -188,16 +189,17 @@ def list_reservations(request: HttpRequest, restaurant_id: str):
     reservations = Reservation.objects.filter(restaurant=restaurant)
     return [
         ReservationSchema(
+            reservation_hash=res.reservation_hash,
             reserver=res.reserver,
             amount_of_people=res.amount_of_people,
             amount_of_hours=res.amount_of_hours,
-            start_time=res.start_time,
-            end_time=res.end_time,
-            date=str(res.date),
+            start_time=res.start_time.strftime("%H:%M"),
+            end_time=res.end_time.strftime("%H:%M"),
+            date=res.date.strftime("%d-%m-%Y"),
             email=res.email,
             country_code=res.country_code,
             phone=res.phone,
-            birthday=str(res.birthday) if res.birthday else None,
+            birthday=res.birthday.strftime("%d-%m-%Y") if res.birthday else None,
             observation=res.observation,
         )
         for res in reservations
@@ -209,18 +211,18 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
     
     reservation = Reservation.objects.create(
         restaurant=restaurant,
+        reservation_hash=str(uuid.uuid4()),
         reserver=payload.reserver,
         amount_of_people=payload.amount_of_people,
         amount_of_hours=payload.amount_of_hours,
-        start_time=payload.start_time,
-        end_time=payload.end_time,
+        start_time=payload.start_time.strftime("%H:%M"),
+        end_time=payload.end_time.strftime("%H:%M"),
         date=payload.date,
         email=payload.email,
         country_code=payload.country_code,
         phone=payload.phone,
         birthday=payload.birthday,
         observation=payload.observation,
-        reservation_hash=str(uuid.uuid4()),
     )
     
     return reservation
