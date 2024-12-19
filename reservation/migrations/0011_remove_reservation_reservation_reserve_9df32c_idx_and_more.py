@@ -32,6 +32,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='reservation',
-            index=models.Index(fields=['reserver', 'start_time', 'end_time', 'date', 'reservation_hash'], name='reservation_reserve_9df32c_idx'),
+            index=models.Index(fields=['reserver', 'start_time', 'end_time', 'reservation_date', 'reservation_hash'], name='reservation_reserve_9df32c_idx'),
         ),
     ]

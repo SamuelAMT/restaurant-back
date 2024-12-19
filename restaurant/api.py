@@ -75,7 +75,7 @@ class ReservationSchema(Schema):
     amount_of_hours: int
     start_time: time
     end_time: time
-    date: date
+    reservation_date: date
     email: EmailStr
     country_code: str
     phone: str
@@ -89,7 +89,7 @@ class ReservationSchema(Schema):
         return datetime.strptime(value, '%H:%M').time()
 
 
-    @field_validator('date', mode='before')
+    @field_validator('reservation_date', mode='before')
     def parse_date(cls, value):
         if isinstance(value, date):
             return value
@@ -219,7 +219,7 @@ def list_reservations(request: HttpRequest, restaurant_id: str):
             amount_of_hours=res.amount_of_hours,
             start_time=res.start_time.strftime("%H:%M"),
             end_time=res.end_time.strftime("%H:%M"),
-            date=res.date.strftime("%d-%m-%Y"),
+            reservation_date=res.reservation_date.strftime("%d-%m-%Y"),
             email=res.email,
             country_code=res.country_code,
             phone=res.phone,
@@ -241,7 +241,7 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
         amount_of_hours=payload.amount_of_hours,
         start_time=payload.start_time.strftime("%H:%M"),
         end_time=payload.end_time.strftime("%H:%M"),
-        date=payload.date,
+        reservation_date=payload.reservation_date,
         email=payload.email,
         country_code=payload.country_code,
         phone=payload.phone,

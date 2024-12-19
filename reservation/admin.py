@@ -10,10 +10,10 @@ class ReservationAdmin(admin.ModelAdmin):
 
     customer_email.short_description = "Customer Email"
 
-    list_display = ("reserver", "date", "start_time", "end_time", "amount_of_people")
+    list_display = ("reserver", "reservation_date", "start_time", "end_time", "amount_of_people")
     search_fields = ("reserver", "reservation_hash", "email")
     list_filter = (
-        "date",
+        "reservation_date",
         "start_time",
         "end_time",
     )
