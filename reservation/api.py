@@ -11,8 +11,31 @@ from restaurant_customer.models import RestaurantCustomer
 
 reservation_router = Router()
 
-class ReservationRequestSchema(Schema):
-# Attach a reservation to a restaurant
+class ReservationResponseSchema(Schema):
+    reservation_hash: str
+    reserver: str
+    amount_of_people: int
+    amount_of_hours: int
+    start_time: time
+    end_time: time
+    reservation_date: date
+    email: EmailStr
+    country_code: str
+    phone: str
+    birthday: Optional[date] = None
+    observation: Optional[str] = None
+
+    
+    @field_serializer('start_time', 'end_time')
+    def serialize_time(self, value):
+        return value.strftime('%H:%M')
+
+
+    @field_serializer('reservation_date', 'birthday')
+    def serialize_date(self, value):
+        return value.strftime('%d-%m-%Y') if value else None
+
+class ReservationCreateSchema(Schema):
     reserver: str
     amount_of_people: int
     amount_of_hours: int
@@ -49,33 +72,8 @@ class ReservationRequestSchema(Schema):
         return datetime.strptime(value, '%d-%m-%Y').date()
 
 
-class ReservationResponseSchema(Schema):
-    reservation_hash: str
-    reserver: str
-    amount_of_people: int
-    amount_of_hours: int
-    start_time: time
-    end_time: time
-    reservation_date: date
-    email: EmailStr
-    country_code: str
-    phone: str
-    birthday: Optional[date] = None
-    observation: Optional[str] = None
-
-    
-    @field_serializer('start_time', 'end_time')
-    def serialize_time(self, value):
-        return value.strftime('%H:%M')
-
-
-    @field_serializer('reservation_date', 'birthday')
-    def serialize_date(self, value):
-        return value.strftime('%d-%m-%Y') if value else None
-
-
 @reservation_router.post("/restaurant/{restaurant_id}/reservation", response=ReservationResponseSchema)
-def create_reservation(request, restaurant_id: str, payload: ReservationRequestSchema):
+def create_reservation(request, restaurant_id: str, payload: ReservationCreateSchema):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
     
     customer, created = RestaurantCustomer.objects.get_or_create(
@@ -104,7 +102,7 @@ def create_reservation(request, restaurant_id: str, payload: ReservationRequestS
         observation=payload.observation,
     )
 
-    return ReservationResponseSchema(
+    return ReservationCreateSchema(
         reservation_hash=reservation.reservation_hash,
         reserver=reservation.reserver,
         amount_of_people=reservation.amount_of_people,

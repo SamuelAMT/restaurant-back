@@ -68,7 +68,7 @@ class DashboardSchema(Schema):
     total_customers: int
     canceled_reservations: int
 
-class ReservationSchema(Schema):
+class ReservationResponsechema(Schema):
     reservation_hash: str
     reserver: str
     amount_of_people: int
@@ -81,6 +81,20 @@ class ReservationSchema(Schema):
     phone: str
     birthday: Optional[date] = None
     observation: Optional[str] = None
+
+class ReservationCreateSchema(Schema):
+    reserver: str
+    amount_of_people: int
+    amount_of_hours: int
+    start_time: time
+    end_time: time
+    reservation_date: date
+    email: EmailStr
+    country_code: str
+    phone: str
+    birthday: Optional[date] = None
+    observation: Optional[str] = None
+    
     
     @field_validator('start_time', 'end_time', mode='before')
     def parse_time(cls, value):
@@ -207,12 +221,12 @@ def get_dashboard(request: HttpRequest, restaurant_id: str):
         canceled_reservations=canceled_reservations,
     )
 
-@restaurant_router.get("/{restaurant_id}/reservations", response=list[ReservationSchema])
+@restaurant_router.get("/{restaurant_id}/reservations", response=list[ReservationCreateSchema])
 def list_reservations(request: HttpRequest, restaurant_id: str):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
     reservations = Reservation.objects.filter(restaurant=restaurant)
     return [
-        ReservationSchema(
+        ReservationCreateSchema(
             reservation_hash=res.reservation_hash,
             reserver=res.reserver,
             amount_of_people=res.amount_of_people,
@@ -229,13 +243,12 @@ def list_reservations(request: HttpRequest, restaurant_id: str):
         for res in reservations
     ]
 
-@restaurant_router.post("/{restaurant_id}/reservations", response=ReservationSchema)
-def create_reservation(request: HttpRequest, restaurant_id: str, payload: ReservationSchema):
+@restaurant_router.post("/{restaurant_id}/reservations", response=ReservationResponsechema)
+def create_reservation(request: HttpRequest, restaurant_id: str, payload: ReservationResponsechema):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
     
     reservation = Reservation.objects.create(
         restaurant=restaurant,
-        reservation_hash=str(uuid.uuid4()),
         reserver=payload.reserver,
         amount_of_people=payload.amount_of_people,
         amount_of_hours=payload.amount_of_hours,
@@ -249,7 +262,19 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
         observation=payload.observation,
     )
     
-    return reservation
+    return ReservationCreateSchema(
+        reserver=reservation.reserver,
+        amount_of_people=reservation.amount_of_people,
+        amount_of_hours=reservation.amount_of_hours,
+        start_time=reservation.start_time,
+        end_time=payload.end_time,
+        reservation_date=(reservation.reservation_date),
+        email=reservation.email,
+        country_code=reservation.country_code,
+        phone=reservation.phone,
+        birthday=reservation.birthday,
+        observation=reservation.observation,
+    )
 
 @restaurant_router.get("/{restaurant_id}/customers", response=list[CustomerSchema])
 def list_customers(request: HttpRequest, restaurant_id: str):
