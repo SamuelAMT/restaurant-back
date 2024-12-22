@@ -221,12 +221,12 @@ def get_dashboard(request: HttpRequest, restaurant_id: str):
         canceled_reservations=canceled_reservations,
     )
 
-@restaurant_router.get("/{restaurant_id}/reservations", response=list[ReservationCreateSchema])
+@restaurant_router.get("/{restaurant_id}/reservations", response=list[ReservationResponsechema])
 def list_reservations(request: HttpRequest, restaurant_id: str):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
     reservations = Reservation.objects.filter(restaurant=restaurant)
     return [
-        ReservationCreateSchema(
+        ReservationResponsechema(
             reservation_hash=res.reservation_hash,
             reserver=res.reserver,
             amount_of_people=res.amount_of_people,
@@ -244,7 +244,7 @@ def list_reservations(request: HttpRequest, restaurant_id: str):
     ]
 
 @restaurant_router.post("/{restaurant_id}/reservations", response=ReservationResponsechema)
-def create_reservation(request: HttpRequest, restaurant_id: str, payload: ReservationResponsechema):
+def create_reservation(request: HttpRequest, restaurant_id: str, payload: ReservationCreateSchema):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
     
     reservation = Reservation.objects.create(
@@ -262,7 +262,8 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
         observation=payload.observation,
     )
     
-    return ReservationCreateSchema(
+    return ReservationResponsechema(
+        reservation_hash=reservation.reservation_hash,
         reserver=reservation.reserver,
         amount_of_people=reservation.amount_of_people,
         amount_of_hours=reservation.amount_of_hours,
