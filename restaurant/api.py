@@ -226,6 +226,7 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
     
     reservation = Reservation.objects.create(
         restaurant=restaurant,
+        reservation_hash=str(uuid.uuid4()),
         reserver=payload.reserver,
         amount_of_people=payload.amount_of_people,
         amount_of_hours=payload.amount_of_hours,
