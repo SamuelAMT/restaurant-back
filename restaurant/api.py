@@ -2,7 +2,7 @@ from ninja import Router, Schema
 import uuid
 from datetime import datetime, date, time
 from typing import List
-from pydantic import EmailStr, AnyUrl, field_validator
+from pydantic import EmailStr, AnyUrl
 from django.http import HttpRequest
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
@@ -94,30 +94,7 @@ class ReservationCreateSchema(Schema):
     phone: str
     birthday: Optional[date] = None
     observation: Optional[str] = None
-    
-    
-    @field_validator('start_time', 'end_time', mode='before')
-    def parse_time(cls, value):
-        if isinstance(value, time):
-            return value
-        return datetime.strptime(value, '%H:%M').time()
 
-
-    @field_validator('reservation_date', mode='before')
-    def parse_date(cls, value):
-        if isinstance(value, date):
-            return value
-        return datetime.strptime(value, '%d-%m-%Y').date()
-    
-    
-    @field_validator('birthday', mode='before')
-    def parse_birthday(cls, value):
-        if not value:
-            return None
-        if isinstance(value, date):
-            return value
-        return datetime.strptime(value, '%d-%m-%Y').date()
-    
 
 class CustomerSchema(Schema):
     name: str
@@ -231,13 +208,13 @@ def list_reservations(request: HttpRequest, restaurant_id: str):
             reserver=res.reserver,
             amount_of_people=res.amount_of_people,
             amount_of_hours=res.amount_of_hours,
-            start_time=res.start_time.strftime("%H:%M"),
-            end_time=res.end_time.strftime("%H:%M"),
-            reservation_date=res.reservation_date.strftime("%d-%m-%Y"),
+            start_time=res.start_time,
+            end_time=res.end_time,
+            reservation_date=res.reservation_date,
             email=res.email,
             country_code=res.country_code,
             phone=res.phone,
-            birthday=res.birthday.strftime("%d-%m-%Y") if res.birthday else None,
+            birthday=res.birthday,
             observation=res.observation,
         )
         for res in reservations
@@ -252,8 +229,8 @@ def create_reservation(request: HttpRequest, restaurant_id: str, payload: Reserv
         reserver=payload.reserver,
         amount_of_people=payload.amount_of_people,
         amount_of_hours=payload.amount_of_hours,
-        start_time=payload.start_time.strftime("%H:%M"),
-        end_time=payload.end_time.strftime("%H:%M"),
+        start_time=payload.start_time,
+        end_time=payload.end_time,
         reservation_date=payload.reservation_date,
         email=payload.email,
         country_code=payload.country_code,

@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpRequest
 from ninja import Router, Schema
 from typing import Optional
-from pydantic import EmailStr, field_validator, field_serializer
+from pydantic import EmailStr
 from .models import Reservation
 from restaurant.models import Restaurant
 from restaurant_customer.models import RestaurantCustomer
@@ -25,16 +25,6 @@ class ReservationResponseSchema(Schema):
     birthday: Optional[date] = None
     observation: Optional[str] = None
 
-    
-    @field_serializer('start_time', 'end_time')
-    def serialize_time(self, value):
-        return value.strftime('%H:%M')
-
-
-    @field_serializer('reservation_date', 'birthday')
-    def serialize_date(self, value):
-        return value.strftime('%d-%m-%Y') if value else None
-
 class ReservationCreateSchema(Schema):
     reserver: str
     amount_of_people: int
@@ -47,29 +37,6 @@ class ReservationCreateSchema(Schema):
     phone: str
     birthday: Optional[date] = None
     observation: Optional[str] = None
-    
-    
-    @field_validator('start_time', 'end_time', mode='before')
-    def parse_time(cls, value):
-        if isinstance(value, time):
-            return value
-        return datetime.strptime(value, '%H:%M').time()
-
-
-    @field_validator('reservation_date', mode='before')
-    def parse_date(cls, value):
-        if isinstance(value, date):
-            return value
-        return datetime.strptime(value, '%d-%m-%Y').date()
-    
-    
-    @field_validator('birthday', mode='before')
-    def parse_birthday(cls, value):
-        if not value:
-            return None
-        if isinstance(value, date):
-            return value
-        return datetime.strptime(value, '%d-%m-%Y').date()
 
 
 @reservation_router.post("/restaurant/{restaurant_id}/reservation", response=ReservationResponseSchema)
