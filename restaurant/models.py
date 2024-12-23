@@ -46,5 +46,8 @@ class RestaurantEmployee(models.Model):
 
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='staff')
 
+    class Meta:
+        db_table = 'restaurant_employee'
+
     def __str__(self):
         return self.name or self.email

@@ -151,6 +151,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
+    
+    class Meta:
+        indexes = [models.Index(fields=['custom_user_id', 'email'], name='custom_user__id_email_idx')]
+        db_table = 'custom_user'
 
     def __str__(self):
         return self.email
@@ -167,6 +171,7 @@ class VerificationToken(models.Model):
         indexes = [
             models.Index(fields=["token"], name="token_idx"),
         ]
+        db_table = "verification_token"
         verbose_name = "Verification Token"
         verbose_name_plural = "Verification Tokens"
 
@@ -196,6 +201,9 @@ class LoginLog(models.Model):
     user_agent = models.TextField(default="Unknown")
     action = models.CharField(max_length=50, default="login")
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = "login_log"
 
     def __str__(self):
         return f"{self.action.capitalize()} log for {self.custom_user.email} on {self.timestamp}"

@@ -19,6 +19,7 @@ class RestaurantCustomer(models.Model):
                 fields=["name", "lastname", "phone"], name="restaurant__name_78fb79_idx"
             )
         ]
+        db_table = "restaurant_customer"
 
     def __str__(self):
         return f"{self.name} {self.lastname}"

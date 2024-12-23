@@ -78,3 +78,4 @@ class Reservation(models.Model):
                 name="reservation_reserve_9df32c_idx",
             )
         ]
+        db_table = 'reservation'
