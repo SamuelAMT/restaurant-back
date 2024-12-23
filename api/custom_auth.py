@@ -36,18 +36,42 @@ def register(request, payload):
     return create_user(request, payload) """
 
 # Authenticate user and provide JWT tokens
-@auth_router.post("/login/", response={200: TokenSchema, 401: ErrorSchema})
+@auth_router.post("/login/", response={200: dict, 401: ErrorSchema})
 def login(request, payload: LoginSchema):
     email = payload.email
     password = payload.password
     user = authenticate(request, username=email, password=password)
     if user is not None:
         refresh = RefreshToken.for_user(user)
+        
+        # Fetch the associated restaurant for the user
+        restaurant = getattr(user, 'restaurants', None)
+        restaurant_data = None
+        
+        if restaurant:
+            restaurant_data = {
+                "restaurant_id": str(restaurant.restaurant_id),
+                "cnpj": restaurant.cnpj,
+                "name": restaurant.name,
+                "country_code": restaurant.country_code,
+                "phone": restaurant.phone,
+                "email": restaurant.email,
+                "email_verified": restaurant.email_verified,
+                "image": restaurant.image.url if restaurant.image else None,
+                "website": restaurant.website,
+                "description": restaurant.description,
+                "created_at": restaurant.created_at,
+                "updated_at": restaurant.updated_at,
+                "customers": [str(customer.customer_id) for customer in restaurant.customers.all()],
+                "employees": [str(employee.restaurant_employee_id) for employee in restaurant.employees.all()],
+            }
+
         return {
             "access": str(refresh.access_token),
             "refresh": str(refresh),
             "email": user.email,
             "is_admin": user.is_staff,
+            "restaurant": restaurant_data,
         }
     else:
         return 401, {"detail": "Invalid credentials"}
@@ -129,10 +153,38 @@ def change_password(request, payload):
 """
 
 # Protected profile endpoint that returns user information.
-@auth_router.get("/profile/", auth=JWTAuth(), response={200: Schema, 401: ErrorSchema})
+@auth_router.get("/profile/", auth=JWTAuth(), response={200: dict, 401: ErrorSchema})
 def profile(request: HttpRequest):
     user = request.user
+
+    if not user.is_authenticated:
+        return 401, {"detail": "Unauthorized"}
+
+    # Fetch the associated restaurant for the user
+    restaurant = getattr(user, 'restaurants', None)
+    restaurant_data = None
+
+    if restaurant:
+        restaurant_data = {
+            "restaurant_id": str(restaurant.restaurant_id),
+            "cnpj": restaurant.cnpj,
+            "name": restaurant.name,
+            "country_code": restaurant.country_code,
+            "phone": restaurant.phone,
+            "email": restaurant.email,
+            "email_verified": restaurant.email_verified,
+            "image": restaurant.image.url if restaurant.image else None,
+            "website": restaurant.website,
+            "description": restaurant.description,
+            "created_at": restaurant.created_at,
+            "updated_at": restaurant.updated_at,
+            "customers": [str(customer.customer_id) for customer in restaurant.customers.all()],
+            "employees": [str(employee.restaurant_employee_id) for employee in restaurant.employees.all()],
+        }
+
     return {
         "email": user.email,
         "first_name": user.first_name,
+        "is_admin": user.is_staff,
+        "restaurant": restaurant_data,
     }
