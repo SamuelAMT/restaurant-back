@@ -55,7 +55,6 @@ class Reservation(models.Model):
         blank=True,
     )
 
-
     def save(self, *args, **kwargs):
         if not self.pk:
             is_unique = False
@@ -74,8 +73,14 @@ class Reservation(models.Model):
     class Meta:
         indexes = [
             models.Index(
-                fields=["reserver", "start_time", "end_time", "reservation_date", "reservation_hash"],
+                fields=[
+                    "reserver",
+                    "start_time",
+                    "end_time",
+                    "reservation_date",
+                    "reservation_hash",
+                ],
                 name="reservation_reserve_9df32c_idx",
             )
         ]
-        db_table = 'reservation'
+        db_table = "reservation"

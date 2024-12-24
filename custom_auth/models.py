@@ -124,6 +124,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(null=False, default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
     
     restaurant = models.ForeignKey('restaurant.Restaurant', on_delete=models.CASCADE, related_name='users', null=True, blank=True)
 
