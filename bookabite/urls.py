@@ -2,8 +2,7 @@ from django.contrib import admin
 from django.urls import include, path
 from ninja import NinjaAPI
 from .views import homepage_view, err_404_view
-from api.auth.admin import admin_auth_router
-from api.auth.user import user_auth_router
+from api.auth.routers import admin_auth_router, user_auth_router
 from address.api import address_router
 from restaurant.api import restaurant_router
 from restaurant_customer.api import restaurant_customer_router
