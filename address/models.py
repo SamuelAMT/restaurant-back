@@ -1,17 +1,24 @@
 from django.db import models
+import uuid
 from django.utils import timezone
 from django.core.validators import RegexValidator
 
+
 class Address(models.Model):
-    address_id = models.AutoField(primary_key=True, db_index=True)
+    address_id = models.CharField(
+        blank=False,
+        primary_key=True,
+        serialize=False,
+        default=uuid.uuid4,
+        db_index=True,
+    )
     cep = models.CharField(
         max_length=9,
         validators=[
             RegexValidator(
-                regex=r'^\d{5}-?\d{3}$',
-                message='CEP must be in the format 00000-000'
+                regex=r"^\d{5}-?\d{3}$", message="CEP must be in the format 00000-000"
             )
-        ]
+        ],
     )
     street = models.CharField(max_length=100)
     number = models.CharField(max_length=10)
@@ -40,7 +47,7 @@ class Address(models.Model):
             models.Index(fields=["city", "state"]),
         ]
         db_table = "address"
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
         return f"{self.street}, {self.number} - {self.neighborhood}, {self.city}/{self.state}"
@@ -48,4 +55,4 @@ class Address(models.Model):
     def clean(self):
         """Clean and format CEP"""
         if self.cep:
-            self.cep = self.cep.replace('-', '')
+            self.cep = self.cep.replace("-", "")
