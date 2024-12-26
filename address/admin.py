@@ -22,7 +22,7 @@ class AddressAdmin(admin.ModelAdmin):
         'street', 
         'city', 
         'state',
-        'restaurant__name',  # Allow searching by restaurant name
+        'restaurant__name',
         'address_id'
     )
     
