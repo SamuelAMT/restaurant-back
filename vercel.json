@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
       {
-        "src": "bookabite/wsgi.py",
+        "src": "bookabite/asgi.py",
         "use": "@vercel/python"
       },
       {
@@ -17,7 +17,7 @@
       },
       {
         "src": "/(.*)",
-        "dest": "bookabite/wsgi.py"
+        "dest": "bookabite/asgi.py"
       }
     ]
   }
