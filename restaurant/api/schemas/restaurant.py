@@ -1,19 +1,21 @@
 from ninja import Schema
+from .schedule import WorkingHoursSchema, BlockedHoursSchema
 from typing import List, Optional
 from datetime import datetime, time
 from uuid import UUID
 from pydantic import EmailStr, AnyUrl
 
-class WorkingHoursSchema(Schema):
-    day_of_week: int
-    opening_time: time
-    closing_time: time
-    is_closed: bool = False
 
-class BlockedHoursSchema(Schema):
-    start_datetime: datetime
-    end_datetime: datetime
-    reason: Optional[str] = None
+class AddressSchema(Schema):
+    cep: str
+    street: str
+    number: str
+    neighborhood: str
+    city: str
+    state: str
+    country: str
+    complement: str = None
+
 
 class RestaurantUnitSchema(Schema):
     unit_id: UUID
@@ -21,6 +23,7 @@ class RestaurantUnitSchema(Schema):
     is_main_unit: bool
     working_hours: List[WorkingHoursSchema]
     blocked_hours: List[BlockedHoursSchema]
+
 
 class RestaurantCreateSchema(Schema):
     name: str
@@ -33,6 +36,8 @@ class RestaurantCreateSchema(Schema):
     website: Optional[AnyUrl] = None
     description: Optional[str] = None
     image: Optional[AnyUrl] = None
+    addresses: List[AddressSchema]
+
 
 class RestaurantResponseSchema(Schema):
     restaurant_id: UUID

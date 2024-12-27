@@ -1,6 +1,6 @@
 from ninja import Schema, ModelSchema
 from datetime import date, time
-from typing import Optional
+from typing import List, Optional
 from pydantic import EmailStr
 from ..models import Reservation
 
@@ -23,3 +23,15 @@ class ReservationResponseSchema(ModelSchema):
                        'amount_of_hours', 'start_time', 'end_time', 
                        'reservation_date', 'email', 'country_code', 'phone', 
                        'birthday', 'observation', 'status']
+        
+class PaginationSchema(Schema):
+    count: int
+    next_page: Optional[int]
+    previous_page: Optional[int]
+    results: List[dict]
+
+class PaginatedReservationResponse(Schema):
+    count: int
+    next_page: Optional[int]
+    previous_page: Optional[int]
+    results: List[ReservationResponseSchema]

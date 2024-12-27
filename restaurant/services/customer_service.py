@@ -12,7 +12,7 @@ class CustomerService:
         restaurant.customers.add(customer)
         
         return {
-            "customer_id": str(customer.customer_id),
+            "restaurant_customer_id": str(customer.restaurant_customer_id),
             **customer_data
         }
 
@@ -21,7 +21,7 @@ class CustomerService:
         restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
         return [
             {
-                "customer_id": str(customer.customer_id),
+                "restaurant_customer_id": str(customer.restaurant_customer_id),
                 "first_name": customer.first_name,
                 "last_name": customer.last_name,
                 "email": customer.email,

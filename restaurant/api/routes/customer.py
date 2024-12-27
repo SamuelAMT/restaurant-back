@@ -13,4 +13,4 @@ def create_customer(request: HttpRequest, restaurant_id: str, payload: CustomerC
 
 @customer_router.get("/{restaurant_id}/customers", response=list[CustomerResponseSchema])
 def list_customers(request: HttpRequest, restaurant_id: str):
-    return CustomerService.get_restaurant_customers(restaurant_id)
+    return CustomerService.get_restaurant_customers(restaurant_id)  

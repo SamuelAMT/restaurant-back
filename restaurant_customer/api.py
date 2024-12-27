@@ -14,10 +14,10 @@ class CustomerSchema(Schema):
     phone: str
     birthday: Optional[date] = None
 
-@restaurant_customer_router.get("/{customer_id}", response=CustomerSchema)
-def get_customer(request, customer_id: str):
+@restaurant_customer_router.get("/{restaurant_customer_id}", response=CustomerSchema)
+def get_customer(request, restaurant_customer_id: str):
     try:
-        customer = RestaurantCustomer.objects.get(id=customer_id)
+        customer = RestaurantCustomer.objects.get(id=restaurant_customer_id)
         return customer
     except RestaurantCustomer.DoesNotExist:
         return {"error": "Customer not found"}, 404

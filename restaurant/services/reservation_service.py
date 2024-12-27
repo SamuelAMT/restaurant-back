@@ -1,4 +1,5 @@
-from typing import List, Optional
+from typing import List
+from uuid import UUID
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from ..models import Restaurant, RestaurantUnit
@@ -31,7 +32,7 @@ class ReservationService:
     @staticmethod
     def get_reservations(
         restaurant_id: str,
-        unit_id: Optional[str] = None
+        unit_id: UUID
     ) -> List[dict]:
         restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
         reservations = Reservation.objects.filter(restaurant=restaurant)

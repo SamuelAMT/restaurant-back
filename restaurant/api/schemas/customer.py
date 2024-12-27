@@ -12,4 +12,4 @@ class CustomerCreateSchema(Schema):
     birthday: Optional[date] = None
 
 class CustomerResponseSchema(CustomerCreateSchema):
-    customer_id: str
+    restaurant_customer_id: str
