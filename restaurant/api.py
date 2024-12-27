@@ -97,8 +97,9 @@ class ReservationCreateSchema(Schema):
 
 
 class CustomerSchema(Schema):
-    name: str
-    lastname: str
+    first_name: str
+    last_name: str
+    country_code: str
     phone: str
     email: EmailStr
     birthday: Optional[date] = None
@@ -108,7 +109,7 @@ class SettingsSchema(Schema):
     setting_value: str
 
 class ProfileSchema(Schema):
-    name: str
+    name: str # Restaurant name
     email: EmailStr
     phone: str
     website: str
@@ -261,8 +262,9 @@ def list_customers(request: HttpRequest, restaurant_id: str):
     customers = restaurant.customers.all()
     return [
         CustomerSchema(
-            name=customer.name,
-            lastname=customer.lastname,
+            first_name=customer.first_name,
+            last_name=customer.last_name,
+            country_code=customer.country_code,
             phone=customer.phone,
             email=customer.email,
             birthday=str(customer.birthday) if customer.birthday else None,
@@ -274,9 +276,10 @@ def list_customers(request: HttpRequest, restaurant_id: str):
 def create_customer(request: HttpRequest, restaurant_id: str, payload: CustomerSchema):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
     customer = RestaurantCustomer.objects.create(
-        name=payload.name,
-        lastname=payload.lastname,
+        first_name=payload.first_name,
+        last_name=payload.last_name,
         email=payload.email,
+        country_code=payload.country_code,
         phone=payload.phone,
         birthday=payload.birthday,
     )

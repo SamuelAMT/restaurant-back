@@ -1,11 +1,9 @@
-# Integrate with frontend
+{% extends "reservation/base.html" %}
 
-<html>
-    <body>
-        {% if name %}
-        <h1>Welcome {{ name }}!</h1>
-        {% else %}
-        <h1>This is the BookABite reservation</h1>
-        {% endif %}
-    </body>
-</html>
+{% block content %}
+{% if name %}
+    <h1>Welcome {{ name }}!</h1>
+{% else %}
+    <h1>This is the BookABite reservation</h1>
+{% endif %}
+{% endblock %}

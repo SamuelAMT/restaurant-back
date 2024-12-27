@@ -1,5 +1,6 @@
 from django import forms
 from .models import Reservation
+from datetime import datetime, timedelta
 
 class ReservationForm(forms.ModelForm):
     class Meta:
@@ -10,35 +11,31 @@ class ReservationForm(forms.ModelForm):
             'start_time', 
             'end_time',
             'amount_of_people',
-            'amount_of_hours',
             'email', 
             'country_code',
             'phone', 
             'birthday', 
             'observation',
             'restaurant',
-            'created_at',
-            'status'
         )
-        widgets = {
-            'created_at': forms.DateTimeInput(attrs={'readonly': 'readonly'}),
-            'status': forms.TextInput(attrs={'readonly': 'readonly'}),
-        }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if 'amount_of_hours' in self.fields:
-            self.fields['amount_of_hours'].widget.attrs['readonly'] = True
-
-    def clean(self):
-        cleaned_data = super().clean()
-        start_time = cleaned_data.get('start_time')
-        end_time = cleaned_data.get('end_time')
+    def save(self, commit=True):
+        instance = super().save(commit=False)
         
-        if start_time and end_time:
-            # Calculate amount of hours
-            time_difference = end_time - start_time
-            hours_difference = time_difference.total_seconds() / 3600
-            cleaned_data['amount_of_hours'] = round(hours_difference, 2)
+        # Calculate amount_of_hours before saving
+        if self.cleaned_data.get('start_time') and self.cleaned_data.get('end_time'):
+            start_datetime = datetime.combine(datetime.today(), self.cleaned_data['start_time'])
+            end_datetime = datetime.combine(datetime.today(), self.cleaned_data['end_time'])
             
-        return cleaned_data
+            # If end_time is less than start_time, assume it's for the next day
+            if end_datetime < start_datetime:
+                end_datetime += timedelta(days=1)
+            
+            # Calculate hours difference and round up to nearest hour
+            time_difference = end_datetime - start_datetime
+            hours = time_difference.total_seconds() / 3600
+            instance.amount_of_hours = int(hours) if hours.is_integer() else int(hours) + 1
+
+        if commit:
+            instance.save()
+        return instance
