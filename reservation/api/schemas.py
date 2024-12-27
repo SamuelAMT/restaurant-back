@@ -2,11 +2,11 @@ from ninja import Schema
 from datetime import date, time
 from typing import Optional
 from pydantic import EmailStr
+from uuid import UUID
 
 class BaseReservationSchema(Schema):
     reserver: str
     amount_of_people: int
-    amount_of_hours: int
     start_time: time
     end_time: time
     reservation_date: date
@@ -20,5 +20,5 @@ class ReservationCreateSchema(BaseReservationSchema):
     pass
 
 class ReservationResponseSchema(BaseReservationSchema):
-    reservation_hash: str
+    reservation_hash: UUID
     status: str

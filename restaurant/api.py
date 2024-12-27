@@ -1,5 +1,6 @@
 from ninja import Router, Schema
 import uuid
+from uuid import UUID
 from datetime import datetime, date, time
 from typing import List
 from pydantic import EmailStr, AnyUrl
@@ -48,7 +49,7 @@ class RestaurantCreateSchema(Schema):
     addresses: List[AddressSchema]
 
 class RestaurantSchema(Schema):
-    restaurant_id: str
+    restaurant_id: UUID
     cnpj: str
     name: str
     country_code: str
@@ -69,7 +70,7 @@ class DashboardSchema(Schema):
     canceled_reservations: int
 
 class ReservationResponsechema(Schema):
-    reservation_hash: str
+    reservation_hash: UUID
     reserver: str
     amount_of_people: int
     amount_of_hours: int
