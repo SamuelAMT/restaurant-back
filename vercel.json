@@ -1,15 +1,23 @@
 {
-    "builds": [{
-        "src": "bookabite/asgi.py",
+    "version": 2,
+    "builds": [
+      {
+        "src": "bookabite/wsgi.py",
         "use": "@vercel/python"
-    }],
-    "routes": [{
+      },
+      {
+        "src": "staticfiles/**",
+        "use": "@vercel/static"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/static/(.*)",
+        "dest": "/staticfiles/$1"
+      },
+      {
         "src": "/(.*)",
-        "dest": "bookabite/asgi.py"
-    }],
-    "functions": {
-        "bookabite/asgi.py": {
-            "includeFiles": "bookabite/templates/**"
-        }
-    }
-}
+        "dest": "bookabite/wsgi.py"
+      }
+    ]
+  }
