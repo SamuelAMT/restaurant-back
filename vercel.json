@@ -16,7 +16,7 @@
         },
         {
             "src": "/(.*)",
-            "dest": "bookabite/config/asgi.py"
+            "dest": "bookabite/config/asgi.py:application"
         }
     ]
 }

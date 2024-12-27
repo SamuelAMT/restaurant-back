@@ -4,3 +4,5 @@ from django.core.asgi import get_asgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bookabite.config.settings.production')
 
 application = get_asgi_application()
+
+app = application
