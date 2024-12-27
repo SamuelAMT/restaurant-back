@@ -3,7 +3,9 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import cloudinary
+import helpers
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 ENV_PATH = BASE_DIR / '.env.local'
 load_dotenv(dotenv_path=ENV_PATH)
@@ -12,6 +14,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise ValueError("SECRET_KEY environment variable is not set")
 
+# Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -20,22 +23,20 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
-    # Third party apps
-    "ninja",
-    "rest_framework",
-    "rest_framework_simplejwt",
-    "corsheaders",
-    "cloudinary",
-    "cloudinary_storage",
-    "django_extensions",
-    # Local apps
     "bookabite.core",
     "restaurant",
     "restaurant_customer",
     "reservation",
     "address",
+    "ninja",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "corsheaders",
     "api",
     "custom_auth",
+    "cloudinary",
+    "cloudinary_storage",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
@@ -49,7 +50,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "bookabite.config.urls"
+ROOT_URLCONF = 'bookabite.config.urls'
 
 TEMPLATES = [
     {
@@ -84,7 +85,6 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'custom_auth.CustomUser'
 
-# Rest Framework & JWT settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -114,7 +114,24 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'public', 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Initialize Cloudinary
+helpers.cloudinary_init()
+
+# Default file storage
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Site ID
+SITE_ID = 1
+
+# Session settings
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1209600  # Two weeks
+SESSION_SAVE_EVERY_REQUEST = True
+
+# CSRF settings
+CSRF_COOKIE_HTTPONLY = True
