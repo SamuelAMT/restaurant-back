@@ -1,4 +1,4 @@
-from django import forms
+""" from django import forms
 from .models import Restaurant, RestaurantEmployee
 
 class RestaurantForm(forms.ModelForm):
@@ -16,3 +16,4 @@ class RestaurantEmployeeForm(forms.ModelForm):
     class Meta:
         model = RestaurantEmployee
         fields = ['first_name', 'last_name', 'email', 'country_code', 'phone', 'role', 'restaurant']
+ """

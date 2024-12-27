@@ -6,7 +6,7 @@ from .constants import ReservationStatus
 
 class ReservationService:
     @staticmethod
-    def create_reservation(restaurant_id: str, reservation_data: dict) -> dict:
+    def create_reservation(restaurant_id: str, reservation_data: dict) -> Reservation:  # Note return type
         restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
         
         customer, _ = RestaurantCustomer.objects.get_or_create(
@@ -20,10 +20,12 @@ class ReservationService:
             }
         )
 
+        reservation_dict = reservation_data.dict()
+
         reservation = Reservation.objects.create(
             restaurant=restaurant,
             customer=customer,
-            **reservation_data.dict()
+            **reservation_dict
         )
 
         return reservation

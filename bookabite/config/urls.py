@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
-from django.conf import settings  # Add this import
+from django.conf import settings
 from ninja import NinjaAPI
 from bookabite.core.views import homepage_view, err_404_view
 from api.auth.routers import admin_auth_router, user_auth_router

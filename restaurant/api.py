@@ -1,4 +1,4 @@
-from ninja import Router, Schema
+""" from ninja import Router, Schema
 import uuid
 from uuid import UUID
 from datetime import datetime, date, time
@@ -309,4 +309,4 @@ def get_profile(request: HttpRequest, restaurant_id: str):
             f"{address.street}, {address.number} - {address.neighborhood}"
             if address else "No address"
         ),
-    )
+    ) """

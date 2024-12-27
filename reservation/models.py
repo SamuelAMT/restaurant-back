@@ -76,27 +76,34 @@ class Reservation(models.Model):
         super().clean()
         errors = {}
 
-        if self.start_time and self.end_time:
-            start_datetime = datetime.combine(self.reservation_date, self.start_time)
-            end_datetime = datetime.combine(self.reservation_date, self.end_time)
-            
-            if end_datetime < start_datetime:
-                end_datetime += timedelta(days=1)
-
-            time_difference = end_datetime - start_datetime
-            hours = time_difference.total_seconds() / 3600
-            self.amount_of_hours = int(hours) if hours.is_integer() else int(hours) + 1
-
-            # Add validation for restaurant working hours (to be implemented when Restaurant model is updated)
-            if hasattr(self.restaurant, 'working_hours'):
-                # Placeholder for the upcoming Restaurant blocking hours journey feature
-                pass
+        # Add validation for restaurant working hours (to be implemented when Restaurant model is updated)
+        if hasattr(self.restaurant, 'working_hours'):
+            # Placeholder for the upcoming Restaurant blocking hours journey feature
+            pass
 
         if errors:
             raise ValidationError(errors)
 
     def save(self, *args, **kwargs):
+        """
+        Overrides the default save method to calculate 'amount_of_hours' before saving.
+        Ensures 'reservation_hash' is unique by regenerating it in case of IntegrityError.
+        """
+        if self.start_time and self.end_time:
+            start_datetime = datetime.combine(self.reservation_date, self.start_time)
+            end_datetime = datetime.combine(self.reservation_date, self.end_time)
+            
+            # If end_time is less than start_time, assume the reservation ends the next day
+            if end_datetime < start_datetime:
+                end_datetime += timedelta(days=1)
+            
+            # Calculate the difference in hours and round up to the nearest hour
+            time_difference = end_datetime - start_datetime
+            hours = time_difference.total_seconds() / 3600
+            self.amount_of_hours = int(hours) if hours.is_integer() else int(hours) + 1
+
         self.full_clean()
+
         if not self.pk:  # Only for new reservations
             is_unique = False
             while not is_unique:
