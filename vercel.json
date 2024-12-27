@@ -1,22 +1,15 @@
 {
-    "builds": [
-        {
-            "src": "bookabite/asgi.py",
-            "use": "@vercel/python",
-            "config": {
-                "maxLambdaSize": "15mb",
-                "runtime": "python3.12",
-                "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput"
-            }
+    "builds": [{
+        "src": "bookabite/asgi.py",
+        "use": "@vercel/python"
+    }],
+    "routes": [{
+        "src": "/(.*)",
+        "dest": "bookabite/asgi.py"
+    }],
+    "functions": {
+        "bookabite/asgi.py": {
+            "includeFiles": "bookabite/templates/**"
         }
-    ],
-    "routes": [
-        {
-            "handle": "filesystem"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "bookabite/asgi.py"
-        }
-    ]
+    }
 }

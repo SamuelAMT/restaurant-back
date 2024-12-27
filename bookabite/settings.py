@@ -102,7 +102,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "public", "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "public", "staticfiles")
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -138,7 +138,7 @@ ROOT_URLCONF = "bookabite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "bookabite" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
