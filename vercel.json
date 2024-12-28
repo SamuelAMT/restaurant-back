@@ -1,23 +1,22 @@
 {
-    "version": 2,
     "builds": [
-      {
-        "src": "bookabite/asgi.py",
-        "use": "@vercel/python"
-      },
-      {
-        "src": "staticfiles/**",
-        "use": "@vercel/static"
-      }
+        {
+            "src": "bookabite/asgi.py",
+            "use": "@vercel/python",
+            "config": {
+                "maxLambdaSize": "15mb",
+                "runtime": "python3.12",
+                "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+            }
+        }
     ],
     "routes": [
-      {
-        "src": "/static/(.*)",
-        "dest": "/staticfiles/$1"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "bookabite/asgi.py"
-      }
+        {
+            "handle": "filesystem"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "bookabite/asgi.py"
+        }
     ]
-  }
+}
