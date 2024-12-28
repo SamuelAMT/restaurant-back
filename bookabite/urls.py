@@ -3,7 +3,6 @@ from django.urls import include, path
 from django.conf import settings
 from ninja import NinjaAPI
 from bookabite.core.views import homepage_view, err_404_view
-#from bookabite.templates.core.views import debug_templates
 from api.auth.routers import admin_auth_router, user_auth_router
 from address.api import address_router
 from restaurant.api import restaurant_router
@@ -39,7 +38,6 @@ urlpatterns = [
     path("", homepage_view, name="homepage"),
     path("admin/", admin.site.urls),
     path("api/", api.urls),
-    #path("debug-templates/", debug_templates, name="debug-templates"),
 ]
 
 if settings.DEBUG:
