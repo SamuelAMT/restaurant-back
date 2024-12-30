@@ -35,7 +35,7 @@ class ReservationService:
     def get_reservations(
         restaurant_id: str,
         unit_id: Optional[UUID] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> List[Reservation]:
         restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
         reservations = Reservation.objects.filter(restaurant=restaurant)
         
