@@ -43,6 +43,6 @@ class RestaurantResponseSchema(Schema):
     restaurant_id: UUID
     name: str
     cnpj: str
-    category: str
+    category: Optional[str]
     cuisine_types: List[str]
     units: List[RestaurantUnitSchema]
