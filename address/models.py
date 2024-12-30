@@ -27,6 +27,7 @@ class Address(models.Model):
     state = models.CharField(max_length=2)
     country = models.CharField(max_length=50)
     complement = models.CharField(max_length=100, null=True, blank=True)
+    maps_url = models.URLField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(null=False, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 

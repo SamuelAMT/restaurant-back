@@ -7,6 +7,23 @@ from ..models.schedule import WorkingHours, BlockedHours
 from datetime import datetime, time
 
 class RestaurantService:
+    
+    @staticmethod
+    def get_restaurants() -> List[Restaurant]:
+        """
+        Retrieve all restaurants with their related data.
+        """
+        return (Restaurant.objects
+            .select_related('category')
+            .prefetch_related(
+                'cuisine_types',
+                'units',
+                'units__working_hours',
+                'units__blocked_hours'
+            )
+            .all()
+            .order_by('name'))
+    
     @staticmethod
     @transaction.atomic
     def create_restaurant(
