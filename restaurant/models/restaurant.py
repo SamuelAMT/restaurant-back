@@ -56,11 +56,11 @@ class Restaurant(models.Model):
     )
     customers = models.ManyToManyField(
         "restaurant_customer.RestaurantCustomer",
-        related_name="restaurants"
+        related_name="customer_restaurants"
     )
     employees = models.ManyToManyField(
         'restaurant.RestaurantEmployee',
-        related_name='restaurants'
+        related_name='employee_restaurants'
     )
     login_logs = models.ManyToManyField(
         'custom_auth.LoginLog',

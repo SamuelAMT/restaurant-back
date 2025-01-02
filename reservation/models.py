@@ -40,6 +40,13 @@ class Reservation(models.Model):
         on_delete=models.CASCADE,
         related_name="reservations",
     )
+    unit = models.ForeignKey(
+        'unit.Unit',
+        on_delete=models.CASCADE,
+        related_name="reservations",
+        null=True,
+        blank=True
+    )
     customer = models.ForeignKey(
         RestaurantCustomer,
         on_delete=models.CASCADE,

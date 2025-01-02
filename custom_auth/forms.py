@@ -14,6 +14,7 @@ class CustomUserCreationForm(UserCreationForm):
             "last_name",
             "role",
             "restaurant",
+            "unit",
             "is_active",
             "is_staff",
             "is_superuser",
@@ -28,6 +29,16 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields["first_name"].required = True
         self.fields["last_name"].required = True
 
+    def clean(self):
+        cleaned_data = super().clean()
+        unit = cleaned_data.get("unit")
+        restaurant = cleaned_data.get("restaurant")
+
+        if unit and not restaurant:
+            cleaned_data["restaurant"] = unit.restaurant
+
+        return cleaned_data
+
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
@@ -38,6 +49,7 @@ class CustomUserChangeForm(UserChangeForm):
             "last_name",
             "role",
             "restaurant",
+            "unit",
             "is_active",
             "is_staff",
             "is_superuser",
@@ -50,6 +62,16 @@ class CustomUserChangeForm(UserChangeForm):
         self.fields["email"].required = True
         self.fields["first_name"].required = True
         self.fields["last_name"].required = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        unit = cleaned_data.get("unit")
+        restaurant = cleaned_data.get("restaurant")
+
+        if unit and not restaurant:
+            cleaned_data["restaurant"] = unit.restaurant
+
+        return cleaned_data
 
 
 class LoginLogForm(forms.ModelForm):

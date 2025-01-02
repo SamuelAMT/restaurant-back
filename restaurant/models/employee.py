@@ -9,16 +9,28 @@ class RestaurantEmployee(models.Model):
     email = models.EmailField(max_length=70, unique=True)
     country_code = models.CharField(max_length=3, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.RESTAURANT_STAFF)
-    unit = models.ForeignKey(
-        'restaurant.RestaurantUnit',
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.UNIT_STAFF)
+    restaurant = models.ForeignKey(
+        'restaurant.Restaurant',
         on_delete=models.CASCADE,
-        related_name='employees',
+        related_name='restaurant_employees',
+        null=False,
+        blank=False
+    )
+    unit = models.ForeignKey(
+        'unit.Unit',
+        on_delete=models.CASCADE,
+        related_name='unit_employees',
         null=False,
         blank=False
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        if self.unit.restaurant_id != self.restaurant_id:
+            raise models.ValidationError("Unit must belong to the employee's restaurant")
+        super().save(*args, **kwargs)
 
     class Meta:
         indexes = [

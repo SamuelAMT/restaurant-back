@@ -1,5 +1,6 @@
 from ninja import Schema
-from .schedule import WorkingHoursSchema, BlockedHoursSchema
+from unit.api.schemas.schedule import WorkingHoursSchema, BlockedHoursSchema
+from unit.api.schemas.unit import UnitResponseSchema
 from typing import List, Optional
 from datetime import datetime, time
 from uuid import UUID
@@ -7,6 +8,7 @@ from pydantic import EmailStr, AnyUrl
 
 
 class AddressSchema(Schema):
+    address_id: UUID
     cep: str
     street: str
     number: str
@@ -15,14 +17,7 @@ class AddressSchema(Schema):
     state: str
     country: str
     complement: str = None
-
-
-class RestaurantUnitSchema(Schema):
-    unit_id: UUID
-    name: str
-    is_main_unit: bool
-    working_hours: List[WorkingHoursSchema]
-    blocked_hours: List[BlockedHoursSchema]
+    maps_url: Optional[AnyUrl] = None
 
 
 class RestaurantCreateSchema(Schema):
@@ -45,4 +40,4 @@ class RestaurantResponseSchema(Schema):
     cnpj: str
     category: Optional[str]
     cuisine_types: List[str]
-    units: List[RestaurantUnitSchema]
+    units: List[UnitResponseSchema]

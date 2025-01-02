@@ -7,15 +7,15 @@ User = get_user_model()
 
 class AddressService:
     @staticmethod
-    def get_restaurant_addresses(user) -> List[Address]:
-        """Get all addresses for a restaurant"""
-        return Address.objects.filter(restaurant=user.restaurant)
+    def get_unit_addresses(user) -> List[Address]:
+        """Get all addresses for a unit"""
+        return Address.objects.filter(unit=user.unit)
 
     @staticmethod
     def create_address(user, address_data: AddressIn) -> Address:
         """Create a new address"""
         address = Address.objects.create(
-            restaurant=user.restaurant,
+            unit=user.unit,
             **address_data.dict()
         )
         return address

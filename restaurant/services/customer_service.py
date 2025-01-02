@@ -8,8 +8,10 @@ class CustomerService:
     def create_customer(restaurant_id: str, customer_data: dict) -> dict:
         restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
         
-        customer = RestaurantCustomer.objects.create(**customer_data)
-        restaurant.customers.add(customer)
+        customer = RestaurantCustomer.objects.create(
+            restaurant=restaurant,
+            **customer_data
+        )
         
         return {
             "restaurant_customer_id": str(customer.restaurant_customer_id),

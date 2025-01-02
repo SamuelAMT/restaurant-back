@@ -13,6 +13,7 @@ class ReservationAdmin(admin.ModelAdmin):
     
     list_display = (
         "reserver",
+        "unit",
         "reservation_date",
         "start_time",
         "end_time",
@@ -26,13 +27,17 @@ class ReservationAdmin(admin.ModelAdmin):
         "reservation_hash",
         "email",
         "observation"
+        "unit__name",
+        "restaurant_name",
     )
     
     list_filter = (
         "reservation_date",
         "start_time",
         "end_time",
-        "status"
+        "status",
+        "unit",
+        "restaurant",
     )
     
     readonly_fields = (
@@ -40,7 +45,8 @@ class ReservationAdmin(admin.ModelAdmin):
         "status",
         "customer",
         "created_at",
-        "amount_of_hours"
+        "amount_of_hours",
+        "restaurant",
     )
 
     exclude = ("customer",)
@@ -49,6 +55,8 @@ class ReservationAdmin(admin.ModelAdmin):
         (None, {
             'fields': (
                 'reserver',
+                'unit',
+                'restaurant',
                 'reservation_date',
                 'start_time',
                 'end_time',
@@ -63,7 +71,6 @@ class ReservationAdmin(admin.ModelAdmin):
         ('Additional Information', {
             'fields': (
                 'observation',
-                'restaurant',
                 'status',
                 'reservation_hash',
             )
@@ -72,3 +79,8 @@ class ReservationAdmin(admin.ModelAdmin):
             'fields': ('created_at',),
         })
     )
+    
+    def save_model(self, request, obj, form, change):
+        if not obj.restaurant and obj.unit:
+            obj.restaurant = obj.unit.restaurant
+        super().save_model(request, obj, form, change)

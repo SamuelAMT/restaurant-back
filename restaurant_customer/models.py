@@ -4,16 +4,33 @@ from django.utils import timezone
 
 class RestaurantCustomer(models.Model):
     restaurant_customer_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)
-    first_name = models.CharField(max_length=30, blank=True)
-    last_name = models.CharField(max_length=30, blank=True)
+    first_name = models.CharField(max_length=30,)
+    last_name = models.CharField(max_length=30,)
     email = models.EmailField(max_length=70, unique=True)
     country_code = models.CharField(max_length=3, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(null=False, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-
-    #restaurant_customer = models.ManyToManyField('restaurant.Restaurant', related_name='restaurant_customer_restaurants')
+    
+    restaurant = models.ForeignKey(
+        'restaurant.Restaurant',
+        on_delete=models.CASCADE,
+        related_name='restaurant_customers',
+        null=False,
+        blank=False
+    )
+    units = models.ManyToManyField(
+        'unit.Unit',
+        related_name='unit_customers',
+        blank=True
+    )
+    preferred_unit = models.ForeignKey(
+        'unit.Unit',
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='regular_customers'
+    )
 
     class Meta:
         indexes = [

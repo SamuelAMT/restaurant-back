@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-# from .models import Account
 from .models import CustomUser, LoginLog, VerificationToken
 from .forms import (
     CustomUserCreationForm,
@@ -8,13 +7,6 @@ from .forms import (
     LoginLogForm,
     VerificationTokenForm,
 )
-
-# @admin.register(Account)
-# class AccountAdmin(admin.ModelAdmin):
-#    list_display = ('email', 'is_admin', 'is_active', 'created_at')
-#    list_filter = ('is_admin', 'is_active', 'created_at')
-#    search_fields = ('email',)
-#    ordering = ('created_at',)
 
 
 @admin.register(CustomUser)
@@ -29,6 +21,7 @@ class CustomUserAdmin(UserAdmin):
         "last_name",
         "role",
         "restaurant",
+        "unit",
         "is_active",
         "is_staff",
         "last_login",
@@ -37,6 +30,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = (
         "role",
         "restaurant",
+        "unit",
         "is_active",
         "is_staff",
         "is_superuser",
@@ -60,7 +54,10 @@ class CustomUserAdmin(UserAdmin):
                 )
             },
         ),
-        ("Restaurant", {"fields": ("restaurant",)}),
+        ("Associations", {
+            "fields": ("restaurant", "unit"),
+            "description": "User can be associated with both restaurant and specific units"
+        }),
         ("Important Dates", {"fields": ("last_login",), "classes": ("collapse",)}),
     )
 
@@ -77,6 +74,7 @@ class CustomUserAdmin(UserAdmin):
                     "last_name",
                     "role",
                     "restaurant",
+                    "unit",
                     "is_active",
                     "is_staff",
                     "is_superuser",
@@ -87,7 +85,7 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
-    search_fields = ("email", "first_name", "last_name", "restaurant__name")
+    search_fields = ("email", "first_name", "last_name", "restaurant__name", "unit__name",)
     ordering = ("email",)
     filter_horizontal = ("groups", "user_permissions")
 

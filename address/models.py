@@ -31,11 +31,8 @@ class Address(models.Model):
     created_at = models.DateTimeField(null=False, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    restaurant = models.ForeignKey(
-        "restaurant.Restaurant",
-        on_delete=models.CASCADE,
-        related_name="addresses",
-        null=False,
+    unit = models.OneToOneField(
+        "unit.Unit", on_delete=models.CASCADE, related_name="unit_address", null=True
     )
 
     class Meta:
