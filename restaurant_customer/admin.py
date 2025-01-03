@@ -31,7 +31,6 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
     
     list_filter = (
         'created_at',
-        'restaurant',
         'units',
         'country_code'
     )
@@ -43,13 +42,6 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
     )
 
     fieldsets = (
-        ('Associations', {
-            'fields': (
-                'restaurants',
-                'units',
-                'restaurant_customer_id'
-            )
-        }),
         ('Personal Information', {
             'fields': (
                 'first_name',
@@ -58,6 +50,12 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
                 'country_code',
                 'phone',
                 'birthday'
+            )
+        }),
+        ('Unit Information', {
+            'fields': (
+                'units',
+                'preferred_unit'
             )
         }),
         ('Important Dates', {
@@ -94,3 +92,7 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
         if hasattr(request.user, 'restaurant'):
             return qs.filter(restaurants=request.user.restaurant)
         return qs
+
+    def get_restaurant_names(self, obj):
+        return ", ".join([restaurant.name for restaurant in obj.restaurants.all()])
+    get_restaurant_names.short_description = 'Restaurants'

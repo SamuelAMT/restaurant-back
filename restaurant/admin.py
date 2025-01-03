@@ -57,7 +57,7 @@ class RestaurantAdmin(admin.ModelAdmin):
     )
     
     readonly_fields = ('created_at', 'updated_at')
-    filter_horizontal = ('cuisine_types', 'customers', 'employees', 'login_logs')
+    filter_horizontal = ('cuisine_types', 'employees', 'login_logs')
     
     def get_unit_count(self, obj):
         return obj.units.count()

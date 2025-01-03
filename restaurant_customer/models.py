@@ -12,14 +12,7 @@ class RestaurantCustomer(models.Model):
     birthday = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(null=False, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-    
-    restaurant = models.ForeignKey(
-        'restaurant.Restaurant',
-        on_delete=models.CASCADE,
-        related_name='restaurant_customers',
-        null=False,
-        blank=False
-    )
+
     units = models.ManyToManyField(
         'unit.Unit',
         related_name='unit_customers',
@@ -28,8 +21,9 @@ class RestaurantCustomer(models.Model):
     preferred_unit = models.ForeignKey(
         'unit.Unit',
         on_delete=models.SET_NULL,
+        related_name='regular_customers',
         null=True,
-        related_name='regular_customers'
+        blank=True,
     )
 
     class Meta:
