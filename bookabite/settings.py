@@ -20,9 +20,9 @@ import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(dotenv_path=BASE_DIR / '.env.local')
+load_dotenv(dotenv_path=BASE_DIR / ".env.local")
 
-DJANGO_DEVELOPMENT = os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True'
+DJANGO_DEVELOPMENT = os.getenv("DJANGO_DEVELOPMENT", "False") == "True"
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
@@ -31,7 +31,16 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.getenv("DEBUG", 0)))
 
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".vercel.app",
+]
+
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1").split(",")
+
+if os.getenv("ALLOWED_HOSTS"):
+    ALLOWED_HOSTS.extend(os.getenv("ALLOWED_HOSTS").split(","))
 
 
 import helpers
@@ -44,31 +53,32 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
-    "bookabite",
-    "restaurant",
-    "restaurant_customer",
-    "reservation",
-    "address",
+    # Third party apps
     "ninja",
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
-    "api",
-    "custom_auth",
     "cloudinary",
     "cloudinary_storage",
     "django_extensions",
-    # add docker-credential-helpers
+    # Local apps
+    "bookabite.core",
+    "restaurant",
+    "restaurant_customer",
+    "reservation",
+    "address",
+    "api",
+    "custom_auth",
 ]
+
+helpers.cloudinary_init()
 
 if DEBUG:
     INSTALLED_APPS += ["debug_toolbar"]
 
-helpers.cloudinary_init()
-
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    #"allauth.account.auth_backends.AuthenticationBackend",
+    # "allauth.account.auth_backends.AuthenticationBackend",
 )
 
 SITE_ID = 1
@@ -92,7 +102,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'public', 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, "public", "staticfiles")
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -103,12 +113,13 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    #"allauth.account.middleware.AccountMiddleware",
-    #"bookabite.middleware.TokenAuthenticationMiddleware",
+    # "allauth.account.middleware.AccountMiddleware",
+    # "bookabite.middleware.TokenAuthenticationMiddleware",
 ]
 
 if DEBUG:
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -116,7 +127,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # In case of needing credentials (cookies, authorization headers, etc.)
-#CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_CREDENTIALS = True
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -127,7 +138,7 @@ ROOT_URLCONF = "bookabite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "bookabite" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -146,9 +157,8 @@ ASGI_APPLICATION = "bookabite.asgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    "default": {
         #'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
-
         # Previous PostgreSQL configuration
         #'ENGINE': 'django.db.backends.postgresql',
         #'NAME': tmpPostgres.path.replace('/', ''),
@@ -156,27 +166,26 @@ DATABASES = {
         #'PASSWORD': tmpPostgres.password,
         #'HOST': tmpPostgres.hostname,
         #'PORT': 5432,
-        
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'OPTIONS': {
-            'sslmode': os.getenv('DB_SSLMODE'),
-            'options': os.getenv('DB_OPTIONS'),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT", "5432"),
+        "OPTIONS": {
+            "sslmode": os.getenv("DB_SSLMODE"),
+            "options": os.getenv("DB_OPTIONS"),
         },
     }
 }
 
-if 'ENGINE' not in DATABASES['default']:
-    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+if "ENGINE" not in DATABASES["default"]:
+    DATABASES["default"]["ENGINE"] = "django.db.backends.postgresql"
 
-if 'NAME' not in DATABASES['default']:
-    DATABASES['default']['NAME'] = os.getenv('DB_NAME')
+if "NAME" not in DATABASES["default"]:
+    DATABASES["default"]["NAME"] = os.getenv("DB_NAME")
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db' 
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 1209600  # Two weeks (timeout)
 SESSION_SAVE_EVERY_REQUEST = True
 
@@ -198,44 +207,42 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'custom_auth.CustomUser'
+AUTH_USER_MODEL = "custom_auth.CustomUser"
 
 # CSRF Protection
 CSRF_COOKIE_HTTPONLY = True
 CSRF_TRUSTED_ORIGINS = [
     "https://bookabite.com.br",
-    'https://bookabite-restaurant-back.vercel.app',
-    'https://restaurant-back-git-develop-samuel-mirandas-projects.vercel.app',
-    'https://bookabite-restaurante.vercel.app',
-    'http://localhost:3000',
-    ]
+    "https://bookabite-restaurant-back.vercel.app",
+    "https://restaurant-back-git-develop-samuel-mirandas-projects.vercel.app",
+    "https://bookabite-restaurante.vercel.app",
+    "http://localhost:3000",
+]
 
 # Token expiration time (if needed globally)
 JWT_ACCESS_TOKEN_LIFETIME = timedelta(minutes=15)
 JWT_REFRESH_TOKEN_LIFETIME = timedelta(days=90)
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'custom_user_id',
-    'USER_ID_CLAIM': 'user_id',
-    'BLACKLIST_AFTER_ROTATION': False,
-    'TOKEN_BLACKLIST_ENABLED': False,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "custom_user_id",
+    "USER_ID_CLAIM": "user_id",
+    "BLACKLIST_AFTER_ROTATION": False,
+    "TOKEN_BLACKLIST_ENABLED": False,
 }
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 LANGUAGE_CODE = "en-us"
 
@@ -254,3 +261,13 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+if os.getenv("VERCEL"):
+    DEBUG = False
+
+    if "DATABASE_URL" in os.environ:
+        import dj_database_url
+
+        DATABASES["default"] = dj_database_url.config(
+            conn_max_age=600, ssl_require=True
+        )

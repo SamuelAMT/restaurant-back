@@ -1,43 +1,74 @@
 from django.contrib import admin
 from .models import Reservation
-from restaurant.models import Restaurant
-
+from .forms import ReservationForm
 
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):
+    form = ReservationForm
+    
     def customer_email(self, obj):
         return obj.customer.email if obj.customer else None
-
+    
     customer_email.short_description = "Customer Email"
-
-    list_display = ("reserver", "date", "start_time", "end_time", "amount_of_people")
-    search_fields = ("reserver", "reservation_hash", "email")
-    list_filter = (
-        "date",
+    
+    list_display = (
+        "reserver",
+        "reservation_date",
         "start_time",
         "end_time",
+        "amount_of_people",
+        "amount_of_hours",
+        "status"
     )
-    readonly_fields = ("reservation_hash", "status", "customer")
+    
+    search_fields = (
+        "reserver",
+        "reservation_hash",
+        "email",
+        "observation"
+    )
+    
+    list_filter = (
+        "reservation_date",
+        "start_time",
+        "end_time",
+        "status"
+    )
+    
+    readonly_fields = (
+        "reservation_hash",
+        "status",
+        "customer",
+        "created_at",
+        "amount_of_hours"
+    )
 
     exclude = ("customer",)
 
-    def save_model(self, request, obj, form, change):
-        if not obj.restaurant:
-            obj.restaurant = request.user.restaurant
-
-        if obj.email:
-            from restaurant_customer.models import RestaurantCustomer
-
-            customer, created = RestaurantCustomer.objects.get_or_create(
-                email=obj.email,
-                defaults={
-                    "name": obj.reserver,
-                    "lastname": "",
-                    "phone": obj.phone,
-                    "birthday": obj.birthday,
-                    "country_code": obj.country_code,
-                },
+    fieldsets = (
+        (None, {
+            'fields': (
+                'reserver',
+                'reservation_date',
+                'start_time',
+                'end_time',
+                'amount_of_people',
+                'amount_of_hours',
+                'email',
+                'country_code',
+                'phone',
+                'birthday',
             )
-            obj.customer = customer
-
-        super().save_model(request, obj, form, change)
+        }),
+        ('Additional Information', {
+            'fields': (
+                'observation',
+                'restaurant',
+                'status',
+                'reservation_hash',
+            )
+        }),
+        ('Dates', {
+            'fields': ('created_at',),
+        })
+    )

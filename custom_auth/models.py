@@ -124,6 +124,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(null=False, default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
     
     restaurant = models.ForeignKey('restaurant.Restaurant', on_delete=models.CASCADE, related_name='users', null=True, blank=True)
 
@@ -140,21 +142,29 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         blank=True,
         help_text="Specific permissions for this user.",
         verbose_name="user permissions",
-    )
-    
-    def clean(self):
-        super().clean()
-        if not self.is_superuser and self.restaurant is None:
-            raise ValidationError('Non-superusers must be associated with a restaurant.')
+    )    
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     objects = CustomUserManager()
+    
+    class Meta:
+        indexes = [models.Index(fields=['custom_user_id', 'email'], name='custom_user__id_email_idx')]
+        db_table = 'custom_user'
 
     def __str__(self):
         return self.email
 
+    def clean(self):
+        super().clean()
+        roles_requiring_restaurant = [
+            Role.RESTAURANT_ADMIN,
+            Role.RESTAURANT_SUB_ADMIN,
+            Role.RESTAURANT_STAFF,
+        ]
+        if self.role in roles_requiring_restaurant and self.restaurant is None:
+            raise ValidationError("Restaurant-based roles must be associated with a restaurant.")
 
 class VerificationToken(models.Model):
     token = models.CharField(max_length=100, primary_key=True, unique=True)
@@ -167,6 +177,7 @@ class VerificationToken(models.Model):
         indexes = [
             models.Index(fields=["token"], name="token_idx"),
         ]
+        db_table = "verification_token"
         verbose_name = "Verification Token"
         verbose_name_plural = "Verification Tokens"
 
@@ -196,6 +207,9 @@ class LoginLog(models.Model):
     user_agent = models.TextField(default="Unknown")
     action = models.CharField(max_length=50, default="login")
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = "login_log"
 
     def __str__(self):
         return f"{self.action.capitalize()} log for {self.custom_user.email} on {self.timestamp}"

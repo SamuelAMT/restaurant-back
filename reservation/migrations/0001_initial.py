@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('amount_of_people', models.IntegerField()),
                 ('amount_of_hours', models.IntegerField()),
                 ('time', models.IntegerField(db_index=True)),
-                ('date', models.DateField(db_index=True)),
+                ('reservation_date', models.DateField(db_index=True)),
                 ('birthday', models.DateField(blank=True, null=True)),
                 ('observation', models.TextField(blank=True, max_length=250, null=True)),
                 ('status', models.CharField(default='pending', max_length=20)),

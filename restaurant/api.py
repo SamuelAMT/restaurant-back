@@ -1,6 +1,7 @@
-from ninja import Router, Schema
+""" from ninja import Router, Schema
 import uuid
-from datetime import time
+from uuid import UUID
+from datetime import datetime, date, time
 from typing import List
 from pydantic import EmailStr, AnyUrl
 from django.http import HttpRequest
@@ -48,7 +49,7 @@ class RestaurantCreateSchema(Schema):
     addresses: List[AddressSchema]
 
 class RestaurantSchema(Schema):
-    restaurant_id: str
+    restaurant_id: UUID
     cnpj: str
     name: str
     country_code: str
@@ -68,36 +69,54 @@ class DashboardSchema(Schema):
     total_customers: int
     canceled_reservations: int
 
-class ReservationSchema(Schema):
+class ReservationResponsechema(Schema):
+    reservation_hash: UUID
     reserver: str
     amount_of_people: int
     amount_of_hours: int
     start_time: time
     end_time: time
-    date: str
-    email: str
+    reservation_date: date
+    email: EmailStr
+    country_code: str
     phone: str
-    birthday: Optional[str] = None
+    birthday: Optional[date] = None
     observation: Optional[str] = None
 
-class CustomerSchema(Schema):
-    name: str
-    lastname: str
+class ReservationCreateSchema(Schema):
+    reserver: str
+    amount_of_people: int
+    amount_of_hours: int
+    start_time: time
+    end_time: time
+    reservation_date: date
+    email: EmailStr
+    country_code: str
     phone: str
-    email: str
-    birthday: Optional[str] = None
+    birthday: Optional[date] = None
+    observation: Optional[str] = None
+
+
+class CustomerSchema(Schema):
+    first_name: str
+    last_name: str
+    country_code: str
+    phone: str
+    email: EmailStr
+    birthday: Optional[date] = None
 
 class SettingsSchema(Schema):
     setting_key: str
     setting_value: str
 
 class ProfileSchema(Schema):
-    name: str
-    email: str
+    name: str # Restaurant name
+    email: EmailStr
     phone: str
     website: str
     description: str
     address: str
+
 
 @restaurant_router.post("/", response=RestaurantSchema)
 @transaction.atomic
@@ -181,46 +200,62 @@ def get_dashboard(request: HttpRequest, restaurant_id: str):
         canceled_reservations=canceled_reservations,
     )
 
-@restaurant_router.get("/{restaurant_id}/reservations", response=list[ReservationSchema])
+@restaurant_router.get("/{restaurant_id}/reservations", response=list[ReservationResponsechema])
 def list_reservations(request: HttpRequest, restaurant_id: str):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
-    reservations = Reservation.objects.filter(visit__restaurant=restaurant)
+    reservations = Reservation.objects.filter(restaurant=restaurant)
     return [
-        ReservationSchema(
+        ReservationResponsechema(
+            reservation_hash=res.reservation_hash,
             reserver=res.reserver,
             amount_of_people=res.amount_of_people,
             amount_of_hours=res.amount_of_hours,
             start_time=res.start_time,
             end_time=res.end_time,
-            date=str(res.date),
+            reservation_date=res.reservation_date,
             email=res.email,
+            country_code=res.country_code,
             phone=res.phone,
-            birthday=str(res.birthday) if res.birthday else None,
+            birthday=res.birthday,
             observation=res.observation,
         )
         for res in reservations
     ]
 
-@restaurant_router.post("/{restaurant_id}/reservations", response=ReservationSchema)
-def create_reservation(request: HttpRequest, restaurant_id: str, payload: ReservationSchema):
+@restaurant_router.post("/{restaurant_id}/reservations", response=ReservationResponsechema)
+def create_reservation(request: HttpRequest, restaurant_id: str, payload: ReservationCreateSchema):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
     
     reservation = Reservation.objects.create(
         restaurant=restaurant,
+        reservation_hash=str(uuid.uuid4()),
         reserver=payload.reserver,
         amount_of_people=payload.amount_of_people,
         amount_of_hours=payload.amount_of_hours,
         start_time=payload.start_time,
         end_time=payload.end_time,
-        date=payload.date,
+        reservation_date=payload.reservation_date,
         email=payload.email,
+        country_code=payload.country_code,
         phone=payload.phone,
         birthday=payload.birthday,
         observation=payload.observation,
-        reservation_hash=str(uuid.uuid4()),
     )
     
-    return reservation
+    return ReservationResponsechema(
+        reservation_hash=reservation.reservation_hash,
+        reserver=reservation.reserver,
+        amount_of_people=reservation.amount_of_people,
+        amount_of_hours=reservation.amount_of_hours,
+        start_time=reservation.start_time,
+        end_time=payload.end_time,
+        reservation_date=(reservation.reservation_date),
+        email=reservation.email,
+        country_code=reservation.country_code,
+        phone=reservation.phone,
+        birthday=reservation.birthday,
+        observation=reservation.observation,
+    )
 
 @restaurant_router.get("/{restaurant_id}/customers", response=list[CustomerSchema])
 def list_customers(request: HttpRequest, restaurant_id: str):
@@ -228,8 +263,9 @@ def list_customers(request: HttpRequest, restaurant_id: str):
     customers = restaurant.customers.all()
     return [
         CustomerSchema(
-            name=customer.name,
-            lastname=customer.lastname,
+            first_name=customer.first_name,
+            last_name=customer.last_name,
+            country_code=customer.country_code,
             phone=customer.phone,
             email=customer.email,
             birthday=str(customer.birthday) if customer.birthday else None,
@@ -241,9 +277,10 @@ def list_customers(request: HttpRequest, restaurant_id: str):
 def create_customer(request: HttpRequest, restaurant_id: str, payload: CustomerSchema):
     restaurant = get_object_or_404(Restaurant, restaurant_id=restaurant_id)
     customer = RestaurantCustomer.objects.create(
-        name=payload.name,
-        lastname=payload.lastname,
+        first_name=payload.first_name,
+        last_name=payload.last_name,
         email=payload.email,
+        country_code=payload.country_code,
         phone=payload.phone,
         birthday=payload.birthday,
     )
@@ -272,4 +309,4 @@ def get_profile(request: HttpRequest, restaurant_id: str):
             f"{address.street}, {address.number} - {address.neighborhood}"
             if address else "No address"
         ),
-    )
+    ) """
