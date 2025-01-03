@@ -3,13 +3,11 @@ import uuid
 from django.utils import timezone
 from django.core.validators import RegexValidator
 
-
 class Address(models.Model):
-    address_id = models.CharField(
-        blank=False,
+    address_id = models.UUIDField(
         primary_key=True,
-        serialize=False,
         default=uuid.uuid4,
+        editable=False,
         db_index=True,
     )
     cep = models.CharField(
@@ -31,18 +29,14 @@ class Address(models.Model):
     created_at = models.DateTimeField(null=False, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    unit = models.OneToOneField(
-        "unit.Unit", on_delete=models.CASCADE, related_name="unit_address", null=True
-    )
-
     class Meta:
         unique_together = (
             ("cep", "street", "number", "neighborhood", "city", "state", "country"),
         )
         indexes = [
-            models.Index(fields=["address_id"]),
-            models.Index(fields=["cep"]),
-            models.Index(fields=["city", "state"]),
+            models.Index(fields=['address_id'], name='address_address_e701d2_idx'),
+            models.Index(fields=['cep'], name='address_cep_a6f9b0_idx'),
+            models.Index(fields=['city', 'state'], name='address_city_daed79_idx')
         ]
         db_table = "address"
         ordering = ["-created_at"]

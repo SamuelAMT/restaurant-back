@@ -13,7 +13,7 @@ class Unit(models.Model):
     address = models.OneToOneField(
         'address.Address',
         on_delete=models.CASCADE,
-        related_name='address_unit',
+        related_name='unit',
         null=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)

@@ -8,7 +8,7 @@ class AddressAdmin(admin.ModelAdmin):
     
     list_display = (
         'address_id',
-        'unit',
+        'get_unit',
         'get_restaurant',
         'cep', 
         'street', 
@@ -32,7 +32,6 @@ class AddressAdmin(admin.ModelAdmin):
         'created_at',
         'state',
         'country',
-        'unit',
     )
     
     readonly_fields = (
@@ -62,11 +61,16 @@ class AddressAdmin(admin.ModelAdmin):
         })
     )
 
+    def get_unit(self, obj):
+        """Get the associated unit"""
+        return obj.unit.name if hasattr(obj, 'unit') else None
+    get_unit.short_description = 'Unit'
+    get_unit.admin_order_field = 'unit__name'
+
     def get_restaurant(self, obj):
         """Get the restaurant through the unit relationship"""
-        return obj.unit.restaurant if obj.unit else None
+        if hasattr(obj, 'unit') and obj.unit:
+            return obj.unit.restaurant
+        return None
     get_restaurant.short_description = 'Restaurant'
     get_restaurant.admin_order_field = 'unit__restaurant'
-
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
