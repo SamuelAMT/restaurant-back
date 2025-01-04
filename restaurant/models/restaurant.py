@@ -60,9 +60,6 @@ class Restaurant(models.Model):
         "restaurant_customer.RestaurantCustomer",
         related_name="customer_restaurants"
     )
-    employees = models.ManyToManyField(
-        "restaurant.RestaurantEmployee", related_name="employee_restaurants"
-    )
     login_logs = models.ManyToManyField(
         "custom_auth.LoginLog", related_name="restaurants"
     )
@@ -77,6 +74,3 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
-
-
-

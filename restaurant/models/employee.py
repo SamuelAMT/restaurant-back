@@ -28,7 +28,7 @@ class RestaurantEmployee(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
-        if self.unit.restaurant_id != self.restaurant_id:
+        if self.unit.restaurant_id != self.restaurant.restaurant_id:
             raise models.ValidationError("Unit must belong to the employee's restaurant")
         super().save(*args, **kwargs)
 

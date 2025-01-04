@@ -2,6 +2,7 @@ from django.db import models
 import uuid
 from django.utils import timezone
 from django.core.validators import RegexValidator
+from unit.models import Unit
 
 class Address(models.Model):
     address_id = models.UUIDField(
@@ -28,6 +29,14 @@ class Address(models.Model):
     maps_url = models.URLField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(null=False, default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    unit = models.OneToOneField(
+        Unit,
+        on_delete=models.CASCADE,
+        related_name='address',
+        null=True,
+        db_column='unit_id'
+    )
 
     class Meta:
         unique_together = (

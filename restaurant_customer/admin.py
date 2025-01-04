@@ -55,7 +55,6 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
         ('Unit Information', {
             'fields': (
                 'units',
-                'preferred_unit'
             )
         }),
         ('Important Dates', {

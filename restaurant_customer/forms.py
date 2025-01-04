@@ -26,7 +26,6 @@ class RestaurantCustomerForm(forms.ModelForm):
             "birthday",
             "restaurants",
             "units",
-            "preferred_unit",
         ]
         widgets = {
             "created_at": forms.DateTimeInput(attrs={"readonly": "readonly"}),

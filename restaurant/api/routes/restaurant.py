@@ -20,6 +20,13 @@ def list_restaurants(request: HttpRequest):
 
 
 def _format_restaurant_response(restaurant: Restaurant) -> RestaurantResponseSchema:
+    units = restaurant.units.all()
+    addresses = []
+    for unit in units:
+        addresses.extend(unit.addresses.all())
+
+    image_url = str(restaurant.image.url) if restaurant.image else None
+
     return RestaurantResponseSchema(
         restaurant_id=restaurant.restaurant_id,
         name=restaurant.name,
@@ -29,9 +36,9 @@ def _format_restaurant_response(restaurant: Restaurant) -> RestaurantResponseSch
         country_code=restaurant.country_code,
         phone=restaurant.phone,
         email=restaurant.email,
-        website=restaurant.website,
+        website=str(restaurant.website) if restaurant.website else None,
         description=restaurant.description,
-        image=restaurant.image,
+        image=image_url,
         role=restaurant.role,
         addresses=[
             {
@@ -46,7 +53,7 @@ def _format_restaurant_response(restaurant: Restaurant) -> RestaurantResponseSch
                 "complement": addr.complement,
                 "maps_url": addr.maps_url,
             }
-            for addr in restaurant.addresses.all()
+            for addr in addresses
         ],
         units=[
             {
@@ -56,7 +63,7 @@ def _format_restaurant_response(restaurant: Restaurant) -> RestaurantResponseSch
                 "working_hours": [...],
                 "blocked_hours": [...],
             }
-            for unit in restaurant.units.all()
+            for unit in units
         ],
     )
 

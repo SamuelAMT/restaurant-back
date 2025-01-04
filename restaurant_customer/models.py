@@ -18,18 +18,11 @@ class RestaurantCustomer(models.Model):
         related_name='unit_customers',
         blank=True
     )
-    preferred_unit = models.ForeignKey(
-        'unit.Unit',
-        on_delete=models.SET_NULL,
-        related_name='regular_customers',
-        null=True,
-        blank=True,
-    )
 
     class Meta:
         indexes = [
             models.Index(
-                fields=["first_name", "last_name", "phone"], name="restaurant__name_78fb79_idx"
+                fields=["first_name", "last_name", "phone"], name="restaurant__name_78fb79_idx",
             )
         ]
         db_table = "restaurant_customer"
