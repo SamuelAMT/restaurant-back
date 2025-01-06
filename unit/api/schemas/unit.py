@@ -11,5 +11,5 @@ class UnitResponseSchema(Schema):
     unit_id: UUID
     name: str
     is_main_unit: bool
-    working_hours: List[WorkingHoursResponseSchema]
-    blocked_hours: List[BlockedHoursResponseSchema]
+    working_hours: List[WorkingHoursResponseSchema] = []
+    blocked_hours: List[BlockedHoursResponseSchema] = []

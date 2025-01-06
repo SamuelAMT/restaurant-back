@@ -16,6 +16,7 @@ class RestaurantCustomer(models.Model):
     units = models.ManyToManyField(
         'unit.Unit',
         related_name='unit_customers',
+        null=True,
         blank=True
     )
 

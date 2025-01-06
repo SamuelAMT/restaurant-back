@@ -21,7 +21,7 @@ class RestaurantEmployee(models.Model):
         'unit.Unit',
         on_delete=models.CASCADE,
         related_name='unit_employees',
-        null=False,
+        null=True,
         blank=False
     )
     created_at = models.DateTimeField(auto_now_add=True)

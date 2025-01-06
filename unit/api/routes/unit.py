@@ -13,8 +13,35 @@ from ..schemas.schedule import (
     WorkingHoursResponseSchema,
     BlockedHoursResponseSchema
 )
+from ...models.unit import Unit
 
 unit_router = Router()
+
+def _format_unit_response(unit: Unit) -> UnitResponseSchema:
+    return UnitResponseSchema(
+        unit_id=unit.unit_id,
+        name=unit.name,
+        is_main_unit=unit.is_main_unit,
+        working_hours=[
+            {
+                "working_hours_id": wh.working_hours_id,
+                "day_of_week": wh.day_of_week,
+                "opening_time": wh.opening_time,
+                "closing_time": wh.closing_time,
+                "is_closed": wh.is_closed,
+            }
+            for wh in unit.working_hours.all()
+        ],
+        blocked_hours=[
+            {
+                "blocked_hours_id": bh.blocked_hours_id,
+                "start_datetime": bh.start_datetime,
+                "end_datetime": bh.end_datetime,
+                "reason": bh.reason,
+            }
+            for bh in unit.blocked_hours.all()
+        ],
+    )
 
 @unit_router.post("/{restaurant_id}/units", response=UnitResponseSchema)
 def create_unit(request: HttpRequest, restaurant_id: str, payload: UnitCreateSchema):

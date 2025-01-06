@@ -78,9 +78,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     groups = models.ManyToManyField(
         Group,
-        related_name="customeruser_set",
         blank=True,
         help_text="The groups this user belongs to.",
+        related_name="customeruser_set",
         verbose_name="groups",
     )
     user_permissions = models.ManyToManyField(
@@ -142,7 +142,7 @@ class LoginLog(models.Model):
     login_log_id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True
     )
-    custom_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    custom_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     ip_address = models.GenericIPAddressField(default="0.0.0.0")
     user_agent = models.TextField(default="Unknown")
     action = models.CharField(max_length=50, default="login")

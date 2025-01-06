@@ -9,6 +9,7 @@ from ..schemas.restaurant import (
     RestaurantResponseSchema,
 )
 from ...models.restaurant import Restaurant
+from unit.api.routes.unit import _format_unit_response
 
 restaurant_router = Router()
 
@@ -55,16 +56,7 @@ def _format_restaurant_response(restaurant: Restaurant) -> RestaurantResponseSch
             }
             for addr in addresses
         ],
-        units=[
-            {
-                "unit_id": unit.unit_id,
-                "name": unit.name,
-                "is_main_unit": unit.is_main_unit,
-                "working_hours": [...],
-                "blocked_hours": [...],
-            }
-            for unit in units
-        ],
+        units = [_format_unit_response(unit) for unit in units],
     )
 
 
