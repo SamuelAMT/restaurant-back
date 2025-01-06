@@ -1,11 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, LoginLog, VerificationToken
+from .models import CustomUser, LoginLog
 from .forms import (
     CustomUserCreationForm,
     CustomUserChangeForm,
     LoginLogForm,
-    VerificationTokenForm,
 )
 
 
@@ -98,10 +97,3 @@ class LoginLogAdmin(admin.ModelAdmin):
     search_fields = ("custom_user__email", "ip_address")
     readonly_fields = ("timestamp",)
 
-
-@admin.register(VerificationToken)
-class VerificationTokenAdmin(admin.ModelAdmin):
-    form = VerificationTokenForm
-    list_display = ("token", "expires")
-    search_fields = ("token",)
-    readonly_fields = ("token",)

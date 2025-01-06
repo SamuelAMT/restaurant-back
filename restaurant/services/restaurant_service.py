@@ -1,7 +1,7 @@
 from typing import List
 from django.db import transaction
 from django.core.exceptions import ValidationError
-from ..models.restaurant import Restaurant, RestaurantCategory, CuisineType
+from ..models.restaurant import Restaurant, RestaurantCategory, RestaurantCuisineType
 from unit.services.unit_service import UnitService
 
 class RestaurantService:
@@ -45,7 +45,7 @@ class RestaurantService:
             **kwargs
         )
         
-        cuisine_types = CuisineType.objects.filter(cuisine_id__in=cuisine_type_ids)
+        cuisine_types = RestaurantCuisineType.objects.filter(cuisine_id__in=cuisine_type_ids)
         restaurant.cuisine_types.set(cuisine_types)
 
         if address_data:

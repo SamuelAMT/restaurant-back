@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, LoginLog, VerificationToken
+from .models import CustomUser, LoginLog
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -78,10 +78,3 @@ class LoginLogForm(forms.ModelForm):
     class Meta:
         model = LoginLog
         fields = ("custom_user", "action", "ip_address")
-
-
-class VerificationTokenForm(forms.ModelForm):
-    class Meta:
-        model = VerificationToken
-        fields = ("token", "expires")
-        widgets = {"expires": forms.DateTimeInput()}

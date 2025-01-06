@@ -3,29 +3,8 @@ from .employee import RestaurantEmployee
 from django.conf import settings
 from cloudinary.models import CloudinaryField
 from custom_auth.models import Role
+from restaurant.models.classification import RestaurantCategory, RestaurantCuisineType
 import uuid
-
-
-class RestaurantCategory(models.Model):
-    category_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-
-    class Meta:
-        db_table = "restaurant_category"
-        verbose_name_plural = "Restaurant Categories"
-
-    def __str__(self):
-        return self.name
-
-
-class CuisineType(models.Model):
-    cuisine_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-
-    class Meta:
-        db_table = "cuisine_type"
 
 
 class Restaurant(models.Model):
@@ -55,7 +34,7 @@ class Restaurant(models.Model):
         null=True,
         related_name="restaurants",
     )
-    cuisine_types = models.ManyToManyField(CuisineType, related_name="restaurants")
+    cuisine_types = models.ManyToManyField(RestaurantCuisineType, related_name="restaurants")
     customers = models.ManyToManyField(
         "restaurant_customer.RestaurantCustomer",
         related_name="customer_restaurants"

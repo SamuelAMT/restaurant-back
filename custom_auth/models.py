@@ -109,40 +109,43 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def clean(self):
         super().clean()
-        if self.role == Role.RESTAURANT_ADMIN and self.restaurant is None:
-            raise ValidationError(
-                "Restaurant Admin must be associated with a restaurant"
-            )
+        if self.role == Role.RESTAURANT_ADMIN and not self.restaurant:
+            raise ValidationError("Restaurant admin must be associated with a restaurant")
+
         if self.role in [Role.UNIT_ADMIN, Role.UNIT_SUB_ADMIN, Role.UNIT_STAFF]:
-            if self.unit is None:
-                raise ValidationError("Unit-based roles must be associated with a unit")
-            if self.restaurant is None:
-                raise ValidationError(
-                    "Unit-based roles must be associated with a restaurant"
-                )
+            if not self.unit:
+                raise ValidationError("Unit roles must be associated with a unit")
+            if not self.restaurant:
+                raise ValidationError("Unit roles must be associated with a restaurant")
+            if self.unit.restaurant != self.restaurant:
+                raise ValidationError("Unit must belong to the associated restaurant")
 
-
-class VerificationToken(models.Model):
-    token = models.CharField(max_length=100, primary_key=True, unique=True)
-    expires = models.DateTimeField()
-
-    def __str__(self):
-        return f"Token for {self.token}"
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["token"], name="token_idx"),
-        ]
-        db_table = "verification_token"
-        verbose_name = "Verification Token"
-        verbose_name_plural = "Verification Tokens"
+    def has_unit_permission(self, unit):
+        """Check if user has permission for specific unit"""
+        if self.role == Role.SUPERADMIN:
+            return True
+        if self.role == Role.RESTAURANT_ADMIN:
+            return unit.restaurant == self.restaurant
+        return self.unit == unit
 
 
 class LoginLog(models.Model):
     login_log_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, unique=True
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False
     )
-    custom_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    custom_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=False
+    )
+    unit = models.ForeignKey(
+        'unit.Unit',
+        on_delete=models.CASCADE,
+        related_name='login_logs',
+        null=False
+    )
     ip_address = models.GenericIPAddressField(default="0.0.0.0")
     user_agent = models.TextField(default="Unknown")
     action = models.CharField(max_length=50, default="login")

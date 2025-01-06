@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Restaurant, RestaurantCategory, CuisineType
+    Restaurant, RestaurantCategory, RestaurantCuisineType
 )
 from unit.models.unit import Unit
 from unit.api.schemas.schedule import WorkingHoursSchema, BlockedHoursSchema
@@ -68,8 +68,8 @@ class RestaurantCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
     search_fields = ('name', 'description')
 
-@admin.register(CuisineType)
-class CuisineTypeAdmin(admin.ModelAdmin):
+@admin.register(RestaurantCuisineType)
+class RestaurantCuisineTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
     search_fields = ('name', 'description')
 
