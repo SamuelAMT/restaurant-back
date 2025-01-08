@@ -52,6 +52,6 @@ class AuthService:
             "updated_at": restaurant.updated_at,
             "customers": [str(customer.restaurant_customer_id) 
                         for customer in restaurant.customers.all()],
-            "employees": [str(employee.restaurant_employee_id) 
-                        for employee in restaurant.employees.all()],
         }
+            #"employees": [str(employee.restaurant_employee_id) 
+            #            for employee in restaurant.employees.all()],

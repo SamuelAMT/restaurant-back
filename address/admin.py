@@ -8,7 +8,8 @@ class AddressAdmin(admin.ModelAdmin):
     
     list_display = (
         'address_id',
-        'restaurant',
+        'get_unit',
+        'get_restaurant',
         'cep', 
         'street', 
         'number', 
@@ -22,7 +23,8 @@ class AddressAdmin(admin.ModelAdmin):
         'street', 
         'city', 
         'state',
-        'restaurant__name',
+        'unit__name',
+        'unit__restaurant__name',
         'address_id'
     )
     
@@ -30,7 +32,6 @@ class AddressAdmin(admin.ModelAdmin):
         'created_at',
         'state',
         'country',
-        'restaurant'
     )
     
     readonly_fields = (
@@ -41,7 +42,7 @@ class AddressAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Restaurant Information', {
-            'fields': ('restaurant', 'address_id')
+            'fields': ('unit', 'address_id')
         }),
         ('Address Details', {
             'fields': (
@@ -60,7 +61,16 @@ class AddressAdmin(admin.ModelAdmin):
         })
     )
 
-    def save_model(self, request, obj, form, change):
-        if not obj.restaurant and hasattr(request.user, 'restaurant'):
-            obj.restaurant = request.user.restaurant
-        super().save_model(request, obj, form, change)
+    def get_unit(self, obj):
+        """Get the associated unit"""
+        return obj.unit.name if hasattr(obj, 'unit') else None
+    get_unit.short_description = 'Unit'
+    get_unit.admin_order_field = 'unit__name'
+
+    def get_restaurant(self, obj):
+        """Get the restaurant through the unit relationship"""
+        if hasattr(obj, 'unit') and obj.unit:
+            return obj.unit.restaurant
+        return None
+    get_restaurant.short_description = 'Restaurant'
+    get_restaurant.admin_order_field = 'unit__restaurant'

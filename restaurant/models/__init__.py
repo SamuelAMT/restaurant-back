@@ -1,15 +1,10 @@
-# restaurant/models/__init__.py
-from .restaurant import Restaurant, RestaurantCategory, CuisineType
+from .restaurant import Restaurant
+from .classification import RestaurantCategory, RestaurantCuisineType
 from .employee import RestaurantEmployee
-from .schedule import WorkingHours, BlockedHours
-from .unit import RestaurantUnit
 
 __all__ = [
     'Restaurant',
     'RestaurantCategory',
-    'CuisineType',
+    'RestaurantCuisineType',
     'RestaurantEmployee',
-    'WorkingHours',
-    'BlockedHours',
-    'RestaurantUnit',
 ]

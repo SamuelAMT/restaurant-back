@@ -10,6 +10,7 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
     list_display = (
         'restaurant_customer_id',
         'get_restaurant_names',
+        'get_unit_names',
         'first_name',
         'last_name',
         'email',
@@ -24,11 +25,13 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
         'email',
         'phone',
         'restaurants__name',
+        'units__name',
         'restaurant_customer_id'
     )
     
     list_filter = (
         'created_at',
+        'units',
         'country_code'
     )
     
@@ -39,9 +42,6 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
     )
 
     fieldsets = (
-        ('Restaurant Information', {
-            'fields': ('restaurants', 'restaurant_customer_id')
-        }),
         ('Personal Information', {
             'fields': (
                 'first_name',
@@ -52,6 +52,11 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
                 'birthday'
             )
         }),
+        ('Unit Information', {
+            'fields': (
+                'units',
+            )
+        }),
         ('Important Dates', {
             'fields': ('created_at', 'updated_at'),
         })
@@ -60,6 +65,10 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
     def get_restaurant_names(self, obj):
         return ", ".join([restaurant.name for restaurant in obj.restaurants.all()])
     get_restaurant_names.short_description = 'Restaurants'
+    
+    def get_unit_names(self, obj):
+        return ", ".join([unit.name for unit in obj.units.all()])
+    get_unit_names.short_description = 'Units'
 
     def save_model(self, request, obj, form, change):
         try:
@@ -83,10 +92,6 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
             return qs.filter(restaurants=request.user.restaurant)
         return qs
 
-    def response_add(self, request, obj, post_url_continue=None):
-        """Override to ensure proper redirect after adding"""
-        return super().response_add(request, obj, post_url_continue)
-
-    def response_change(self, request, obj):
-        """Override to ensure proper redirect after editing"""
-        return super().response_change(request, obj)
+    def get_restaurant_names(self, obj):
+        return ", ".join([restaurant.name for restaurant in obj.restaurants.all()])
+    get_restaurant_names.short_description = 'Restaurants'
