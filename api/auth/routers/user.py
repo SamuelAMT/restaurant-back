@@ -7,22 +7,29 @@ from .base import BaseAuthRouter
 
 user_auth_router = BaseAuthRouter()
 
+
 @user_auth_router.post("/login/", response={200: dict, 401: ErrorSchema})
 def user_login(request, payload: LoginSchema):
     """API endpoint for regular user authentication."""
     user, token_data = AuthService.authenticate_user(
-        request, payload.email, payload.password
+        request,
+        payload.email,
+        payload.password,
+        allowed_roles=['RESTAURANT_ADMIN']
     )
-    
+
     if user and token_data:
         response_data = token_data.dict()
+
         restaurant_data = AuthService.get_restaurant_data(
+            user,
             getattr(user, 'restaurant', None)
         )
         if restaurant_data:
             response_data["restaurant"] = restaurant_data
+
         return response_data
-    return 401, {"detail": "Invalid credentials"}
+    return 401, {"detail": "Invalid credentials or insufficient permissions"}
 
 @user_auth_router.post("/token/refresh/", response={200: TokenSchema, 401: ErrorSchema})
 def token_refresh(request, payload: dict):
