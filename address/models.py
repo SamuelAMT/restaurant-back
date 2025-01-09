@@ -46,6 +46,7 @@ class Address(models.Model):
         indexes = [
             models.Index(fields=['city', 'state'], name='address_city_state_idx')
         ]
+        db_table = 'address'
 
     def __str__(self):
         return f"{self.street}, {self.number} - {self.neighborhood}, {self.city}/{self.state}"
