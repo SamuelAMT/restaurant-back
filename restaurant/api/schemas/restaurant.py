@@ -16,8 +16,14 @@ class AddressSchema(Schema):
     city: str
     state: str
     country: str
-    complement: str = None
+    complement: Optional[str] = None
     maps_url: Optional[AnyUrl] = None
+
+    @field_validator("maps_url", mode="before")
+    def validate_maps_url(cls, v):
+        if not v:
+            return None
+        return v
 
 
 class RestaurantCreateSchema(Schema):
