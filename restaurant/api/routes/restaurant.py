@@ -24,7 +24,19 @@ def _format_restaurant_response(restaurant: Restaurant) -> RestaurantResponseSch
     units = restaurant.units.all()
     addresses = []
     for unit in units:
-        addresses.extend(unit.addresses.all())
+        if unit.address:
+            addresses.append({
+            "address_id": unit.address.address_id,
+            "cep": unit.address.cep,
+            "street": unit.address.street,
+            "number": unit.address.number,
+            "neighborhood": unit.address.neighborhood,
+            "city": unit.address.city,
+            "state": unit.address.state,
+            "country": unit.address.country,
+            "complement": unit.address.complement or None,
+            "maps_url": unit.address.maps_url if unit.address.maps_url else None
+            })
 
     image_url = str(restaurant.image.url) if restaurant.image else None
 
@@ -41,22 +53,8 @@ def _format_restaurant_response(restaurant: Restaurant) -> RestaurantResponseSch
         description=restaurant.description,
         image=image_url,
         role=restaurant.role,
-        addresses=[
-            {
-                "id": str(addr.address_id),
-                "cep": addr.cep,
-                "street": addr.street,
-                "number": addr.number,
-                "neighborhood": addr.neighborhood,
-                "city": addr.city,
-                "state": addr.state,
-                "country": addr.country,
-                "complement": addr.complement,
-                "maps_url": addr.maps_url,
-            }
-            for addr in addresses
-        ],
-        units = [_format_unit_response(unit) for unit in units],
+        addresses=addresses,
+        units=[_format_unit_response(unit) for unit in units],
     )
 
 
