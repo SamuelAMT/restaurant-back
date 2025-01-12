@@ -18,18 +18,19 @@ class CustomerSchema(Schema):
 def get_customer(request, restaurant_customer_id: str):
     try:
         customer = RestaurantCustomer.objects.get(restaurant_customer_id=restaurant_customer_id)
-        return {
-            "first_name": customer.first_name,
-            "last_name": customer.last_name,
-            "email": customer.email,
-            "country_code": customer.country_code,
-            "phone": customer.phone,
-            "birthday": customer.birthday,
-        }
+        return CustomerSchema(
+            restaurant_customer_id=str(customer.restaurant_customer_id),
+            first_name=customer.first_name,
+            last_name=customer.last_name,
+            email=customer.email,
+            country_code=customer.country_code,
+            phone=customer.phone,
+            birthday=customer.birthday,
+        )
     except RestaurantCustomer.DoesNotExist:
         return {"error": "Customer not found"}, 404
 
-@restaurant_customer_router.post("/customers/", response=CustomerSchema)
+@restaurant_customer_router.post("/", response=CustomerSchema)
 def create_customer(request, payload: CustomerSchema):
     customer = RestaurantCustomer.objects.create(
         first_name=payload.first_name,
