@@ -9,7 +9,7 @@ import uuid
 
 class Restaurant(models.Model):
     restaurant_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, db_index=True
+        primary_key=True, default=uuid.uuid4, editable=False,
     )
     cnpj = models.CharField(max_length=14, unique=True, db_index=True)
     name = models.CharField(max_length=100, db_index=True)

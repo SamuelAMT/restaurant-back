@@ -25,7 +25,7 @@ class Unit(models.Model):
         unique_together = [['restaurant', 'name']]
 
     def __str__(self):
-        return f"{self.restaurant.name} - {self.name}"
+        return self.name
 
     def clean(self):
         super().clean()
