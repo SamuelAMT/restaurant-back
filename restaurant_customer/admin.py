@@ -67,7 +67,7 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
         })
     )
 
-    filter_horizontal = ('units', 'restaurants')  # Add filter_horizontal for units and restaurants
+    filter_horizontal = ('units', 'restaurants')
 
     def save_model(self, request, obj, form, change):
         try:
@@ -83,7 +83,6 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
                 if hasattr(request.user, 'restaurant') and request.user.restaurant:
                     unit_restaurants.add(request.user.restaurant)
 
-                # Ensure at least one restaurant is associated
                 if not unit_restaurants:
                     raise ValueError("No restaurants found for the selected units.")
 
@@ -96,7 +95,7 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if hasattr(request.user, 'restaurant'):
+        if hasattr(request.user, 'restaurant') and not request.user.is_superuser:
             return qs.filter(restaurants=request.user.restaurant)
         return qs
 
