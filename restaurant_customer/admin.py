@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib import messages
+from django.db import transaction
 from .models import RestaurantCustomer
 from .forms import RestaurantCustomerForm
-
 
 @admin.register(RestaurantCustomer)
 class RestaurantCustomerAdmin(admin.ModelAdmin):
@@ -11,7 +11,6 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
     list_display = (
         'restaurant_customer_id',
         'get_restaurant_names',
-        'get_unit_names',
         'first_name',
         'last_name',
         'email',
@@ -58,36 +57,45 @@ class RestaurantCustomerAdmin(admin.ModelAdmin):
                 'units',
             )
         }),
+        ('Restaurant Information', {
+            'fields': (
+                'restaurants',
+            )
+        }),
         ('Important Dates', {
             'fields': ('created_at', 'updated_at'),
         })
     )
 
-    def get_unit_names(self, obj):
-        return ", ".join([unit.name for unit in obj.units.all()])
-
-    get_unit_names.short_description = 'Units'
+    filter_horizontal = ('units', 'restaurants')
 
     def save_model(self, request, obj, form, change):
         try:
-            super().save_model(request, obj, form, change)
+            with transaction.atomic():
+                super().save_model(request, obj, form, change)
 
-            # Get restaurants from the selected units
-            unit_restaurants = {unit.restaurant for unit in obj.units.all()}
+                units = form.cleaned_data.get('units', [])
 
-            # If user is a restaurant admin, ensure their restaurant is included
-            if hasattr(request.user, 'restaurant'):
-                unit_restaurants.add(request.user.restaurant)
+                obj.units.set(units)
 
-            obj.restaurants.set(unit_restaurants)
+                unit_restaurants = {unit.restaurant for unit in units if unit.restaurant}
 
-            messages.success(request, f'Restaurant customer "{obj}" was saved successfully.')
+                if hasattr(request.user, 'restaurant') and request.user.restaurant:
+                    unit_restaurants.add(request.user.restaurant)
+
+                if not unit_restaurants:
+                    raise ValueError("No restaurants found for the selected units.")
+
+                obj.restaurants.set(unit_restaurants)
+
+                messages.success(request, f'Restaurant customer "{obj}" was saved successfully.')
         except Exception as e:
             messages.error(request, f'Error saving restaurant customer: {str(e)}')
+            raise
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if hasattr(request.user, 'restaurant'):
+        if hasattr(request.user, 'restaurant') and not request.user.is_superuser:
             return qs.filter(restaurants=request.user.restaurant)
         return qs
 

@@ -53,7 +53,8 @@ class AddressAdmin(admin.ModelAdmin):
                 'city',
                 'state',
                 'country',
-                'complement'
+                'complement',
+                'maps_url',
             )
         }),
         ('Important Dates', {

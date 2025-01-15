@@ -20,6 +20,7 @@ class AddressForm(forms.ModelForm):
             "state",
             "country",
             "complement",
+            "maps_url",
         ]
         widgets = {
             "complement": forms.TextInput(attrs={"placeholder": "Apartment, suite, etc."}),
