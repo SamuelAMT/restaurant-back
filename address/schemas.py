@@ -13,7 +13,7 @@ class AddressBase(Schema):
     country: str
     complement: Optional[str] = None
     maps_url: Optional[str] = None
-    unit_id: Optional[UUID] = None
+    unit_id: UUID
 
 class AddressIn(Schema):
     pass
