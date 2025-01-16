@@ -13,20 +13,19 @@ class Reservation(models.Model):
     reservation_hash = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
-        editable=False,
-        db_index=True,
+        editable=False
     )
-    reserver = models.CharField(max_length=100, db_index=True)
+    reserver = models.CharField(max_length=100)
     amount_of_people = models.PositiveIntegerField()
     amount_of_hours = models.PositiveIntegerField()
-    start_time = models.TimeField(db_index=True)
-    end_time = models.TimeField(db_index=True)
-    reservation_date = models.DateField(db_index=True)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    reservation_date = models.DateField()
     email = models.EmailField(max_length=70)
     country_code = models.CharField(max_length=3, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
-    observation = models.TextField(max_length=250, null=True, blank=True)
+    observation = models.TextField(max_length=250, blank=True)
     status = models.CharField(
         max_length=20,
         choices=ReservationStatus.choices,
@@ -34,31 +33,36 @@ class Reservation(models.Model):
     )
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
+    unit = models.ForeignKey(
+        'unit.Unit',
+        on_delete=models.CASCADE,
+        related_name="reservations",
+        null=False
+    )
     restaurant = models.ForeignKey(
         Restaurant,
         on_delete=models.CASCADE,
         related_name="reservations",
+        null=False
     )
     customer = models.ForeignKey(
         RestaurantCustomer,
         on_delete=models.CASCADE,
         related_name="customer_reservations",
         null=True,
-        blank=True,
+        blank=True
     )
 
     class Meta:
         indexes = [
             models.Index(
                 fields=[
-                    "reserver",
+                    "reservation_date",
                     "start_time",
                     "end_time",
-                    "reservation_date",
-                    "reservation_hash",
                 ],
-                name="reservation_idx",
+                name="reservation_datetime_idx",
             )
         ]
         db_table = "reservation"
@@ -74,15 +78,10 @@ class Reservation(models.Model):
 
     def clean(self):
         super().clean()
-        errors = {}
-
-        # Add validation for restaurant working hours (to be implemented when Restaurant model is updated)
-        if hasattr(self.restaurant, 'working_hours'):
-            # Placeholder for the upcoming Restaurant blocking hours journey feature
-            pass
-
-        if errors:
-            raise ValidationError(errors)
+        if not self.unit or not self.restaurant:
+            raise ValidationError("Both unit and restaurant are required")
+        if self.unit.restaurant != self.restaurant:
+            raise ValidationError("Unit must belong to the specified restaurant")
 
     def save(self, *args, **kwargs):
         """

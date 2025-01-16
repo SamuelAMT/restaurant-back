@@ -1,12 +1,14 @@
 from ninja import Schema
-from .schedule import WorkingHoursSchema, BlockedHoursSchema
+from unit.api.schemas.schedule import WorkingHoursSchema, BlockedHoursSchema
+from unit.api.schemas.unit import UnitResponseSchema
 from typing import List, Optional
 from datetime import datetime, time
 from uuid import UUID
-from pydantic import EmailStr, AnyUrl
+from pydantic import EmailStr, AnyUrl, field_validator
 
 
 class AddressSchema(Schema):
+    address_id: UUID
     cep: str
     street: str
     number: str
@@ -14,15 +16,14 @@ class AddressSchema(Schema):
     city: str
     state: str
     country: str
-    complement: str = None
+    complement: Optional[str] = None
+    maps_url: Optional[AnyUrl] = None
 
-
-class RestaurantUnitSchema(Schema):
-    unit_id: UUID
-    name: str
-    is_main_unit: bool
-    working_hours: List[WorkingHoursSchema]
-    blocked_hours: List[BlockedHoursSchema]
+    @field_validator("maps_url", mode="before")
+    def validate_maps_url(cls, v):
+        if not v:
+            return None
+        return v
 
 
 class RestaurantCreateSchema(Schema):
@@ -45,4 +46,18 @@ class RestaurantResponseSchema(Schema):
     cnpj: str
     category: Optional[str]
     cuisine_types: List[str]
-    units: List[RestaurantUnitSchema]
+    country_code: str
+    phone: str
+    email: EmailStr
+    website: Optional[str]
+    description: Optional[str]
+    image: Optional[str]
+    role: str
+    addresses: List[AddressSchema]
+    units: List[UnitResponseSchema]
+
+    @field_validator("website", "image", mode="before")
+    def convert_url_to_string(cls, value):
+        if value is not None:
+            return str(value)
+        return value

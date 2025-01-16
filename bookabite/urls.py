@@ -12,7 +12,7 @@ from restaurant.api.routes.profile import profile_router
 from restaurant.api.routes.settings import settings_router
 from restaurant_customer.api import restaurant_customer_router
 from reservation.api import reservation_router
-from restaurant.api.routes.unit import unit_router
+from unit.api.routes.unit import unit_router
 
 api = NinjaAPI(
     title="BookABite API",

@@ -7,8 +7,8 @@ from restaurant_customer.models import RestaurantCustomer
 restaurant_customer_router = Router()
 
 class CustomerSchema(Schema):
-    name: str
-    lastname: str
+    first_name: str
+    last_name: str
     email: EmailStr
     country_code: str
     phone: str
@@ -17,16 +17,24 @@ class CustomerSchema(Schema):
 @restaurant_customer_router.get("/{restaurant_customer_id}", response=CustomerSchema)
 def get_customer(request, restaurant_customer_id: str):
     try:
-        customer = RestaurantCustomer.objects.get(id=restaurant_customer_id)
-        return customer
+        customer = RestaurantCustomer.objects.get(restaurant_customer_id=restaurant_customer_id)
+        return CustomerSchema(
+            restaurant_customer_id=str(customer.restaurant_customer_id),
+            first_name=customer.first_name,
+            last_name=customer.last_name,
+            email=customer.email,
+            country_code=customer.country_code,
+            phone=customer.phone,
+            birthday=customer.birthday,
+        )
     except RestaurantCustomer.DoesNotExist:
         return {"error": "Customer not found"}, 404
 
-@restaurant_customer_router.post("/customers/", response=CustomerSchema)
+@restaurant_customer_router.post("/", response=CustomerSchema)
 def create_customer(request, payload: CustomerSchema):
     customer = RestaurantCustomer.objects.create(
-        name=payload.name,
-        lastname=payload.lastname,
+        first_name=payload.first_name,
+        last_name=payload.last_name,
         email=payload.email,
         country_code=payload.country_code,
         phone=payload.phone,

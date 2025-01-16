@@ -1,8 +1,9 @@
 from ninja import Schema
 from datetime import datetime
+from uuid import UUID
 from typing import Optional
 
-class AddressIn(Schema):
+class AddressBase(Schema):
     cep: str
     street: str
     number: str
@@ -11,8 +12,13 @@ class AddressIn(Schema):
     state: str
     country: str
     complement: Optional[str] = None
+    maps_url: Optional[str] = None
+    unit_id: UUID
+
+class AddressIn(Schema):
+    pass
 
 class AddressOut(AddressIn):
-    address_id: int
+    address_id: UUID
     created_at: datetime
     updated_at: datetime

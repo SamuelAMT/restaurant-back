@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     "address",
     "api",
     "custom_auth",
+    "unit",
 ]
 
 helpers.cloudinary_init()

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomUser, LoginLog, VerificationToken
+from .models import CustomUser, LoginLog
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -14,6 +14,7 @@ class CustomUserCreationForm(UserCreationForm):
             "last_name",
             "role",
             "restaurant",
+            "unit",
             "is_active",
             "is_staff",
             "is_superuser",
@@ -28,6 +29,16 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields["first_name"].required = True
         self.fields["last_name"].required = True
 
+    def clean(self):
+        cleaned_data = super().clean()
+        unit = cleaned_data.get("unit")
+        restaurant = cleaned_data.get("restaurant")
+
+        if unit and not restaurant:
+            cleaned_data["restaurant"] = unit.restaurant
+
+        return cleaned_data
+
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
@@ -38,6 +49,7 @@ class CustomUserChangeForm(UserChangeForm):
             "last_name",
             "role",
             "restaurant",
+            "unit",
             "is_active",
             "is_staff",
             "is_superuser",
@@ -51,15 +63,18 @@ class CustomUserChangeForm(UserChangeForm):
         self.fields["first_name"].required = True
         self.fields["last_name"].required = True
 
+    def clean(self):
+        cleaned_data = super().clean()
+        unit = cleaned_data.get("unit")
+        restaurant = cleaned_data.get("restaurant")
+
+        if unit and not restaurant:
+            cleaned_data["restaurant"] = unit.restaurant
+
+        return cleaned_data
+
 
 class LoginLogForm(forms.ModelForm):
     class Meta:
         model = LoginLog
         fields = ("custom_user", "action", "ip_address")
-
-
-class VerificationTokenForm(forms.ModelForm):
-    class Meta:
-        model = VerificationToken
-        fields = ("token", "expires")
-        widgets = {"expires": forms.DateTimeInput()}
